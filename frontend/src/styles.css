@@ -115,13 +115,14 @@ html[data-season="winter"] {
  * 底景只使用宽幅素材，以 100% auto 等比缩放，禁止裁切与横纵拉伸。
  */
 html[data-scene="dashboard"] {
-  --scene-header-art: var(--season-header-landscape-art);
+  /* 今日工作台页头换用核城纪念塔水墨横幅（取代季节山水） */
+  --scene-header-art: url("./assets/tower-banner.jpg");
   --scene-lower-art: var(--season-lower-scroll-art);
   --scene-header-left: 29%; --scene-header-right: 1.5%; --scene-header-height: 170px;
   --scene-header-left-compact: 34%; --scene-header-height-short: 138px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(45vh, 430px);
   --scene-lower-height-short: min(38vh, 300px); --scene-header-position: center bottom;
-  --scene-lower-position: center bottom; --scene-header-opacity: 0.47; --scene-lower-opacity: 0.42;
+  --scene-lower-position: center bottom; --scene-header-opacity: 0.62; --scene-lower-opacity: 0.42;
 }
 
 html[data-scene="tasks"] {
