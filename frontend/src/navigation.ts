@@ -61,6 +61,11 @@ export const navigationDomains: NavigationDomain[] = [
       { path: "/study-center", label: "中心组学习", icon: "calendar" },
       { path: "/party-development", label: "发展党员", icon: "task" },
       { path: "/business-meetings", label: "其他党建会议", icon: "journal" },
+      { path: "/party-members", label: "党员队伍", icon: "book" },
+      { path: "/party-fees", label: "党费管理", icon: "report" },
+      { path: "/party-review", label: "考核评议", icon: "compare" },
+      { path: "/mass-work", label: "群团工作", icon: "topic" },
+      { path: "/brand-culture", label: "宣传文化", icon: "book" },
     ],
   },
   {

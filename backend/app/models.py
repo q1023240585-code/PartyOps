@@ -16,6 +16,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    Numeric,
     String,
     Text,
     UniqueConstraint,
@@ -2487,3 +2488,290 @@ class NotificationSource(Base):
     window_key: Mapped[str] = mapped_column(String(48), default="")
     source_version: Mapped[int] = mapped_column(Integer, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+# ---------------------------------------------------------------------------
+# 党务扩展模块：党员队伍、党费、考核评议、群团、品牌舆情、标准化对标。
+# 2026-10 中核四〇四定制扩展，遵循既有表的审计与版本字段约定。
+# ---------------------------------------------------------------------------
+
+
+class PartyMember(Base):
+    """党员名册：全体党员基础信息库。"""
+
+    __tablename__ = "party_members"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    name: Mapped[str] = mapped_column(String(80), index=True)
+    gender: Mapped[str] = mapped_column(String(8), default="男")
+    birth_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    joined_party_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
+    branch: Mapped[str] = mapped_column(String(160), index=True)
+    party_post: Mapped[str] = mapped_column(String(80), default="党员")
+    education: Mapped[str] = mapped_column(String(60), default="")
+    phone: Mapped[str] = mapped_column(String(40), default="")
+    member_kind: Mapped[str] = mapped_column(String(24), default="正式党员", index=True)
+    status: Mapped[str] = mapped_column(String(24), default="在册", index=True)
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class PartyFeeRecord(Base):
+    """党费收缴与使用台账；kind 区分缴纳（income）与使用（expense）。"""
+
+    __tablename__ = "party_fee_records"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    kind: Mapped[str] = mapped_column(String(12), default="income", index=True)
+    member_name: Mapped[str] = mapped_column(String(80), default="", index=True)
+    member_ref: Mapped[Optional[str]] = mapped_column(ForeignKey("party_members.id", ondelete="SET NULL"), nullable=True, index=True)
+    branch: Mapped[str] = mapped_column(String(160), default="", index=True)
+    year: Mapped[int] = mapped_column(Integer, index=True)
+    month: Mapped[int] = mapped_column(Integer, default=0, index=True)
+    base_amount: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+    ratio: Mapped[float] = mapped_column(Numeric(6, 4), default=0)
+    amount: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+    status: Mapped[str] = mapped_column(String(24), default="已缴", index=True)
+    paid_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    method: Mapped[str] = mapped_column(String(40), default="")
+    purpose: Mapped[str] = mapped_column(String(240), default="")
+    approver: Mapped[str] = mapped_column(String(80), default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class DemocraticReview(Base):
+    """民主评议党员年度记录。"""
+
+    __tablename__ = "democratic_reviews"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    year: Mapped[int] = mapped_column(Integer, index=True)
+    member_name: Mapped[str] = mapped_column(String(80), index=True)
+    member_ref: Mapped[Optional[str]] = mapped_column(ForeignKey("party_members.id", ondelete="SET NULL"), nullable=True, index=True)
+    branch: Mapped[str] = mapped_column(String(160), default="", index=True)
+    self_rating: Mapped[str] = mapped_column(String(24), default="")
+    peer_rating: Mapped[str] = mapped_column(String(24), default="")
+    final_rating: Mapped[str] = mapped_column(String(24), default="未定格", index=True)
+    issues_found: Mapped[str] = mapped_column(Text, default="")
+    rectification: Mapped[str] = mapped_column(Text, default="")
+    status: Mapped[str] = mapped_column(String(24), default="进行中", index=True)
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class AssessmentIndicator(Base):
+    """党建工作责任制考核指标。"""
+
+    __tablename__ = "assessment_indicators"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    year: Mapped[int] = mapped_column(Integer, index=True)
+    category: Mapped[str] = mapped_column(String(80), index=True)
+    title: Mapped[str] = mapped_column(String(240))
+    score: Mapped[float] = mapped_column(Numeric(6, 1), default=0)
+    owner_role: Mapped[str] = mapped_column(String(120), default="")
+    description: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class AssessmentScore(Base):
+    """支部（单位）在考核指标上的得分记录。"""
+
+    __tablename__ = "assessment_scores"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    indicator_ref: Mapped[str] = mapped_column(
+        ForeignKey("assessment_indicators.id", ondelete="CASCADE"), index=True
+    )
+    year: Mapped[int] = mapped_column(Integer, index=True)
+    branch: Mapped[str] = mapped_column(String(160), index=True)
+    score_obtained: Mapped[float] = mapped_column(Numeric(6, 1), default=0)
+    evidence: Mapped[str] = mapped_column(Text, default="")
+    assessor: Mapped[str] = mapped_column(String(80), default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class MassActivity(Base):
+    """群团活动：工会与共青团活动台账共用，kind 区分。"""
+
+    __tablename__ = "mass_activities"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    kind: Mapped[str] = mapped_column(String(24), default="union", index=True)
+    title: Mapped[str] = mapped_column(String(240), index=True)
+    held_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    location: Mapped[str] = mapped_column(String(160), default="")
+    participants: Mapped[int] = mapped_column(Integer, default=0)
+    budget: Mapped[float] = mapped_column(Numeric(10, 2), default=0)
+    organizer: Mapped[str] = mapped_column(String(120), default="")
+    summary: Mapped[str] = mapped_column(Text, default="")
+    status: Mapped[str] = mapped_column(String(24), default="已举办", index=True)
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class LeagueMember(Base):
+    """团员名册。"""
+
+    __tablename__ = "league_members"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    name: Mapped[str] = mapped_column(String(80), index=True)
+    gender: Mapped[str] = mapped_column(String(8), default="男")
+    birth_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    league_joined_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), index=True)
+    branch: Mapped[str] = mapped_column(String(160), index=True)
+    league_post: Mapped[str] = mapped_column(String(80), default="团员")
+    education: Mapped[str] = mapped_column(String(60), default="")
+    status: Mapped[str] = mapped_column(String(24), default="在册", index=True)
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class LeagueElection(Base):
+    """团组织换届记录。"""
+
+    __tablename__ = "league_elections"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    branch: Mapped[str] = mapped_column(String(160), index=True)
+    term: Mapped[str] = mapped_column(String(60), default="")
+    election_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    new_secretary: Mapped[str] = mapped_column(String(80), default="")
+    committee: Mapped[str] = mapped_column(Text, default="")
+    approval_status: Mapped[str] = mapped_column(String(24), default="待报批", index=True)
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class BrandProject(Base):
+    """党建/文化品牌项目库。"""
+
+    __tablename__ = "brand_projects"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    title: Mapped[str] = mapped_column(String(240), index=True)
+    category: Mapped[str] = mapped_column(String(60), default="党建品牌", index=True)
+    slogan: Mapped[str] = mapped_column(String(240), default="")
+    description: Mapped[str] = mapped_column(Text, default="")
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(24), default="培育中", index=True)
+    highlights: Mapped[str] = mapped_column(Text, default="")
+    owner: Mapped[str] = mapped_column(String(120), default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class PublicOpinionItem(Base):
+    """舆情台账：登记与处置跟踪。"""
+
+    __tablename__ = "public_opinion_items"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    title: Mapped[str] = mapped_column(String(240), index=True)
+    source: Mapped[str] = mapped_column(String(80), default="", index=True)
+    occurred_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    severity: Mapped[str] = mapped_column(String(24), default="一般", index=True)
+    summary: Mapped[str] = mapped_column(Text, default="")
+    disposition: Mapped[str] = mapped_column(Text, default="")
+    status: Mapped[str] = mapped_column(String(24), default="登记", index=True)
+    responder: Mapped[str] = mapped_column(String(80), default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class StandardCheckItem(Base):
+    """党支部标准化规范化对标自查项。"""
+
+    __tablename__ = "standard_check_items"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    branch: Mapped[str] = mapped_column(String(160), index=True)
+    category: Mapped[str] = mapped_column(String(80), index=True)
+    item: Mapped[str] = mapped_column(String(240))
+    requirement: Mapped[str] = mapped_column(Text, default="")
+    compliant: Mapped[str] = mapped_column(String(24), default="未查", index=True)
+    evidence: Mapped[str] = mapped_column(Text, default="")
+    checked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )
+
+
+class TrainingRecord(Base):
+    """党员教育培训台账。"""
+
+    __tablename__ = "training_records"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_str)
+    title: Mapped[str] = mapped_column(String(240), index=True)
+    category: Mapped[str] = mapped_column(String(60), default="集中培训", index=True)
+    start_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    end_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True))
+    hours: Mapped[float] = mapped_column(Numeric(6, 1), default=0)
+    participants: Mapped[int] = mapped_column(Integer, default=0)
+    branch: Mapped[str] = mapped_column(String(160), default="", index=True)
+    summary: Mapped[str] = mapped_column(Text, default="")
+    notes: Mapped[str] = mapped_column(Text, default="")
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    created_by: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow
+    )

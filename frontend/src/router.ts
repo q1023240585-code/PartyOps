@@ -45,6 +45,11 @@ const router = createRouter({
     },
     { path: "/party-life", component: () => import("./views/PartyLifeView.vue") },
     { path: "/study-center", component: () => import("./views/StudyCenterView.vue") },
+    { path: "/party-members", component: () => import("./views/PartyMembersView.vue") },
+    { path: "/party-fees", component: () => import("./views/PartyFeesView.vue") },
+    { path: "/party-review", component: () => import("./views/PartyReviewView.vue") },
+    { path: "/mass-work", component: () => import("./views/MassWorkView.vue") },
+    { path: "/brand-culture", component: () => import("./views/BrandCultureView.vue") },
     {
       path: "/business-meetings",
       component: () => import("./views/BusinessMeetingsView.vue"),

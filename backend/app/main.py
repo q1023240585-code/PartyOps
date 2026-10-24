@@ -54,6 +54,7 @@ from .routers import (
     bootstrap,
     business,
     events,
+    extension,
     fleet,
     integration,
     ledger_imports,
@@ -681,6 +682,7 @@ app.include_router(productivity.router, prefix=api_prefix)
 app.include_router(party_development.router, prefix=api_prefix)
 app.include_router(business.router, prefix=api_prefix)
 app.include_router(party_work.router, prefix=api_prefix)
+app.include_router(extension.router, prefix=api_prefix)
 app.include_router(updates.router, prefix=api_prefix)
 app.include_router(bootstrap.router, prefix=api_prefix)
 app.include_router(integration.router, prefix=api_prefix)

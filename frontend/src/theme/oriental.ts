@@ -137,6 +137,11 @@ export function sceneConfigForPath(path: string): OrientalSceneConfig {
   if (path.startsWith("/party-life")) return config("journal", "standard", "open", STANDARD_SLOTS);
   if (path.startsWith("/study-center")) return config("calendar", "standard", "open", STANDARD_SLOTS);
   if (path.startsWith("/party-development")) return config("calendar", "standard", "open", STANDARD_SLOTS);
+  if (path.startsWith("/party-members")) return config("calendar", "standard", "open", STANDARD_SLOTS);
+  if (path.startsWith("/party-fees")) return config("reports", "standard", "open", STANDARD_SLOTS);
+  if (path.startsWith("/party-review")) return config("inspection", "standard", "open", STANDARD_SLOTS);
+  if (path.startsWith("/mass-work")) return config("topic", "standard", "open", STANDARD_SLOTS);
+  if (path.startsWith("/brand-culture")) return config("knowledge", "standard", "open", STANDARD_SLOTS);
   if (path.startsWith("/topics")) return config("topic", "standard", "open", STANDARD_SLOTS);
   if (path.startsWith("/workspace")) return config("workspace", "standard", "open", STANDARD_SLOTS);
   if (path.startsWith("/archives")) return config("archives", "standard", "open", STANDARD_SLOTS);
