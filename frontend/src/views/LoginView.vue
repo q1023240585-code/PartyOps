@@ -117,7 +117,7 @@ async function submit() {
       <div class="identity-content">
         <h1><span>党建</span>智能体</h1>
         <div class="brand-rule"><b></b><i></i></div>
-        <p class="subtitle">中核四〇四有限公司 · 基层党建工作平台</p>
+        <p class="subtitle">中核四〇四有限公司 · 党建工作平台</p>
         <p class="partyops">科技赋能 · 产业造福</p>
         <p class="oriental-date">{{ orientalDate.gregorian }}　{{ orientalDate.weekday }}　{{ orientalDate.lunar }}<b v-if="orientalDate.solarTerm">{{ orientalDate.solarTerm }}</b></p>
       </div>
@@ -189,7 +189,7 @@ async function submit() {
         <p v-if="!configured" class="setup-note">业务数据只保存在这台主机；首位管理员创建后请立即配置备份。</p>
         <div class="org-footer">
           <span>中核四〇四有限公司 党委组织部</span>
-          <b>事业高于一切 · 责任重于一切 · 严细融入一切</b>
+          <b>事业高于一切 · 责任重于一切 · 严细融入一切 · 进取成就一切</b>
         </div>
       </div>
     </section>
