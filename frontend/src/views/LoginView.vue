@@ -272,6 +272,8 @@ h1 span {
   font-size: clamp(22px, 2vw, 30px);
   line-height: 1.5;
   letter-spacing: 0.1em;
+  /* 断行只发生在「·」分隔处，短语不被拆开 */
+  word-break: keep-all;
 }
 
 .partyops {
@@ -280,6 +282,7 @@ h1 span {
   font-family: var(--serif);
   font-size: 22px;
   letter-spacing: 0.22em;
+  word-break: keep-all;
 }
 
 .org-footer {
@@ -295,10 +298,16 @@ h1 span {
   color: var(--muted);
 }
 
+.org-footer span {
+  white-space: nowrap;
+}
+
 .org-footer b {
   color: var(--cinnabar-dark);
   font-weight: 500;
   letter-spacing: 0.08em;
+  /* 断行只发生在「·」分隔处，四字短语不被拆开 */
+  word-break: keep-all;
 }
 
 @media (max-height: 620px) {
