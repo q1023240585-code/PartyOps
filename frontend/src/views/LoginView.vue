@@ -122,7 +122,7 @@ async function submit() {
         <p class="partyops">科技赋能 · 产业造福</p>
         <p class="oriental-date">{{ orientalDate.gregorian }}　{{ orientalDate.weekday }}　{{ orientalDate.lunar }}<b v-if="orientalDate.solarTerm">{{ orientalDate.solarTerm }}</b></p>
       </div>
-      <img class="motif" src="../assets/launch-motif-nuclear.svg" alt="" aria-hidden="true" />
+      <img class="motif" src="../assets/launch-motif-scroll.jpg" alt="" aria-hidden="true" />
     </section>
     <section class="login-pane">
       <img class="photo-base" src="../assets/photo-huyang.jpg" alt="" aria-hidden="true" />
@@ -242,11 +242,11 @@ async function submit() {
   right: 0;
   bottom: 0;
   z-index: 1;
-  width: min(30vw, 300px);
-  height: 66%;
+  width: min(34vw, 340px);
+  height: 72%;
   object-fit: cover;
   object-position: 62% 40%;
-  opacity: 0.16;
+  opacity: 0.42;
   mix-blend-mode: multiply;
   pointer-events: none;
   /* 右缘羽化，避免照片边界形成硬切线 */
@@ -261,10 +261,10 @@ async function submit() {
   bottom: 0;
   left: 0;
   z-index: 0;
-  height: 220px;
+  height: 240px;
   object-fit: cover;
   object-position: center 30%;
-  opacity: 0.18;
+  opacity: 0.35;
   mix-blend-mode: multiply;
   pointer-events: none;
   -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 100%);
