@@ -122,7 +122,7 @@ async function submit() {
         <p class="partyops">科技赋能 · 产业造福</p>
         <p class="oriental-date">{{ orientalDate.gregorian }}　{{ orientalDate.weekday }}　{{ orientalDate.lunar }}<b v-if="orientalDate.solarTerm">{{ orientalDate.solarTerm }}</b></p>
       </div>
-      <img class="motif" src="../assets/launch-motif-scroll.jpg" alt="" aria-hidden="true" />
+      <img class="motif" src="../assets/photo-tower.jpg" alt="" aria-hidden="true" />
     </section>
     <section class="login-pane">
       <img class="photo-base" src="../assets/photo-huyang.jpg" alt="" aria-hidden="true" />
@@ -372,14 +372,17 @@ h1 span {
   border: 1px solid rgba(199, 0, 11, 0.5);
 }
 
+/* 核城纪念塔：档案照片式呈现，白框微倾贴于纸面 */
 .motif {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: 56px;
+  left: 7.9vw;
   z-index: 1;
-  width: min(58vw, 820px);
+  width: min(38vw, 400px);
   height: auto;
-  mix-blend-mode: multiply;
+  border: 1px solid rgba(41, 39, 36, 0.18);
+  box-shadow: 0 10px 26px rgba(41, 39, 36, 0.16);
+  transform: rotate(-1.2deg);
   pointer-events: none;
 }
 
