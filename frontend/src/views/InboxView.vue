@@ -302,7 +302,7 @@ async function create() {
 
 .intake-steps .active b {
   color: var(--cinnabar);
-  border-color: rgba(180, 35, 24, 0.5);
+  border-color: rgba(199, 0, 11, 0.5);
 }
 
 .source-pane,

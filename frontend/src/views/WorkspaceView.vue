@@ -1301,7 +1301,7 @@ onBeforeUnmount(() => {
 .root-strip button.active {
   color: var(--cinnabar);
   background: var(--paper);
-  border-color: rgba(180, 35, 24, 0.45);
+  border-color: rgba(199, 0, 11, 0.45);
 }
 
 .root-strip b,
@@ -1356,7 +1356,7 @@ onBeforeUnmount(() => {
 }
 
 .folder-selection-row:hover {
-  background: rgba(180, 35, 24, 0.04);
+  background: rgba(199, 0, 11, 0.04);
 }
 
 .folder-selection-row > svg {
@@ -1447,7 +1447,7 @@ onBeforeUnmount(() => {
   gap: 14px;
   padding: 7px 16px;
   color: var(--cinnabar);
-  background: rgba(180, 35, 24, 0.055);
+  background: rgba(199, 0, 11, 0.055);
   border-bottom: 1px solid var(--line);
 }
 
@@ -1471,7 +1471,7 @@ onBeforeUnmount(() => {
 
 .file-row:hover,
 .file-row.selected {
-  background: rgba(180, 35, 24, 0.05);
+  background: rgba(199, 0, 11, 0.05);
 }
 
 .file-row.missing {

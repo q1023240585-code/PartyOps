@@ -183,7 +183,7 @@ onBeforeUnmount(() => {
   font-size: 11px;
   letter-spacing: 0.12em;
   background: rgba(247, 241, 231, 0.68);
-  border: 1px solid rgba(180, 35, 24, 0.3);
+  border: 1px solid rgba(199, 0, 11, 0.3);
 }
 
 .season-caption > span {

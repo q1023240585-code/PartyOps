@@ -344,7 +344,7 @@ onMounted(load);
 .year-block button:hover,
 .year-block button.active {
   color: var(--cinnabar);
-  background: rgba(180, 35, 24, 0.05);
+  background: rgba(199, 0, 11, 0.05);
   border-left-color: var(--cinnabar);
 }
 
@@ -450,7 +450,7 @@ onMounted(load);
   color: var(--cinnabar);
   font-size: 10px;
   text-align: center;
-  background: rgba(180, 35, 24, 0.07);
+  background: rgba(199, 0, 11, 0.07);
 }
 
 .report-items a,

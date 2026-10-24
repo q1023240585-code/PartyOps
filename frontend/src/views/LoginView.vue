@@ -117,8 +117,8 @@ async function submit() {
       <div class="identity-content">
         <h1><span>党建</span>智办</h1>
         <div class="brand-rule"><b></b><i></i></div>
-        <p class="subtitle">基层党建工作闭环协同系统</p>
-        <p class="partyops">PartyOps</p>
+        <p class="subtitle">中核四〇四有限公司 · 基层党建工作平台</p>
+        <p class="partyops">强核报国 · 创新奉献</p>
         <p class="oriental-date">{{ orientalDate.gregorian }}　{{ orientalDate.weekday }}　{{ orientalDate.lunar }}<b v-if="orientalDate.solarTerm">{{ orientalDate.solarTerm }}</b></p>
       </div>
       <img class="motif" src="../assets/launch-motif.png" alt="" aria-hidden="true" />
@@ -187,6 +187,10 @@ async function submit() {
           连接设置
         </button>
         <p v-if="!configured" class="setup-note">业务数据只保存在这台主机；首位管理员创建后请立即配置备份。</p>
+        <div class="org-footer">
+          <span>中核四〇四有限公司 党委组织部</span>
+          <b>事业高于一切 · 责任重于一切 · 严细融入一切</b>
+        </div>
       </div>
     </section>
     <a-modal v-model:visible="showConnection" title="局域网连接设置" :footer="false">
@@ -259,7 +263,7 @@ h1 span {
 .brand-rule i {
   height: 1px;
   flex: 1;
-  background: rgba(180, 35, 24, 0.48);
+  background: var(--gold);
 }
 
 .subtitle {
@@ -272,10 +276,35 @@ h1 span {
 
 .partyops {
   margin: 22px 0 0;
-  color: var(--cinnabar);
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 28px;
-  letter-spacing: 0.05em;
+  color: var(--cinnabar-dark);
+  font-family: var(--serif);
+  font-size: 22px;
+  letter-spacing: 0.22em;
+}
+
+.org-footer {
+  position: absolute;
+  right: 7.8vw;
+  bottom: 22px;
+  left: 4vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.org-footer b {
+  color: var(--cinnabar-dark);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+@media (max-height: 620px) {
+  .org-footer {
+    display: none;
+  }
 }
 
 .oriental-date {
@@ -293,7 +322,7 @@ h1 span {
   color: var(--cinnabar);
   font-family: var(--serif);
   font-weight: 500;
-  border: 1px solid rgba(180, 35, 24, 0.5);
+  border: 1px solid rgba(199, 0, 11, 0.5);
 }
 
 .motif {
@@ -354,7 +383,7 @@ form {
 .setup-stage {
   margin: -18px 0 24px;
   padding: 14px 16px;
-  background: rgba(180, 35, 24, 0.055);
+  background: rgba(199, 0, 11, 0.055);
   border-left: 3px solid var(--cinnabar);
 }
 

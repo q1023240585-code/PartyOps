@@ -210,7 +210,7 @@ header h3 { margin: 4px 0 0; font-size: 17px; }
 .activity-list small { margin-top: 5px; color: var(--muted); font-size: 10px; }
 .search-results { max-height: 230px; margin: -8px 0 14px; overflow: auto; border: 1px solid var(--line); }
 .search-results button { display: block; width: 100%; padding: 10px 12px; text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--line-light); cursor: pointer; }
-.search-results button:hover,.search-results button.selected { color: var(--cinnabar); background: rgba(180,35,24,.06); }
+.search-results button:hover,.search-results button.selected { color: var(--cinnabar); background: rgba(199,0,11,.06); }
 .search-results strong,.search-results small { display: block; }
 .search-results small { margin-top: 3px; color: var(--muted); font-size: 10px; }
 </style>

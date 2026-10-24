@@ -360,7 +360,7 @@ onBeforeUnmount(() => window.removeEventListener("partyops:refresh", load));
 <style scoped>
 .calendar-page { width: 100%; max-width: none; }
 .date-kicker { margin: 0 0 9px; color: var(--cinnabar); font: 11px Georgia,serif; letter-spacing: .08em; }
-.date-kicker b { margin-left: 8px; padding: 2px 6px; font: 500 10px var(--serif); border: 1px solid rgba(180,35,24,.5); }
+.date-kicker b { margin-left: 8px; padding: 2px 6px; font: 500 10px var(--serif); border: 1px solid rgba(199,0,11,.5); }
 .calendar-toolbar,.filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 0; border-top: 1px solid var(--line); }
 .date-nav { display: flex; align-items: center; gap: 8px; }
 .date-nav strong { margin-left: 8px; font-family: "Noto Serif CJK SC",SimSun,serif; font-size: 18px; }
@@ -407,7 +407,7 @@ onBeforeUnmount(() => window.removeEventListener("partyops:refresh", load));
 .month-day > small { color: var(--cinnabar); font-size: 9px; }
 .year-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
 .year-grid button { min-height: 150px; padding: 24px; text-align: left; background: rgba(251,248,241,.92); border: 0; cursor: pointer; }
-.year-grid button:hover { background: rgba(180,35,24,.06); }
+.year-grid button:hover { background: rgba(199,0,11,.06); }
 .year-grid span,.year-grid strong,.year-grid small { display: block; }
 .year-grid strong { margin: 10px 0 4px; color: var(--cinnabar); font: 34px Georgia,serif; }
 .year-grid small { color: var(--muted); }

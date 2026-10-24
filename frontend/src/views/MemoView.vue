@@ -398,7 +398,7 @@ onBeforeUnmount(() => {
 .editor-toolbar > :last-child { margin-left: auto; }
 .save-state { color: #8c7866; font-size: 12px; }
 .save-state.saved { color: #377158; }
-.save-state.failed { color: #b42318; font-weight: 600; }
+.save-state.failed { color: var(--cinnabar); font-weight: 600; }
 .memo-title-input, .memo-body-input, .checklist-row input { border: 0; outline: 0; color: #352a22; background: transparent; font: inherit; }
 .memo-title-input { margin: 28px 0 14px; padding: 0 3px 12px; border-bottom: 1px solid rgba(104, 73, 46, .14); font-family: "Noto Serif SC", "Songti SC", serif; font-size: clamp(24px, 3vw, 34px); font-weight: 700; }
 .memo-body-input { flex: 1; min-height: 420px; padding: 4px; resize: none; font-size: 16px; line-height: 1.9; }

@@ -489,7 +489,7 @@ onMounted(load);
 }
 
 .notice-list button.unread {
-  background: rgba(180, 35, 24, 0.05);
+  background: rgba(199, 0, 11, 0.05);
 }
 
 .notice-mark {
@@ -505,7 +505,7 @@ onMounted(load);
 
 .unread .notice-mark {
   color: var(--cinnabar);
-  border-color: rgba(180, 35, 24, 0.35);
+  border-color: rgba(199, 0, 11, 0.35);
 }
 
 .notice-list strong {

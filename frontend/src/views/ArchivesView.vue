@@ -969,12 +969,12 @@ onMounted(load);
 .category-heading { margin-top: 24px !important; }
 .year-item, .category-item { display: flex; justify-content: space-between; width: 100%; padding: 9px 10px; text-align: left; background: transparent; border: 0; color: var(--ink); cursor: pointer; }
 .year-item small, .category-item small { color: var(--muted); font-size: 10px; }
-.year-item.active, .category-item.active { color: var(--cinnabar); background: rgba(180,35,24,.08); }
+.year-item.active, .category-item.active { color: var(--cinnabar); background: rgba(199,0,11,.08); }
 .archive-list { min-width: 0; border-right: 1px solid var(--line); }
 .list-heading { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 16px; border-bottom: 1px solid var(--line); }
 .list-heading span { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
 .archive-row { display: grid; grid-template-columns: 44px minmax(0,1fr) 100px; width: 100%; gap: 10px; padding: 13px 16px; text-align: left; border: 0; border-bottom: 1px solid rgba(50,40,30,.08); background: transparent; cursor: pointer; }
-.archive-row:hover, .archive-row.selected { background: rgba(180,35,24,.07); }
+.archive-row:hover, .archive-row.selected { background: rgba(199,0,11,.07); }
 .archive-sequence { color: var(--cinnabar); font: 16px Georgia, serif; }
 .archive-row-main, .archive-row-meta { min-width: 0; }
 .archive-row-main b, .archive-row-main small, .archive-row-meta i, .archive-row-meta em { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1007,7 +1007,7 @@ onMounted(load);
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
 .category-manager-list { display: flex; gap: 6px; margin: 14px 0 4px; padding-bottom: 12px; overflow-x: auto; border-bottom: 1px solid var(--line); }
 .field-builder { padding-top: 10px; border-top: 1px solid var(--line); }
-.field-chip { display: inline-block; margin: 8px 6px 0 0; padding: 5px 8px; background: rgba(180,35,24,.08); font-size: 11px; }
+.field-chip { display: inline-block; margin: 8px 6px 0 0; padding: 5px 8px; background: rgba(199,0,11,.08); font-size: 11px; }
 .field-add-row { display: grid; grid-template-columns: 1fr 1fr 110px 1.4fr; gap: 8px; margin-top: 10px; }
 .switch-note { margin-left: 10px; color: var(--muted); font-size: 11px; }
 .grant-manager { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }

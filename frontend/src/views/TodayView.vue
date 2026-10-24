@@ -277,7 +277,7 @@ onBeforeUnmount(() => window.removeEventListener("partyops:refresh", load));
   padding: 2px 6px;
   font: 500 10px var(--serif);
   letter-spacing: 0.08em;
-  border: 1px solid rgba(180, 35, 24, 0.5);
+  border: 1px solid rgba(199, 0, 11, 0.5);
 }
 
 .full-spin {
@@ -351,7 +351,7 @@ onBeforeUnmount(() => window.removeEventListener("partyops:refresh", load));
   place-items: center;
   color: var(--cinnabar);
   font: 12px Georgia, serif;
-  border: 1px solid rgba(180, 35, 24, 0.35);
+  border: 1px solid rgba(199, 0, 11, 0.35);
   border-radius: 50%;
 }
 
@@ -431,7 +431,7 @@ onBeforeUnmount(() => window.removeEventListener("partyops:refresh", load));
 }
 
 .status-ledger a:hover {
-  background: rgba(180, 35, 24, 0.05);
+  background: rgba(199, 0, 11, 0.05);
 }
 
 .status-ledger strong,

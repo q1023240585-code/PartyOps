@@ -157,9 +157,9 @@ export function renderStartupProblem(
       font:14px/1.75 system-ui,'Noto Sans CJK SC','Microsoft YaHei',sans-serif">
       <section style="
         width:min(680px,100%);padding:38px 42px;background:#fbf8f1;
-        border:1px solid #d9d0c3;border-top:4px solid #b42318;
+        border:1px solid #d9d0c3;border-top:4px solid #c7000b;
         box-shadow:0 24px 70px rgba(93,48,34,.12)">
-        <p style="margin:0 0 10px;color:#b42318;font:12px Georgia,serif;letter-spacing:.12em">
+        <p style="margin:0 0 10px;color:#c7000b;font:12px Georgia,serif;letter-spacing:.12em">
           PARTYOPS RECOVERY
         </p>
         <h1 style="margin:0;font:600 28px/1.35 SimSun,serif">${safeTitle}</h1>
@@ -171,7 +171,7 @@ export function renderStartupProblem(
         </ol>
         <button id="partyops-reload" type="button" style="
           min-width:150px;height:42px;padding:0 22px;color:white;
-          background:#b42318;border:0;cursor:pointer">重新载入系统</button>
+          background:#c7000b;border:0;cursor:pointer">重新载入系统</button>
         <p style="margin:18px 0 0;color:#8a8178;font-size:12px">
           诊断代码：${safeCode}
         </p>

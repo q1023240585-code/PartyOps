@@ -77,8 +77,8 @@ onMounted(load);
 .notice-toolbar > span { color: var(--muted); font-size: 11px; }
 .notice-list { border: 1px solid var(--line); background: rgba(255,255,255,.3); }
 .notice-list button { display: grid; grid-template-columns: 28px minmax(0,1fr) 110px 100px; gap: 10px; align-items: center; width: 100%; min-height: 76px; padding: 12px 16px; text-align: left; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--line-light); cursor: pointer; }
-.notice-list button.unread { background: rgba(180,35,24,.055); box-shadow: inset 3px 0 0 var(--cinnabar); }
-.notice-list button:hover { background: rgba(180,35,24,.08); }
+.notice-list button.unread { background: rgba(199,0,11,.055); box-shadow: inset 3px 0 0 var(--cinnabar); }
+.notice-list button:hover { background: rgba(199,0,11,.08); }
 .notice-list b, .notice-list small { display: block; }
 .notice-list small { margin-top: 5px; color: var(--muted); }
 .notice-list em { color: var(--cinnabar); font-size: 11px; font-style: normal; }

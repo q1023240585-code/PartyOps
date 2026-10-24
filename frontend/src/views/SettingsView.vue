@@ -1995,7 +1995,7 @@ onBeforeUnmount(() => {
   gap: 24px;
   margin-top: 18px;
   padding: 18px 20px;
-  border: 1px solid rgba(180, 35, 24, 0.26);
+  border: 1px solid rgba(199, 0, 11, 0.26);
   border-left: 4px solid var(--cinnabar);
   background: rgba(251, 248, 241, 0.78);
 }
@@ -2236,7 +2236,7 @@ onBeforeUnmount(() => {
 .policy-heading p { margin: 0; color: var(--muted); font-size: 10px; }
 .policy-list { display: grid; gap: 8px; margin-top: 18px; }
 .policy-list article { align-items: center; padding: 12px; background: #fffaf0; border: 1px solid var(--line-light); }
-.policy-list article.selected { border-color: rgba(180, 35, 24, 0.48); box-shadow: inset 3px 0 var(--cinnabar); }
+.policy-list article.selected { border-color: rgba(199, 0, 11, 0.48); box-shadow: inset 3px 0 var(--cinnabar); }
 .policy-list article.inactive { opacity: 0.64; }
 .policy-list strong,
 .policy-list small { display: block; }

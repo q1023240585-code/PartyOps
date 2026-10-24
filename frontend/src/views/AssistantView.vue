@@ -549,8 +549,8 @@ onMounted(load);
 
 .capability-grid button.active {
   color: var(--cinnabar);
-  background: rgba(180, 35, 24, 0.05);
-  border-color: rgba(180, 35, 24, 0.42);
+  background: rgba(199, 0, 11, 0.05);
+  border-color: rgba(199, 0, 11, 0.42);
 }
 
 .capability-grid b,
@@ -593,7 +593,7 @@ onMounted(load);
 
 .file-results button.active {
   color: var(--cinnabar);
-  background: rgba(180, 35, 24, 0.06);
+  background: rgba(199, 0, 11, 0.06);
 }
 
 .file-results span {
@@ -667,7 +667,7 @@ onMounted(load);
   padding: 8px 10px;
   color: var(--cinnabar);
   font-size: 9px;
-  background: rgba(180, 35, 24, 0.06);
+  background: rgba(199, 0, 11, 0.06);
   border-left: 2px solid var(--cinnabar);
 }
 

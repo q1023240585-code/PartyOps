@@ -1356,8 +1356,8 @@ onBeforeUnmount(() => window.removeEventListener("partyops:refresh", load));
 .comment-list article.reply {
   padding-right: 12px;
   padding-left: 12px;
-  background: rgba(180, 35, 24, 0.035);
-  border-left: 2px solid rgba(180, 35, 24, 0.24);
+  background: rgba(199, 0, 11, 0.035);
+  border-left: 2px solid rgba(199, 0, 11, 0.24);
 }
 
 .comment-list article > button {
@@ -1447,7 +1447,7 @@ onBeforeUnmount(() => window.removeEventListener("partyops:refresh", load));
   padding: 2px 6px;
   color: var(--cinnabar);
   font-size: 10px;
-  background: rgba(180, 35, 24, 0.08);
+  background: rgba(199, 0, 11, 0.08);
 }
 
 .two-columns {

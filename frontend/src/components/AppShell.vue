@@ -446,7 +446,7 @@ onBeforeUnmount(() => {
     <aside class="sidebar">
       <RouterLink class="brand-lockup" to="/">
         <span class="brand-cn"><b>党建</b>智办</span>
-        <span class="brand-en">PartyOps</span>
+        <span class="brand-en">中核四〇四</span>
       </RouterLink>
       <nav class="nav-list" aria-label="主导航">
         <section
@@ -668,7 +668,7 @@ onBeforeUnmount(() => {
 
 .command-section button:hover {
   color: var(--cinnabar);
-  background: rgba(180, 35, 24, 0.05);
+  background: rgba(199, 0, 11, 0.05);
 }
 
 .command-section strong,
@@ -700,8 +700,8 @@ onBeforeUnmount(() => {
 .recent-notifications header { display: flex; justify-content: space-between; align-items: center; padding: 7px 8px 10px; border-bottom: 1px solid var(--line); }
 .recent-notifications header a { color: var(--cinnabar); font-size: 11px; }
 .recent-notifications button { display: block; width: 100%; padding: 10px 8px; text-align: left; color: var(--ink); background: transparent; border: 0; border-bottom: 1px solid var(--line-light); cursor: pointer; }
-.recent-notifications button.unread { background: rgba(180,35,24,.06); box-shadow: inset 2px 0 0 var(--cinnabar); }
-.recent-notifications button:hover { background: rgba(180,35,24,.09); }
+.recent-notifications button.unread { background: rgba(199,0,11,.06); box-shadow: inset 2px 0 0 var(--cinnabar); }
+.recent-notifications button:hover { background: rgba(199,0,11,.09); }
 .recent-notifications span, .recent-notifications small { display: block; }
 .recent-notifications small { margin-top: 4px; color: var(--muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .recent-notifications p { padding: 24px; color: var(--muted); text-align: center; }
@@ -714,7 +714,7 @@ onBeforeUnmount(() => {
   padding: 8px 12px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgba(180, 35, 24, 0.24) transparent;
+  scrollbar-color: rgba(199, 0, 11, 0.24) transparent;
 }
 
 .nav-group {
@@ -743,7 +743,7 @@ onBeforeUnmount(() => {
 
 .domain-toggle:hover {
   color: var(--charcoal);
-  background: rgba(180, 35, 24, 0.045);
+  background: rgba(199, 0, 11, 0.045);
 }
 
 .nav-group.current > .domain-toggle {
@@ -797,13 +797,13 @@ onBeforeUnmount(() => {
 
 .nav-item:hover {
   color: var(--charcoal);
-  background: rgba(180, 35, 24, 0.045);
+  background: rgba(199, 0, 11, 0.045);
 }
 
 .nav-item.active {
   color: var(--cinnabar);
   font-weight: 600;
-  background: rgba(180, 35, 24, 0.07);
+  background: rgba(199, 0, 11, 0.07);
   border-left-color: var(--cinnabar);
 }
 

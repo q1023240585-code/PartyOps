@@ -82,13 +82,13 @@ onMounted(load);
 <style scoped>
 .scope-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
 .scope-grid button { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; padding: 18px; text-align: left; color: var(--ink); background: rgba(255,255,255,.4); border: 1px solid var(--line); cursor: pointer; }
-.scope-grid button.active { color: var(--cinnabar); background: rgba(180,35,24,.07); border-color: rgba(180,35,24,.45); box-shadow: inset 3px 0 0 var(--cinnabar); }
+.scope-grid button.active { color: var(--cinnabar); background: rgba(199,0,11,.07); border-color: rgba(199,0,11,.45); box-shadow: inset 3px 0 0 var(--cinnabar); }
 .scope-grid button > span { display: flex; align-items: center; gap: 8px; }
 .scope-grid button > strong { font: 28px Georgia, serif; }
 .scope-grid button > small { grid-column: 1 / -1; color: var(--muted); }
 .work-list { border: 1px solid var(--line); background: rgba(255,255,255,.32); }
 .work-row { display: grid; grid-template-columns: minmax(0, 1fr) 100px 180px; gap: 18px; align-items: center; min-height: 86px; padding: 14px 18px; border-bottom: 1px solid var(--line-light); }
-.work-row:hover { background: rgba(180,35,24,.05); }
+.work-row:hover { background: rgba(199,0,11,.05); }
 .work-row div span, .work-row div b, .work-row div small { display: block; }
 .work-row div span { color: var(--cinnabar); font-size: 10px; letter-spacing: .06em; }
 .work-row div b { margin-top: 5px; font-size: 15px; }
