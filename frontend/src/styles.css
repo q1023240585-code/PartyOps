@@ -21,7 +21,7 @@
   --danger: #a81e16;
   --serif: "Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
   --season-header-landscape-art: url("./assets/oriental/spring-header-landscape.webp");
-  --season-lower-scroll-art: url("./assets/oriental/spring-lower-scroll.webp");
+  --season-lower-scroll-art: url("./assets/season-spring.jpg");
   --season-header-center-art: url("./assets/oriental/spring-header-center.webp");
   --season-content-center-art: url("./assets/oriental/spring-content-center.webp");
   --season-corner-accent-art: url("./assets/oriental/spring-corner-accent.webp");
@@ -47,7 +47,7 @@
 
 html[data-season="summer"] {
   --season-header-landscape-art: url("./assets/oriental/summer-header-landscape.webp");
-  --season-lower-scroll-art: url("./assets/oriental/summer-lower-scroll.webp");
+  --season-lower-scroll-art: url("./assets/season-summer.jpg");
   --season-header-center-art: url("./assets/oriental/summer-header-center.webp");
   --season-content-center-art: url("./assets/oriental/summer-content-center.webp");
   --season-corner-accent-art: url("./assets/oriental/summer-corner-accent.webp");
@@ -67,7 +67,7 @@ html[data-season="summer"] {
 
 html[data-season="autumn"] {
   --season-header-landscape-art: url("./assets/oriental/autumn-header-landscape.webp");
-  --season-lower-scroll-art: url("./assets/oriental/autumn-lower-scroll.webp");
+  --season-lower-scroll-art: url("./assets/season-autumn.jpg");
   --season-header-center-art: url("./assets/oriental/autumn-header-center.webp");
   --season-content-center-art: url("./assets/oriental/autumn-content-center.webp");
   --season-corner-accent-art: url("./assets/oriental/autumn-corner-accent.webp");
@@ -87,7 +87,7 @@ html[data-season="autumn"] {
 
 html[data-season="winter"] {
   --season-header-landscape-art: url("./assets/oriental/winter-header-landscape.webp");
-  --season-lower-scroll-art: url("./assets/oriental/winter-lower-scroll.webp");
+  --season-lower-scroll-art: url("./assets/season-winter.jpg");
   --season-header-center-art: url("./assets/oriental/winter-header-center.webp");
   --season-content-center-art: url("./assets/oriental/winter-content-center.webp");
   --season-corner-accent-art: url("./assets/oriental/winter-corner-accent.webp");
@@ -126,7 +126,7 @@ html[data-scene="dashboard"] {
 }
 
 html[data-scene="tasks"] {
-  --scene-header-art: var(--season-section-divider-art); --scene-lower-art: var(--scene-tasks-art);
+  --scene-header-art: url("./assets/scene-tasks.jpg"); --scene-lower-art: var(--scene-tasks-art);
   --scene-header-left: 31%; --scene-header-right: 1.5%; --scene-header-height: 142px;
   --scene-header-left-compact: 38%; --scene-header-height-short: 116px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(52vh, 500px);
@@ -135,7 +135,7 @@ html[data-scene="tasks"] {
 }
 
 html[data-scene="calendar"] {
-  --scene-header-art: var(--season-header-center-art); --scene-lower-art: var(--scene-water-art);
+  --scene-header-art: url("./assets/scene-calendar.jpg"); --scene-lower-art: var(--scene-water-art);
   --scene-header-left: 14%; --scene-header-right: 2%; --scene-header-height: 150px;
   --scene-header-left-compact: 22%; --scene-header-height-short: 118px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(48vh, 460px);
@@ -144,7 +144,7 @@ html[data-scene="calendar"] {
 }
 
 html[data-scene="inbox"] {
-  --scene-header-art: var(--season-section-divider-art); --scene-lower-art: var(--scene-inbox-art);
+  --scene-header-art: url("./assets/scene-inbox.jpg"); --scene-lower-art: var(--scene-inbox-art);
   --scene-header-left: 28%; --scene-header-right: 1.5%; --scene-header-height: 142px;
   --scene-header-left-compact: 36%; --scene-header-height-short: 112px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(48vh, 455px);
@@ -153,7 +153,7 @@ html[data-scene="inbox"] {
 }
 
 html[data-scene="reports"] {
-  --scene-header-art: var(--season-header-center-art); --scene-lower-art: var(--scene-reports-art);
+  --scene-header-art: url("./assets/scene-reports.jpg"); --scene-lower-art: var(--scene-reports-art);
   --scene-header-left: 28%; --scene-header-right: 1.5%; --scene-header-height: 146px;
   --scene-header-left-compact: 36%; --scene-header-height-short: 114px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(53vh, 510px);
@@ -162,7 +162,7 @@ html[data-scene="reports"] {
 }
 
 html[data-scene="journal"] {
-  --scene-header-art: var(--season-section-divider-art); --scene-lower-art: var(--scene-journal-art);
+  --scene-header-art: url("./assets/scene-journal.jpg"); --scene-lower-art: var(--scene-journal-art);
   --scene-header-left: 28%; --scene-header-right: 1.5%; --scene-header-height: 140px;
   --scene-header-left-compact: 37%; --scene-header-height-short: 110px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(44vh, 420px);
@@ -171,7 +171,7 @@ html[data-scene="journal"] {
 }
 
 html[data-scene="topic"] {
-  --scene-header-art: var(--season-header-center-art); --scene-lower-art: var(--scene-topic-art);
+  --scene-header-art: url("./assets/scene-topic.jpg"); --scene-lower-art: var(--scene-topic-art);
   --scene-header-left: 43%; --scene-header-right: 1.5%; --scene-header-height: 142px;
   --scene-header-left-compact: 49%; --scene-header-height-short: 112px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(60vh, 570px);
@@ -180,7 +180,7 @@ html[data-scene="topic"] {
 }
 
 html[data-scene="workspace"] {
-  --scene-header-art: var(--season-header-landscape-art); --scene-lower-art: var(--season-empty-center-art);
+  --scene-header-art: url("./assets/scene-workspace.jpg"); --scene-lower-art: var(--season-empty-center-art);
   --scene-header-left: 26%; --scene-header-right: 1.5%; --scene-header-height: 148px;
   --scene-header-left-compact: 34%; --scene-header-height-short: 116px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(56vh, 540px);
@@ -189,7 +189,7 @@ html[data-scene="workspace"] {
 }
 
 html[data-scene="archives"] {
-  --scene-header-art: var(--season-section-divider-art); --scene-lower-art: var(--scene-archive-art);
+  --scene-header-art: url("./assets/scene-archives.jpg"); --scene-lower-art: var(--scene-archive-art);
   --scene-header-left: 39%; --scene-header-right: 1.5%; --scene-header-height: 140px;
   --scene-header-left-compact: 47%; --scene-header-height-short: 108px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(52vh, 500px);
@@ -198,7 +198,7 @@ html[data-scene="archives"] {
 }
 
 html[data-scene="inspection"] {
-  --scene-header-art: var(--season-header-center-art); --scene-lower-art: var(--season-lower-scroll-art);
+  --scene-header-art: url("./assets/scene-inspection.jpg"); --scene-lower-art: var(--season-lower-scroll-art);
   --scene-header-left: 25%; --scene-header-right: 1.5%; --scene-header-height: 142px;
   --scene-header-left-compact: 34%; --scene-header-height-short: 110px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(50vh, 480px);
@@ -207,7 +207,7 @@ html[data-scene="inspection"] {
 }
 
 html[data-scene="knowledge"] {
-  --scene-header-art: var(--season-section-divider-art); --scene-lower-art: var(--scene-knowledge-art);
+  --scene-header-art: url("./assets/scene-knowledge.jpg"); --scene-lower-art: var(--scene-knowledge-art);
   --scene-header-left: 43%; --scene-header-right: 1.5%; --scene-header-height: 140px;
   --scene-header-left-compact: 50%; --scene-header-height-short: 108px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(55vh, 530px);
@@ -225,7 +225,7 @@ html[data-scene="comparison"] {
 }
 
 html[data-scene="collaboration"] {
-  --scene-header-art: var(--season-header-landscape-art); --scene-lower-art: var(--scene-collaboration-art);
+  --scene-header-art: url("./assets/scene-collaboration.jpg"); --scene-lower-art: var(--scene-collaboration-art);
   --scene-header-left: 27%; --scene-header-right: 1.5%; --scene-header-height: 142px;
   --scene-header-left-compact: 36%; --scene-header-height-short: 110px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(52vh, 500px);
@@ -234,7 +234,7 @@ html[data-scene="collaboration"] {
 }
 
 html[data-scene="transfer"] {
-  --scene-header-art: var(--season-section-divider-art); --scene-lower-art: var(--scene-transfer-art);
+  --scene-header-art: url("./assets/scene-transfer.jpg"); --scene-lower-art: var(--scene-transfer-art);
   --scene-header-left: 34%; --scene-header-right: 1.5%; --scene-header-height: 138px;
   --scene-header-left-compact: 42%; --scene-header-height-short: 108px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(50vh, 480px);
@@ -243,7 +243,7 @@ html[data-scene="transfer"] {
 }
 
 html[data-scene="management"] {
-  --scene-header-art: var(--season-section-divider-art); --scene-lower-art: var(--season-corner-accent-art);
+  --scene-header-art: url("./assets/scene-management.jpg"); --scene-lower-art: var(--season-corner-accent-art);
   --scene-header-left: 42%; --scene-header-right: 1.5%; --scene-header-height: 126px;
   --scene-header-left-compact: 50%; --scene-header-height-short: 98px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(34vh, 320px);
@@ -252,7 +252,7 @@ html[data-scene="management"] {
 }
 
 html[data-scene="help"] {
-  --scene-header-art: var(--season-header-center-art); --scene-lower-art: var(--scene-scholar-art);
+  --scene-header-art: url("./assets/scene-help.jpg"); --scene-lower-art: var(--scene-scholar-art);
   --scene-header-left: 38%; --scene-header-right: 1.5%; --scene-header-height: 136px;
   --scene-header-left-compact: 46%; --scene-header-height-short: 104px;
   --scene-lower-left: 0%; --scene-lower-right: 0%; --scene-lower-height: min(38vh, 360px);
