@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMax meet">
+  <!-- 核城主题登录页主视觉：纪念塔 · 戈壁胡杨 · 红砖厂房 · 原子轨道 · 红日
+       用于米白纸底 + multiply 混合，深色元素沉入纸面，浅色留白 -->
+
+  <!-- 电子轨道弧（右上，穿过红日） -->
+  <g fill="none" stroke="#292724" stroke-opacity="0.28" stroke-width="2.5">
+    <ellipse cx="1120" cy="300" rx="330" ry="118" transform="rotate(-14 1120 300)"/>
+    <ellipse cx="1140" cy="320" rx="250" ry="86" transform="rotate(-14 1140 320)"/>
+  </g>
+  <!-- 轨道电子 -->
+  <circle cx="828" cy="252" r="9" fill="#c7000b" fill-opacity="0.85"/>
+  <circle cx="1352" cy="392" r="7" fill="#292724" fill-opacity="0.5"/>
+  <circle cx="1052" cy="402" r="6" fill="#c9a227" fill-opacity="0.9"/>
+
+  <!-- 红日 -->
+  <circle cx="1168" cy="292" r="64" fill="#c7000b" fill-opacity="0.88"/>
+  <circle cx="1168" cy="292" r="88" fill="none" stroke="#c7000b" stroke-opacity="0.3" stroke-width="2"/>
+
+  <!-- 远景：红砖厂房 / 水塔 / 烟囱 天际线（炭墨低饱和剪影） -->
+  <g fill="#292724" fill-opacity="0.30">
+    <!-- 烟囱 -->
+    <rect x="1032" y="520" width="26" height="150"/>
+    <rect x="1074" y="556" width="20" height="114"/>
+    <!-- 锯齿厂房 -->
+    <path d="M850 670 v-70 h34 v34 h30 v-34 h34 v34 h30 v-34 h34 v70 z"/>
+    <path d="M1070 670 v-56 h40 v28 h32 v-28 h40 v56 z"/>
+    <!-- 水塔 -->
+    <rect x="1176" y="540" width="58" height="40" rx="4"/>
+    <path d="M1182 580 l-8 90 h12 l6-70 h6 l6 70 h12 l-8-90 z"/>
+    <!-- 主楼 -->
+    <rect x="1268" y="560" width="130" height="110"/>
+    <rect x="1300" y="528" width="26" height="32"/>
+    <!-- 厂房连排 -->
+    <path d="M640 670 v-44 l24-20 24 20 v44 z"/>
+    <rect x="700" y="636" width="96" height="34"/>
+  </g>
+  <!-- 厂房窗（暖光点） -->
+  <g fill="#c9a227" fill-opacity="0.55">
+    <rect x="866" y="626" width="10" height="12"/><rect x="896" y="626" width="10" height="12"/>
+    <rect x="926" y="626" width="10" height="12"/><rect x="956" y="626" width="10" height="12"/>
+    <rect x="1290" y="592" width="12" height="14"/><rect x="1318" y="592" width="12" height="14"/>
+    <rect x="1346" y="592" width="12" height="14"/>
+  </g>
+
+  <!-- 中景：戈壁缓丘 -->
+  <path d="M0 742 Q 220 660 470 724 T 980 736 Q 1240 748 1536 706 V 1024 H 0 Z"
+        fill="#c9a227" fill-opacity="0.14"/>
+  <path d="M0 800 Q 300 742 620 786 T 1180 792 Q 1380 796 1536 772 V 1024 H 0 Z"
+        fill="#292724" fill-opacity="0.10"/>
+
+  <!-- 胡杨（金赭，三株） -->
+  <g>
+    <!-- 左一：大株 -->
+    <path d="M338 766 c-6-38 2-64 14-84" stroke="#a8781e" stroke-opacity="0.75" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M346 700 c-16-14-38-18-52-10 M346 700 c4-22 18-36 36-40 M352 676 c-8-18-4-36 8-46"
+          stroke="#a8781e" stroke-opacity="0.7" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <g fill="#c9a227" fill-opacity="0.62">
+      <ellipse cx="296" cy="688" rx="26" ry="15" transform="rotate(-18 296 688)"/>
+      <ellipse cx="378" cy="662" rx="28" ry="16" transform="rotate(10 378 662)"/>
+      <ellipse cx="352" cy="630" rx="24" ry="14" transform="rotate(-8 352 630)"/>
+      <ellipse cx="322" cy="648" rx="18" ry="11"/>
+    </g>
+    <!-- 右二：中株 -->
+    <path d="M1316 748 c-4-26 2-46 12-60" stroke="#a8781e" stroke-opacity="0.65" stroke-width="7" fill="none" stroke-linecap="round"/>
+    <g fill="#c9a227" fill-opacity="0.5">
+      <ellipse cx="1284" cy="700" rx="20" ry="12" transform="rotate(-16 1284 700)"/>
+      <ellipse cx="1344" cy="678" rx="22" ry="13" transform="rotate(12 1344 678)"/>
+      <ellipse cx="1322" cy="652" rx="16" ry="10"/>
+    </g>
+  </g>
+
+  <!-- 主角：核城纪念塔（左前景，细高，顶部五角星） -->
+  <g>
+    <!-- 基座 -->
+    <path d="M196 872 h180 l-16 26 h-148 z" fill="#292724" fill-opacity="0.55"/>
+    <path d="M222 848 h128 l-8 24 h-112 z" fill="#292724" fill-opacity="0.7"/>
+    <!-- 塔身（收分方尖） -->
+    <path d="M272 848 L258 420 h84 L328 848 z" fill="#c7000b" fill-opacity="0.82"/>
+    <!-- 塔身竖向饰线 -->
+    <g stroke="#f7f1e7" stroke-opacity="0.5" stroke-width="3">
+      <line x1="278" y1="820" x2="268" y2="440"/>
+      <line x1="300" y1="820" x2="300" y2="430"/>
+      <line x1="322" y1="820" x2="332" y2="440"/>
+    </g>
+    <!-- 塔身横格（隐约砖石层次） -->
+    <g stroke="#f7f1e7" stroke-opacity="0.35" stroke-width="2">
+      <line x1="265" y1="760" x2="335" y2="760"/>
+      <line x1="263" y1="680" x2="337" y2="680"/>
+      <line x1="261" y1="600" x2="339" y2="600"/>
+      <line x1="259" y1="520" x2="341" y2="520"/>
+    </g>
+    <!-- 观景环廊 -->
+    <rect x="256" y="486" width="88" height="14" rx="3" fill="#292724" fill-opacity="0.6"/>
+    <!-- 塔颈与顶 -->
+    <rect x="288" y="448" width="24" height="38" fill="#292724" fill-opacity="0.6"/>
+    <!-- 五角星 -->
+    <path d="M300 352 l9.9 21.6 23.6 2.7-17.5 16 4.8 23.3-20.8-11.6-20.8 11.6 4.8-23.3-17.5-16 23.6-2.7 z"
+          fill="#c7000b"/>
+    <circle cx="300" cy="380" r="46" fill="none" stroke="#c7000b" stroke-opacity="0.35" stroke-width="3"/>
+    <circle cx="300" cy="380" r="60" fill="none" stroke="#c7000b" stroke-opacity="0.16" stroke-width="2"/>
+  </g>
+
+  <!-- 前景地面线 -->
+  <g stroke="#292724" stroke-opacity="0.35" stroke-width="3" fill="none">
+    <path d="M60 908 Q 420 878 860 902 T 1480 894"/>
+    <path d="M120 948 Q 500 926 940 944"/>
+  </g>
+</svg>

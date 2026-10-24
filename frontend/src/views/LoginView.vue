@@ -121,7 +121,7 @@ async function submit() {
         <p class="partyops">科技赋能 · 产业造福</p>
         <p class="oriental-date">{{ orientalDate.gregorian }}　{{ orientalDate.weekday }}　{{ orientalDate.lunar }}<b v-if="orientalDate.solarTerm">{{ orientalDate.solarTerm }}</b></p>
       </div>
-      <img class="motif" src="../assets/launch-motif.png" alt="" aria-hidden="true" />
+      <img class="motif" src="../assets/launch-motif-nuclear.svg" alt="" aria-hidden="true" />
     </section>
     <section class="login-pane">
       <div class="login-form-wrap">
@@ -187,10 +187,10 @@ async function submit() {
           连接设置
         </button>
         <p v-if="!configured" class="setup-note">业务数据只保存在这台主机；首位管理员创建后请立即配置备份。</p>
-        <div class="org-footer">
-          <span>中核四〇四有限公司 党委组织部</span>
-          <b>事业高于一切 · 责任重于一切 · 严细融入一切 · 进取成就一切</b>
-        </div>
+      </div>
+      <div class="org-footer">
+        <span>中核四〇四有限公司 党委组织部</span>
+        <b>事业高于一切 · 责任重于一切 · 严细融入一切 · 进取成就一切</b>
       </div>
     </section>
     <a-modal v-model:visible="showConnection" title="局域网连接设置" :footer="false">
@@ -287,9 +287,9 @@ h1 span {
 
 .org-footer {
   position: absolute;
-  right: 7.8vw;
+  right: 6vw;
   bottom: 22px;
-  left: 4vw;
+  left: 2.5vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -305,7 +305,7 @@ h1 span {
 .org-footer b {
   color: var(--cinnabar-dark);
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   /* 断行只发生在「·」分隔处，四字短语不被拆开 */
   word-break: keep-all;
 }
