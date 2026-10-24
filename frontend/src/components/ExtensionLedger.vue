@@ -149,22 +149,24 @@ defineExpose({ load });
       row-key="id"
       :scroll="{ x: 900 }"
     >
-      <a-table-column
-        v-for="col in columns"
-        :key="col.key"
-        :title="col.label"
-        :width="col.width"
-      >
-        <template #cell="{ record }">{{ display(record, col.key) }}</template>
-      </a-table-column>
-      <a-table-column title="操作" :width="130" fixed="right">
-        <template #cell="{ record }">
-          <a-button size="mini" @click="openEdit(record)"><template #icon><IconEdit /></template>编辑</a-button>
-          <a-button size="mini" status="danger" @click="remove(record)">
-            <template #icon><IconDelete /></template>删除
-          </a-button>
-        </template>
-      </a-table-column>
+      <template #columns>
+        <a-table-column
+          v-for="col in columns"
+          :key="col.key"
+          :title="col.label"
+          :width="col.width"
+        >
+          <template #cell="{ record }">{{ display(record, col.key) }}</template>
+        </a-table-column>
+        <a-table-column title="操作" :width="130" fixed="right">
+          <template #cell="{ record }">
+            <a-button size="mini" @click="openEdit(record)"><template #icon><IconEdit /></template>编辑</a-button>
+            <a-button size="mini" status="danger" @click="remove(record)">
+              <template #icon><IconDelete /></template>删除
+            </a-button>
+          </template>
+        </a-table-column>
+      </template>
     </a-table>
 
     <a-modal
