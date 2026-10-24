@@ -517,4 +517,50 @@ form {
     transform: translateY(1vh) scale(0.9);
   }
 }
+
+@media (max-width: 900px) {
+  .login-screen {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+
+  .identity-pane,
+  .login-pane {
+    min-height: 0;
+  }
+
+  .identity-content {
+    width: auto;
+    margin: 8vh 8vw 0;
+  }
+
+  h1 {
+    font-size: clamp(44px, 11vw, 72px);
+  }
+
+  .subtitle {
+    font-size: clamp(18px, 4.6vw, 24px);
+  }
+
+  .motif {
+    display: none;
+  }
+
+  .login-pane {
+    padding: 32px 8vw 56px;
+  }
+
+  .login-form-wrap {
+    width: min(440px, 100%);
+    transform: none;
+  }
+
+  .org-footer {
+    position: static;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin-top: 26px;
+  }
+}
 </style>

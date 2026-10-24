@@ -465,6 +465,14 @@ body,
   margin: 0;
 }
 
+/* 登录页例外：允许窄于桌面基准宽度，配合 LoginView 的单列自适应；
+   不支持 :has 的旧浏览器维持原桌面最小宽度行为。 */
+html:has(.login-screen),
+body:has(.login-screen),
+#app:has(.login-screen) {
+  min-width: 0;
+}
+
 body {
   min-height: 100vh;
   background: var(--ivory);
