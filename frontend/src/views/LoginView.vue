@@ -114,6 +114,7 @@ async function submit() {
       standalone
     />
     <section class="identity-pane">
+      <img class="photo-far" src="../assets/photo-jiayuguan.jpg" alt="" aria-hidden="true" />
       <div class="identity-content">
         <h1><span>党建</span>智能体</h1>
         <div class="brand-rule"><b></b><i></i></div>
@@ -124,6 +125,7 @@ async function submit() {
       <img class="motif" src="../assets/launch-motif-nuclear.svg" alt="" aria-hidden="true" />
     </section>
     <section class="login-pane">
+      <img class="photo-base" src="../assets/photo-huyang.jpg" alt="" aria-hidden="true" />
       <div class="login-form-wrap">
         <div class="connection-status">
           <span class="connection-dot"></span>
@@ -234,6 +236,41 @@ async function submit() {
   margin: 20vh 0 0 7.9vw;
 }
 
+/* 嘉峪关远景：右缘竖幅纸面水印，沉入纸底 */
+.photo-far {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: min(30vw, 300px);
+  height: 66%;
+  object-fit: cover;
+  object-position: 62% 40%;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  /* 右缘羽化，避免照片边界形成硬切线 */
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+}
+
+/* 戈壁胡杨：右栏底部极淡水印，托在表单与页脚之下 */
+.photo-base {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  height: 220px;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.18;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 100%);
+}
+
 h1 {
   margin: 0;
   font-family: "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif;
@@ -290,6 +327,7 @@ h1 span {
   right: 6vw;
   bottom: 22px;
   left: 2.5vw;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
