@@ -36,7 +36,7 @@ describe("会话状态", () => {
         : {
             configured: true,
             mode: "host",
-            app_name: "党建智办",
+            app_name: "党建智能体",
             host: "127.0.0.1",
             port: 18765,
           }
@@ -70,7 +70,7 @@ describe("会话状态", () => {
         : {
             configured: true,
             mode: "host",
-            app_name: "党建智办",
+            app_name: "党建智能体",
             host: "127.0.0.1",
             port: 18765,
           }

@@ -92,7 +92,7 @@ def _tasks_for_kind(db: Session, user: User, kind: str) -> list[Task]:
 
 def export_tasks_xlsx(db: Session, user: User, kind: str = "台账") -> Path:
     settings = get_settings()
-    path = settings.exports_dir / f"党建智办-{_safe_name(kind)}-{_stamp()}.xlsx"
+    path = settings.exports_dir / f"党建智能体-{_safe_name(kind)}-{_stamp()}.xlsx"
     workbook = Workbook()
     sheet = cast(Worksheet, workbook.active)
     sheet.title = _safe_name(kind)[:31]
@@ -201,7 +201,7 @@ def export_tasks_xlsx(db: Session, user: User, kind: str = "台账") -> Path:
 
 def export_tasks_docx(db: Session, user: User, kind: str = "周工作清单") -> Path:
     settings = get_settings()
-    path = settings.exports_dir / f"党建智办-{_safe_name(kind)}-{_stamp()}.docx"
+    path = settings.exports_dir / f"党建智能体-{_safe_name(kind)}-{_stamp()}.docx"
     document = Document()
     section = document.sections[0]
     section.top_margin = Cm(2)
@@ -210,7 +210,7 @@ def export_tasks_docx(db: Session, user: User, kind: str = "周工作清单") ->
     section.right_margin = Cm(2)
     title = document.add_paragraph()
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = title.add_run(f"党建智办 · {kind}")
+    run = title.add_run(f"党建智能体 · {kind}")
     run.bold = True
     run.font.size = Pt(20)
     run.font.name = "Noto Sans CJK SC"
@@ -251,7 +251,7 @@ def export_inspection_package(
     db: Session, user: User, task_ids: list[str] | None = None
 ) -> Path:
     settings = get_settings()
-    path = settings.exports_dir / f"党建智办-迎检归档包-{_stamp()}.zip"
+    path = settings.exports_dir / f"党建智能体-迎检归档包-{_stamp()}.zip"
     tasks = visible_tasks(db, user)
     if task_ids:
         requested = set(task_ids)

@@ -1629,7 +1629,7 @@ def _deactivate_windows_host_services_privileged_locked(transaction_id: str = ""
                 "firewall",
                 "delete",
                 "rule",
-                "name=党建智办主机",
+                "name=党建智能体主机",
             ],
             check=False,
             capture_output=True,
@@ -4114,7 +4114,7 @@ def _start_windows_host_service(timeout: float = 60.0) -> None:
     if state == "missing":
         raise HostStartupError(
             SERVICE_MISSING,
-            "未检测到“党建智办 PartyOps 主机服务”，请重新运行安装器完成修复安装。",
+            "未检测到“党建智能体 PartyOps 主机服务”，请重新运行安装器完成修复安装。",
             detail=detail,
         )
     # 已安装但未运行：重试启动，容忍冷启动慢/SCM 未就绪。
@@ -4145,7 +4145,7 @@ def _start_windows_host_service(timeout: float = 60.0) -> None:
         if current == "missing":
             raise HostStartupError(
                 SERVICE_MISSING,
-                "未检测到“党建智办 PartyOps 主机服务”，请重新运行安装器完成修复安装。",
+                "未检测到“党建智能体 PartyOps 主机服务”，请重新运行安装器完成修复安装。",
                 detail=current_detail,
             )
         time.sleep(1.0 if current == "pending" else 3.0)
@@ -4470,7 +4470,7 @@ def install_host_autostart(config_path: Path) -> Path | None:
         [
             "[Desktop Entry]",
             "Type=Application",
-            "Name=党建智办主机服务",
+            "Name=党建智能体主机服务",
             (
                 "Exec=env "
                 f"PARTYOPS_ENV_FILE={desktop_quote(config_path.resolve())} "
@@ -4542,7 +4542,7 @@ def install_client_autostart(config_path: Path) -> Path | None:
         [
             "[Desktop Entry]",
             "Type=Application",
-            "Name=党建智办灾备伴随进程",
+            "Name=党建智能体灾备伴随进程",
             (
                 f"Exec={desktop_quote(executable)} --config "
                 f"{desktop_quote(config_path.resolve())} --no-open-browser"
@@ -4592,7 +4592,7 @@ def launch_client(config_path: Path) -> str:
             raise ValueError(
                 "入网凭据和证书已安全保存，但协同 Agent 尚未连通。"
                 f"请确认主机服务正在监听设备端口 {port}，且主机防火墙允许可信局域网访问；"
-                "修复后直接双击“党建智办”，不需要重新输入入网码。"
+                "修复后直接双击“党建智能体”，不需要重新输入入网码。"
             )
     return create_browser_launch_url(host_url, agent_url, token)
 
@@ -4903,7 +4903,7 @@ def render_admin_setup_page(csrf: str, service_url: str, error: str = "") -> str
     )
     safe_url = html.escape(service_url)
     return f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<title>党建智办 · 创建首位管理员</title><style>
+<title>党建智能体 · 创建首位管理员</title><style>
 *{{box-sizing:border-box}}body{{margin:0;color:#282522;background:#f7f1e7;font:14px/1.6 system-ui,"Noto Sans CJK SC",sans-serif}}main{{width:min(860px,94vw);margin:5vh auto;background:#fbf8f1;border:1px solid #d8cec1;box-shadow:0 22px 70px #5d30221a}}header{{padding:28px 38px;border-bottom:3px solid #b42318}}h1{{margin:0;font:600 32px SimSun,serif}}h1 b{{color:#b42318}}header p{{margin:8px 0 0;color:#776f66}}.progress{{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#ded4c8}}.progress span{{padding:12px 18px;color:#27613d;background:#edf3ea;font-size:12px;font-weight:600}}.progress span.active{{color:#8f1f17;background:#f8e9e6}}section{{padding:30px 38px}}.service-ok{{margin-bottom:22px;padding:14px 16px;color:#27613d;background:#eaf3ea;border-left:3px solid #39724d}}.service-ok strong,.service-ok small{{display:block}}.service-ok small{{margin-top:3px;color:#597261}}.form-grid{{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}}label{{display:block;margin-top:15px}}label:first-child{{grid-column:1/-1}}label span{{display:block;margin-bottom:6px;font-size:12px;font-weight:600}}label small{{display:block;margin-top:5px;color:#857c72}}input{{width:100%;height:44px;padding:0 12px;border:1px solid #cfc3b6;background:#fffdf8}}input:focus{{outline:2px solid #b4231830;border-color:#b42318}}button{{width:100%;height:48px;margin-top:24px;color:#fff;background:#b42318;border:0;font-weight:600;cursor:pointer}}.field-error{{min-height:20px;margin:4px 0 0;color:#9d2118;font-size:11px}}.notice{{margin:20px 38px 0;padding:12px 15px;border-left:3px solid}}.error{{background:#f8e9e7;border-color:#b42318}}footer{{padding:18px 38px;color:#776f66;background:#f1e9de;border-top:1px solid #ddd2c5}}@media(max-width:700px){{.form-grid,.progress{{grid-template-columns:1fr}}section,header{{padding-left:22px;padding-right:22px}}}}
 </style></head><body><main><header><h1><b>党建</b>智办</h1><p>首次配置最后一步 · 创建团队首位管理员</p></header>
 <div class="progress"><span>✓　角色已确认</span><span>✓　网络与主机已启动</span><span class="active">3　创建管理员并完成</span></div>{failure}
@@ -4969,7 +4969,7 @@ def render_page(
     )
     return f"""<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<title>党建智办 · {'重新配置运行角色' if reconfiguration else '首次配置'}</title><style>
+<title>党建智能体 · {'重新配置运行角色' if reconfiguration else '首次配置'}</title><style>
 *{{box-sizing:border-box}}body{{margin:0;color:#282522;background:#f7f1e7;font:14px/1.6 system-ui,"Noto Sans CJK SC",sans-serif}}
 main{{width:min(1040px,94vw);margin:4vh auto;background:#fbf8f1;border:1px solid #d8cec1;box-shadow:0 22px 70px #5d30221a}}
 header{{padding:28px 38px;border-bottom:3px solid #b42318}}h1{{margin:0;font:600 34px/1.2 SimSun,serif}}h1 b{{color:#b42318}}header p{{margin:8px 0 0;color:#776f66}}
@@ -5108,7 +5108,7 @@ def render_shared_root_manager(
 <form method="post"><input type="hidden" name="csrf" value="{csrf}"><input type="hidden" name="action" value="rename"><input type="hidden" name="root_id" value="{root_id}"><input name="name" value="{name}" aria-label="共享目录名称"><button>重命名</button></form>
 <form method="post"><input type="hidden" name="csrf" value="{csrf}"><input type="hidden" name="action" value="remove"><input type="hidden" name="root_id" value="{root_id}"><button class="danger">移除</button></form></article>"""
         )
-    return f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>党建智办 · 管理共享文件夹</title><style>
+    return f"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>党建智能体 · 管理共享文件夹</title><style>
 *{{box-sizing:border-box}}body{{margin:0;color:#282522;background:#f7f1e7;font:14px/1.6 system-ui,"Noto Sans CJK SC",sans-serif}}main{{width:min(980px,92vw);margin:5vh auto;background:#fbf8f1;border:1px solid #d8cec1;box-shadow:0 22px 70px #5d30221a}}header{{padding:28px 36px;border-bottom:3px solid #b42318}}h1{{margin:0;font:600 30px SimSun,serif}}h1 b{{color:#b42318}}header p{{margin:7px 0 0;color:#776f66}}section{{padding:24px 36px}}.notice{{margin:18px 36px 0;padding:10px 14px;border-left:3px solid}}.ok{{background:#eef4ed;border-color:#39724d}}.error{{background:#f8e9e7;border-color:#b42318}}article{{display:grid;grid-template-columns:minmax(0,1fr) 250px 64px;gap:10px;align-items:center;padding:13px 0;border-bottom:1px solid #e3d9cd}}article b,article span,article small{{display:block}}article span{{color:#625c55;overflow-wrap:anywhere}}article small{{margin-top:3px;color:#8b8177}}input{{width:100%;height:38px;padding:0 10px;border:1px solid #cfc3b6;background:#fffdf8}}button{{height:38px;padding:0 15px;color:#fff;background:#b42318;border:0;cursor:pointer}}article form{{display:flex;gap:6px}}article form button{{flex:0 0 auto}}button.danger{{background:#6f312b}}.add-grid{{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:18px}}.actions{{display:flex;gap:10px;margin-top:18px}}.actions form{{margin:0}}.muted{{color:#776f66}}@media(max-width:760px){{article,.add-grid{{grid-template-columns:1fr}}}}
 </style></head><body><main><header><h1><b>党建</b>智办 · 管理共享文件夹</h1><p>可重复添加、移除、重命名、查看审批状态并立即同步；本机绝对路径不会上传到主机。</p></header>{notice}{failure}<section><h2>本机共享目录</h2>{"".join(rows) or '<p class="muted">尚未添加共享目录。</p>'}
 <form method="post" class="add-grid"><input type="hidden" name="csrf" value="{csrf}"><input type="hidden" name="action" value="add"><input name="local_path" placeholder="手工输入本机文件夹路径（留空使用系统选择器）"><input name="name" placeholder="显示名称（可选）"><button>添加共享目录</button></form>
@@ -5763,7 +5763,7 @@ def run_wizard(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="党建智办主机/终端配置向导")
+    parser = argparse.ArgumentParser(description="党建智能体主机/终端配置向导")
     parser.add_argument("--no-browser", action="store_true")
     parser.add_argument("--prepare-launch-environment", action="store_true")
     parser.add_argument("--config-file", default="")

@@ -36,7 +36,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    app_name: str = "党建智办"
+    app_name: str = "党建智能体"
     app_version: str = "1.4.5-rc.6"
     mode: Literal["host", "personal", "client"] = "host"
     # 未显式配置时按生产边界运行。开发脚本和自动化测试会主动设置

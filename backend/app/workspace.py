@@ -73,7 +73,7 @@ def validate_root_path(value: str) -> Path:
             403,
             "ROOT_PATH_PERMISSION_DENIED",
             "目录没有只读权限",
-            "请在主机桌面向导中为党建智办授予该目录只读权限。",
+            "请在主机桌面向导中为党建智能体授予该目录只读权限。",
         )
     return resolved
 

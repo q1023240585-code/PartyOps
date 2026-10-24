@@ -1486,7 +1486,7 @@ onBeforeUnmount(() => {
             <a-table-column title="版本与内容">
               <template #cell="{ record }">
                 <strong>{{ record.version }}</strong>
-                <small class="update-content">{{ record.manifest?.release_title || "党建智办功能与稳定性更新" }}</small>
+                <small class="update-content">{{ record.manifest?.release_title || "党建智能体功能与稳定性更新" }}</small>
                 <ul v-if="record.manifest?.release_notes?.length" class="compact-notes">
                   <li v-for="note in record.manifest.release_notes.slice(0, 3)" :key="note">{{ note }}</li>
                 </ul>

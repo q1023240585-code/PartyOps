@@ -445,7 +445,7 @@ onBeforeUnmount(() => {
   <div class="app-shell">
     <aside class="sidebar">
       <RouterLink class="brand-lockup" to="/">
-        <span class="brand-cn"><b>党建</b>智办</span>
+        <span class="brand-cn"><b>党建</b>智能体</span>
         <span class="brand-en">中核四〇四</span>
       </RouterLink>
       <nav class="nav-list" aria-label="主导航">

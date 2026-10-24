@@ -320,7 +320,7 @@ def _period_export_payload(
 
 
 def export_period_docx(db: Session, report: PeriodReport) -> Path:
-    path = get_settings().exports_dir / f"党建智办-{report.period_key}-{report.id[:8]}.docx"
+    path = get_settings().exports_dir / f"党建智能体-{report.period_key}-{report.id[:8]}.docx"
     document = Document()
     heading = document.add_paragraph()
     heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -345,7 +345,7 @@ def export_period_docx(db: Session, report: PeriodReport) -> Path:
 
 
 def export_period_xlsx(db: Session, report: PeriodReport) -> Path:
-    path = get_settings().exports_dir / f"党建智办-{report.period_key}-{report.id[:8]}.xlsx"
+    path = get_settings().exports_dir / f"党建智能体-{report.period_key}-{report.id[:8]}.xlsx"
     workbook = Workbook()
     sheet = cast(Worksheet, workbook.active)
     sheet.title = report.period_key[:31]

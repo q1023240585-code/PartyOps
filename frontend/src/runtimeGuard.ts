@@ -149,7 +149,7 @@ export function renderStartupProblem(
   const safeTitle = escapeHtml(title);
   const safeDetail = escapeHtml(detail);
   const safeCode = escapeHtml(code);
-  document.title = `${title} · 党建智办`;
+  document.title = `${title} · 党建智能体`;
   document.body.innerHTML = `
     <main id="partyops-startup-problem" style="
       min-height:100vh;display:grid;place-items:center;padding:32px;
@@ -165,7 +165,7 @@ export function renderStartupProblem(
         <h1 style="margin:0;font:600 28px/1.35 SimSun,serif">${safeTitle}</h1>
         <p style="margin:18px 0;color:#5f5952">${safeDetail}</p>
         <ol style="margin:18px 0;padding-left:20px;color:#5f5952">
-          <li>先关闭其他“党建智办”浏览器页签。</li>
+          <li>先关闭其他“党建智能体”浏览器页签。</li>
           <li>由管理员重启 PartyOps 服务或重新双击桌面图标。</li>
           <li>再点击下方按钮重新载入，业务数据库不会因刷新而改变。</li>
         </ol>

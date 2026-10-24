@@ -132,7 +132,7 @@ function formatSize(value: number) {
 function explainDirectoryOperations() {
   const mode = session.runtimeContext?.node_mode || "unknown";
   if (mode === "unknown") {
-    Message.info("当前页面不是主机本机或已入网协同机。请在主机桌面或已入网协同机打开党建智办后操作目录。");
+    Message.info("当前页面不是主机本机或已入网协同机。请在主机桌面或已入网协同机打开党建智能体后操作目录。");
     return;
   }
   Message.info("当前账号或设备没有目录操作权限，请联系主机管理员开启本机共享或目录纳管能力。");

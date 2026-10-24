@@ -1234,7 +1234,7 @@ def _create_installed_package_snapshot(destination: Path) -> None:
                     "Priority: optional",
                     f"Architecture: {architecture}",
                     "Maintainer: PartyOps",
-                    "Description: 党建智办升级回滚快照",
+                    "Description: 党建智能体升级回滚快照",
                     "",
                 ]
             ),

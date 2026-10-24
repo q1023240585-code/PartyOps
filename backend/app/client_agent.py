@@ -2219,9 +2219,9 @@ def show_desktop_notification(unread_count: int) -> bool:
         subprocess.run(  # noqa: S603 - executable 由 PATH 固定解析，参数不进入 shell。
             [
                 executable,
-                "--app-name=党建智办",
+                "--app-name=党建智能体",
                 "--icon=partyops",
-                "党建智办",
+                "党建智能体",
                 f"您有 {unread_count} 条未读工作提醒，请双击桌面图标查看。",
             ],
             check=False,
@@ -2475,7 +2475,7 @@ def run(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="党建智办协同终端伴随进程")
+    parser = argparse.ArgumentParser(description="党建智能体协同终端伴随进程")
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--once", action="store_true")
     parser.add_argument(

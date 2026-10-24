@@ -788,7 +788,7 @@ def _validate_manifest_contract(manifest: dict) -> None:
             422,
             "UPDATE_FORMAT_INVALID",
             "更新包类型无效",
-            "请选择由党建智办发布工具生成的更新包。",
+            "请选择由党建智能体发布工具生成的更新包。",
         )
     raw_format_version = manifest.get("format_version", 0)
     if type(raw_format_version) is not int:

@@ -139,7 +139,7 @@ describe("应用壳与快捷操作", () => {
     });
     await flushPromises();
 
-    expect(wrapper.text()).toContain("党建智办");
+    expect(wrapper.text()).toContain("党建智能体");
     const state = (wrapper.vm as unknown as { $: { setupState: Record<string, unknown> } }).$.setupState;
     const invoke = async (name: string, ...args: unknown[]) => {
       const action = state[name] as (...values: unknown[]) => unknown;

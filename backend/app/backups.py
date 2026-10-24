@@ -434,7 +434,7 @@ def verify_backup(path: Path) -> dict[str, object]:
                 400, "BACKUP_MANIFEST_INVALID", "备份清单无效", "缺少有效 manifest.json。"
             ) from exc
         if not isinstance(manifest, dict) or manifest.get("format") != "partyops-backup":
-            raise ProblemException(400, "BACKUP_FORMAT_INVALID", "备份格式不匹配", "请选择党建智办备份。")
+            raise ProblemException(400, "BACKUP_FORMAT_INVALID", "备份格式不匹配", "请选择党建智能体备份。")
         try:
             format_version = int(manifest.get("format_version", 0))
         except (TypeError, ValueError) as exc:
@@ -447,14 +447,14 @@ def verify_backup(path: Path) -> dict[str, object]:
             )
         if format_version > FORMAT_VERSION:
             raise ProblemException(
-                409, "BACKUP_TOO_NEW", "备份版本过新", "请使用更高版本的党建智办恢复。"
+                409, "BACKUP_TOO_NEW", "备份版本过新", "请使用更高版本的党建智能体恢复。"
             )
         if str(manifest.get("schema_version", "0000")) > SCHEMA_VERSION:
             raise ProblemException(
                 409,
                 "BACKUP_SCHEMA_TOO_NEW",
                 "备份数据库版本过新",
-                "请使用相同或更高版本的党建智办恢复。",
+                "请使用相同或更高版本的党建智能体恢复。",
             )
         declared_files = manifest.get("files")
         if not isinstance(declared_files, list):

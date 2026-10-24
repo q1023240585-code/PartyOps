@@ -60,7 +60,7 @@ async function startUpdate() {
   starting.value = true;
   try {
     gate.value = await api.post<DeviceUpdateGate>("/device/update-start");
-    Message.success("更新任务已交给本机党建智办 Agent，完成后将自动进入系统");
+    Message.success("更新任务已交给本机党建智能体 Agent，完成后将自动进入系统");
     schedulePoll(1500);
   } catch (error) {
     Message.error(error instanceof Error ? error.message : "更新启动失败");
@@ -101,7 +101,7 @@ onBeforeUnmount(() => window.clearTimeout(pollTimer));
             <header>
               <div>
                 <span>本次更新</span>
-                <h2>{{ gate.release_title || `党建智办 ${gate.target_version}` }}</h2>
+                <h2>{{ gate.release_title || `党建智能体 ${gate.target_version}` }}</h2>
               </div>
               <small v-if="gate.installed_at">
                 主机安装于 {{ formatServerTime(gate.installed_at, "YYYY-MM-DD HH:mm") }}（北京时间）

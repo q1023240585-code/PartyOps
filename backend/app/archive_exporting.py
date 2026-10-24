@@ -80,7 +80,7 @@ def export_archive_package(
     settings = get_settings()
     rows = _rows(db, user, archive_year, category_id, keyword, device_id)
     timestamp = beijing_now().strftime("%Y%m%d%H%M%S")
-    output = settings.exports_dir / f"党建智办-{archive_year}年重要档案包-{timestamp}.zip"
+    output = settings.exports_dir / f"党建智能体-{archive_year}年重要档案包-{timestamp}.zip"
     manifest_files: list[dict[str, object]] = []
     workbook = Workbook()
     sheet = cast(Worksheet, workbook.active)

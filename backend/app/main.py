@@ -430,7 +430,7 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="党建智办 API",
+    title="党建智能体 API",
     version=__version__,
     docs_url="/api/docs" if settings.environment != "production" else None,
     redoc_url=None,

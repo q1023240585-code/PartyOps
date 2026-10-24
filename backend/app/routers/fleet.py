@@ -1637,7 +1637,7 @@ def start_current_device_update(
             400,
             "DEVICE_CONTEXT_REQUIRED",
             "无法识别当前协同电脑",
-            "请从本机“党建智办”桌面图标重新进入系统。",
+            "请从本机“党建智能体”桌面图标重新进入系统。",
         )
     start_device_update(db, device)
     db.commit()

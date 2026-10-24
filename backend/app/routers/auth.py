@@ -144,7 +144,7 @@ def bootstrap_host(
             403,
             "BOOTSTRAP_TRUST_REQUIRED",
             "首次配置请求未经 PartyOps 向导确认",
-            "请从主机桌面打开党建智办配置向导，或使用主机自身页面完成管理员创建。",
+            "请从主机桌面打开党建智能体配置向导，或使用主机自身页面完成管理员创建。",
         )
     password_hash = hash_password(payload.password)
     # 正式部署只运行一个 Uvicorn 进程；应用级写锁把“检查并创建”收敛为

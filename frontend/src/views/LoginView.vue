@@ -115,10 +115,10 @@ async function submit() {
     />
     <section class="identity-pane">
       <div class="identity-content">
-        <h1><span>党建</span>智办</h1>
+        <h1><span>党建</span>智能体</h1>
         <div class="brand-rule"><b></b><i></i></div>
         <p class="subtitle">中核四〇四有限公司 · 基层党建工作平台</p>
-        <p class="partyops">强核报国 · 创新奉献</p>
+        <p class="partyops">科技赋能 · 产业造福</p>
         <p class="oriental-date">{{ orientalDate.gregorian }}　{{ orientalDate.weekday }}　{{ orientalDate.lunar }}<b v-if="orientalDate.solarTerm">{{ orientalDate.solarTerm }}</b></p>
       </div>
       <img class="motif" src="../assets/launch-motif.png" alt="" aria-hidden="true" />
@@ -204,7 +204,7 @@ async function submit() {
       </div>
       <div class="role-connection-grid">
         <article><strong>这台电脑是主机</strong><p>保持当前页面，完成管理员创建或直接登录。协同设备、备份和系统更新只由获授权管理员设置。</p></article>
-        <article><strong>这台电脑应是协同机</strong><p>关闭此页，从开始菜单重新打开“党建智办”，在首次配置向导选择“这是协同机”，先测试主机地址再输入 10 分钟入网码。</p></article>
+        <article><strong>这台电脑应是协同机</strong><p>关闭此页，从开始菜单重新打开“党建智能体”，在首次配置向导选择“这是协同机”，先测试主机地址再输入 10 分钟入网码。</p></article>
       </div>
     </a-modal>
   </main>
@@ -237,7 +237,7 @@ async function submit() {
 h1 {
   margin: 0;
   font-family: "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif;
-  font-size: clamp(76px, 8.6vw, 124px);
+  font-size: clamp(60px, 7.2vw, 100px);
   font-weight: 500;
   line-height: 1;
   letter-spacing: 0.025em;
@@ -269,9 +269,9 @@ h1 span {
 .subtitle {
   margin: 0;
   font-family: "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif;
-  font-size: clamp(30px, 3vw, 45px);
-  letter-spacing: 0.12em;
-  white-space: nowrap;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
 }
 
 .partyops {
