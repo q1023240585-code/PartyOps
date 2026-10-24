@@ -236,22 +236,22 @@ async function submit() {
   margin: 20vh 0 0 7.9vw;
 }
 
-/* 嘉峪关远景：右缘竖幅纸面水印，沉入纸底 */
+/* 嘉峪关远景：右缘竖幅纸面水印，双缘羽化与相邻层过渡 */
 .photo-far {
   position: absolute;
   right: 0;
   bottom: 0;
   z-index: 1;
-  width: min(34vw, 340px);
-  height: 72%;
+  width: min(22vw, 250px);
+  height: 66%;
   object-fit: cover;
   object-position: 62% 40%;
   opacity: 0.42;
   mix-blend-mode: multiply;
   pointer-events: none;
-  /* 右缘羽化，避免照片边界形成硬切线 */
-  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
-  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 55%, rgba(0, 0, 0, 0) 100%);
+  /* 左缘羽化衔接纪念塔水墨，右缘羽化衔接右栏 */
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 100%, rgba(0, 0, 0, 1) 82%, rgba(0, 0, 0, 1) 24%, rgba(0, 0, 0, 0.35) 0%);
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 100%, rgba(0, 0, 0, 1) 82%, rgba(0, 0, 0, 1) 24%, rgba(0, 0, 0, 0.35) 0%);
 }
 
 /* 戈壁胡杨：右栏底部极淡水印，托在表单与页脚之下 */
@@ -378,10 +378,13 @@ h1 span {
   bottom: 0;
   left: 0;
   z-index: 1;
-  width: min(52vw, 760px);
+  width: min(36vw, 480px);
   height: auto;
   mix-blend-mode: multiply;
   pointer-events: none;
+  /* 右缘羽化，与嘉峪关照片层过渡衔接 */
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 100%, rgba(0, 0, 0, 1) 88%);
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 100%, rgba(0, 0, 0, 1) 88%);
 }
 
 .login-pane {
