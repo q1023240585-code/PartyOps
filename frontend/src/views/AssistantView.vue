@@ -273,7 +273,7 @@ onMounted(load);
     </header>
 
     <a-alert type="warning" class="security-banner">
-      AI 默认关闭。启用和调整资料范围只能由管理员在“系统设置 → AI 与权限”中完成。
+      AI 由管理员统一管控，仅读取授权的最小资料片段；所有结果以草稿形式呈现，敏感事项、密钥与目录路径不进入模型。
     </a-alert>
 
     <section class="orchestration-panel">
