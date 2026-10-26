@@ -76,6 +76,21 @@ TOOL_REGISTRY: dict[str, ToolContract] = {
         True,
         sensitive=True,
     ),
+    "extension.create_record": ToolContract(
+        "extension.create_record",
+        "向党务台账登记一条记录（党费/民主评议/考核指标/群团活动/团员/换届/品牌/舆情/标准化自查/教育培训）",
+        frozenset({"resource", "values"}),
+        "medium",
+        True,
+    ),
+    "party_development.create_profile": ToolContract(
+        "party_development.create_profile",
+        "按抽取的姓名与申请书日期创建发展党员档案并生成参考计划",
+        frozenset({"name", "gender", "party_committee", "party_branch", "application_date", "education"}),
+        "medium",
+        True,
+        sensitive=True,
+    ),
     "notifications.recalculate": ToolContract(
         "notifications.recalculate", "按任务日期立即重算提醒", frozenset({"task_id"}), "medium", True
     ),
@@ -185,16 +200,124 @@ def step_scope_digest(step: Mapping[str, Any]) -> str:
     return hashlib.sha256(canonical).hexdigest()
 
 
+_CJK_NAME = re.compile(r"([\u4e00-\u9fa5]{2,4})(?:同志)?\s*(?:递交了?|提交了?)")
+_CJK_NAME_WITH_DATE = re.compile(r"([\u4e00-\u9fa5]{2,4})(?:同志)?\s*于[^。；,]{0,16}?(?:递交了?|提交了?)")
+_CJK_NAME_RECEIVED = re.compile(r"收到\s*([\u4e00-\u9fa5]{2,4})(?:同志)?的?\s*入党申请")
+_CJK_NAME_TAIL = re.compile(r"入党申请(?:书)?[^。；]{0,10}?([\u4e00-\u9fa5]{2,4})(?=[，。；,]|$)")
+_DATE_FULL = re.compile(r"(\d{4})[-/年.](\d{1,2})[-/月.](\d{1,2})\s*日?")
+_GENDER = re.compile(r"(女|男)(?:同志|\s|$)")
+_NAME_STOPWORDS = ("党员", "管理", "支部", "申请", "发展", "纳入", "录入", "系统", "档案", "建立", "登记", "新增")
+
+
+_NAME_TIME_WORDS = re.compile(r"今天|今日|昨天|昨日|刚刚|刚才|上午|下午|本月|上周|本周")
+
+
+def _clean_name(candidate: str) -> str:
+    name = candidate.replace("同志", "").strip().rstrip("的入")
+    name = _NAME_TIME_WORDS.sub("", name).strip()
+    name = re.sub(r"^(?:登记|记录|录入|新增|建立|缴纳|帮我|帮忙|记|请|给|把|将|为|替)+", "", name).strip()
+    if not 2 <= len(name) <= 4:
+        return ""
+    if any(word in name for word in _NAME_STOPWORDS):
+        return ""
+    return name
+
+
+_VERB_APPLICATION = re.compile(r"(?:递交了?|提交了?)[^。；]{0,10}入党申请")
+_NAME_SKIP_UNITS = ("今天", "今日", "昨天", "昨日", "上午", "下午", "刚刚", "刚才", "同志")
+
+
+def _extract_name_before_verb(goal: str) -> str:
+    """从'递交/提交'动词向前回溯收集连续汉字，跳过时间词与'同志'。"""
+
+    match = _VERB_APPLICATION.search(goal)
+    if not match:
+        return ""
+    chars: list[str] = []
+    i = match.start() - 1
+    while i >= 0 and len(chars) < 4:
+        ch = goal[i]
+        if ch.isspace():
+            i -= 1
+            continue
+        if not "一" <= ch <= "龥":
+            break
+        # 跳过时间词与'同志'（整词向前跳）
+        skipped = False
+        for unit in _NAME_SKIP_UNITS:
+            if goal[max(0, i - len(unit) + 1) : i + 1] == unit:
+                i -= len(unit)
+                skipped = True
+                break
+        if skipped:
+            continue
+        if ch in "请纳入录入建立新增登记将把给已由让的地得了与和":
+            break
+        chars.append(ch)
+        i -= 1
+    name = _clean_name("".join(reversed(chars)))
+    return name
+
+
+def _extract_name(goal: str) -> str:
+    """分层抽取申请人姓名：动词前回溯 > 于+日期间隔 > 收到式 > 句尾兜底。"""
+
+    name = _extract_name_before_verb(goal)
+    if name:
+        return name
+    for pattern in (_CJK_NAME_WITH_DATE, _CJK_NAME_RECEIVED, _CJK_NAME_TAIL):
+        match = pattern.search(goal)
+        if match:
+            name = _clean_name(match.group(1))
+            if name:
+                return name
+    return ""
+
+
+def _extract_profile_params(goal: str) -> dict[str, Any]:
+    """从自然语言目标中抽取发展档案创建参数。
+
+    只抽取白名单字段；抽取不到的值按党建场景给安全默认（性别男、
+    申请日期今天），最终以确认门禁页展示给用户核对，不静默写库。
+    """
+
+    text = " ".join(str(goal or "").split())
+    today = utcnow().astimezone().strftime("%Y-%m-%d")
+    name = _extract_name(text)
+    application_date = today
+    date_match = _DATE_FULL.search(text)
+    if date_match:
+        application_date = f"{date_match.group(1)}-{int(date_match.group(2)):02d}-{int(date_match.group(3)):02d}"
+    gender_match = _GENDER.search(text)
+    gender = gender_match.group(1) if gender_match else "男"
+    return {
+        "name": name,
+        "gender": gender,
+        "party_committee": "",
+        "party_branch": "",
+        "application_date": application_date,
+        "education": "",
+    }
+
+
 def _rule_steps(goal: str) -> list[dict[str, Any]]:
     text = goal.lower()
     steps: list[dict[str, Any]] = []
 
     def add(tool: str, arguments: dict[str, Any], reason: str, confidence: float = 0.88) -> None:
         contract = TOOL_REGISTRY[tool]
+        safe_arguments = {
+            key: (
+                {k: _safe_text(v, 160) for k, v in value.items()}
+                if isinstance(value, dict)
+                else _safe_text(value, 160)
+            )
+            for key, value in arguments.items()
+        }
         steps.append(
             {
                 "tool": tool,
-                "arguments": {key: _safe_text(value, 160) for key, value in arguments.items()},
+                "arguments": safe_arguments,
                 "reason": reason,
                 "confidence": confidence,
                 "evidence": [{"source": "用户目标摘要", "digest": input_digest(goal)}],
@@ -216,7 +339,31 @@ def _rule_steps(goal: str) -> list[dict[str, Any]]:
             0.94,
         )
     if "发展党员" in text or "入党" in text:
-        add("party_development.timeline", {}, "识别到发展党员时间轴或节点测算目标", 0.86)
+        profile_params = _extract_profile_params(goal)
+        if profile_params["name"] and any(
+            token in text for token in ("纳入", "录入", "建立", "新增", "建档", "登记")
+        ):
+            steps_text = text
+            branch = ""
+            branch_match = re.search(r"([\u4e00-\u9fa5]{2,12}党支部)", steps_text)
+            if branch_match:
+                branch = branch_match.group(1)
+            committee_match = re.search(r"([\u4e00-\u9fa5]{2,20}?(?:党委|有限公司党委|公司党委))", steps_text)
+            add(
+                "party_development.create_profile",
+                {
+                    "name": profile_params["name"],
+                    "gender": profile_params["gender"],
+                    "party_committee": committee_match.group(1) if committee_match else "",
+                    "party_branch": branch,
+                    "application_date": profile_params["application_date"],
+                    "education": "",
+                },
+                "识别到纳入发展党员管理目标，已抽取姓名与申请书日期，待确认后建档",
+                0.88,
+            )
+        else:
+            add("party_development.timeline", {}, "识别到发展党员时间轴或节点测算目标", 0.86)
     if any(token in text for token in ("提醒", "通知", "改期", "截止", "日期")):
         add("notifications.recalculate", {}, "识别到日期或提醒联动目标", 0.82)
     if any(token in text for token in ("协同", "主机", "设备", "入网", "重绑", "证书", "端口")):
@@ -225,12 +372,90 @@ def _rule_steps(goal: str) -> list[dict[str, Any]]:
         add("user.archive", {}, "涉及用户生命周期，必须先预览责任移交并确认", 0.9)
     if any(token in text for token in ("网络地址", "公布地址", "ip地址", "ip")):
         add("settings.network_change", {}, "涉及协同公布地址变更，必须管理员单独确认", 0.8)
+    _add_extension_steps(add, text, goal)
     if not steps:
         if any(token in text for token in ("哪里", "怎么打开", "入口", "进入")):
             add("navigation.find", {"target": goal_summary(goal)}, "定位功能入口")
         else:
             add("work.search", {"query": goal_summary(goal)}, "使用工作台范围内的只读查询")
     return steps
+
+
+_EXTENSION_RESOURCE_RULES: tuple[tuple[tuple[str, ...], str, dict[str, str]], ...] = (
+    (("党费", "缴纳党费", "缴费"), "fees", {"kind": "income", "status": "已缴", "method": "转账"}),
+    (("民主评议", "评议党员"), "reviews", {"status": "已完成"}),
+    (("考核指标", "责任制考核", "考核项"), "indicators", {}),
+    (("工会活动", "团委活动", "团日活动", "文体活动", "联谊", "活动"), "activities", {"status": "已举办"}),
+    (("团员", "入团"), "league-members", {"status": "在册"}),
+    (("换届", "团支部换届"), "elections", {"approval_status": "待报批"}),
+    (("品牌", ), "brands", {"status": "培育中"}),
+    (("舆情", ), "opinions", {"status": "登记"}),
+    (("标准化", "对标自查", "规范化自查"), "checks", {"compliant": "达标"}),
+    (("培训", "读书班", "轮训"), "trainings", {}),
+)
+
+
+def _quoted_title(goal: str) -> str:
+    for pattern in ("《([^《》]{2,40})》", "[“”‘’\"']([^“”]{2,40})[“”‘’\"']"):
+        match = re.search(pattern, goal)
+        if match:
+            return match.group(1).strip()
+    prefix = re.search(r"([一-龥A-Za-z0-9]{2,20})(?=活动|品牌|读书班|轮训|培训|台账)", goal)
+    if prefix:
+        return prefix.group(1)
+    return ""
+
+
+def _add_extension_steps(add, text: str, goal: str) -> None:
+    """党务扩展台账的语言登记入口：每类资源一条可确认的写入步骤。"""
+
+    for tokens, resource, defaults in _EXTENSION_RESOURCE_RULES:
+        if not any(token in text for token in tokens):
+            continue
+        values: dict[str, Any] = dict(defaults)
+        title = _quoted_title(goal)
+        if resource in {"activities", "brands", "trainings", "opinions", "indicators"}:
+            values["title"] = title or _safe_text(goal, 60)
+        if resource == "opinions":
+            values.pop("title", None)
+            values["title"] = title or _safe_text(goal, 60)
+        amount = re.search(r"(\d+(?:\.\d+)?)\s*(?:元|块钱)", goal)
+        if amount and resource == "fees":
+            values["amount"] = amount.group(1)
+        month_match = re.search(r"(\d{1,2})\s*月", goal)
+        if month_match and resource == "fees":
+            values["month"] = month_match.group(1)
+            values["year"] = str(utcnow().astimezone().year)
+        participants = re.search(r"(\d{1,4})\s*(?:人|名(?:党员|团员|职工))", goal)
+        if participants and resource == "trainings":
+            values["participants"] = participants.group(1)
+        hours = re.search(r"(\d+(?:\.\d+)?)\s*(?:个?学时|课时)", goal)
+        if hours and resource == "trainings":
+            values["hours"] = hours.group(1)
+        if resource in {"fees", "members", "league-members", "reviews"}:
+            person = _extract_name_before_verb(goal) or ""
+            if not person:
+                received = re.search(r"收到(?:团员|党员)?\s*([一-龥]{2,4})(?:同志)?的?", goal)
+                if received:
+                    person = _clean_name(received.group(1))
+            if not person:
+                pay = re.search(r"([一-龥]{2,4})(?:同志)?\s*(?:缴纳|交了|缴)", goal)
+                if pay:
+                    person = _clean_name(pay.group(1))
+            if not person:
+                monthly = re.search(r"([一-龥]{2,4})的?\s*\d{1,2}\s*月\s*党费", goal)
+                if monthly:
+                    person = _clean_name(monthly.group(1))
+            if not person:
+                direct = re.search(r"([一-龥]{2,4})的?党费", goal)
+                if direct:
+                    person = _clean_name(direct.group(1))
+            if person:
+                key = "name" if resource in {"members", "league-members", "reviews"} else "member_name"
+                values[key] = person
+        add("extension.create_record", {"resource": resource, "values": values},
+            f"识别到{resource}登记目标，参数已按模板填充，待确认后写入台账", 0.84)
+    return
 
 
 def _extract_json(text: str) -> dict[str, Any] | None:
@@ -422,6 +647,7 @@ _BUSINESS_HANDOFFS: dict[str, dict[str, str]] = {
     "business_meeting.prepare_workflow": {"route": "/business-meetings", "label": "打开会议筹备流程"},
     "ledger.commit": {"route": "/archives", "label": "打开台账导入"},
     "party_development.timeline": {"route": "/party-development?tab=cases", "label": "打开发展党员时间轴"},
+    "party_development.create_profile": {"route": "/party-development?tab=cases", "label": "打开发展党员时间轴"},
     "notifications.recalculate": {"route": "/notifications", "label": "打开通知重算"},
     "fleet.rebind": {"route": "/fleet/devices", "label": "打开设备重绑"},
     "user.archive": {"route": "/settings/updates?tab=users", "label": "打开用户归档"},
@@ -430,15 +656,28 @@ _BUSINESS_HANDOFFS: dict[str, dict[str, str]] = {
 }
 
 
-def dispatch_step(step: AIOrchestrationStep, contract: ToolContract) -> dict[str, Any]:
+def dispatch_step(
+    step: AIOrchestrationStep,
+    contract: ToolContract,
+    db: Session | None = None,
+    user: User | None = None,
+    request: Any = None,
+) -> dict[str, Any]:
     """固定工具的安全执行边界。
 
-    写操作绝不在模型进程中执行，而是生成一个固定、同源的业务办理入口；
-    用户进入对应页面后仍需接受该模块自己的权限、版本、参数与二次确认
-    校验。编排步骤在业务写入完成前保持 ``awaiting_business_action``，不能
-    虚报为“已完成”。只读工具可以在当前会话内完成。
+    默认策略：写操作不在模型进程中执行，而是生成固定、同源的业务办理
+    入口；用户进入对应页面后仍需接受该模块自己的权限、版本、参数与二
+    次确认校验。
+
+    例外：标记者（如 party_development.create_profile）在用户已通过编
+    排确认门禁后，由服务端既有业务函数完成写入——模型只产出白名单内
+    的结构化参数，落库仍走权限、校验与审计，全程留痕。
     """
 
+    if contract.mutates and contract.name == "party_development.create_profile":
+        return _execute_create_profile(step, contract, db, user, request)
+    if contract.mutates and contract.name == "extension.create_record":
+        return _execute_extension_record(step, contract, db, user, request)
     if contract.mutates:
         handoff = _BUSINESS_HANDOFFS[contract.name]
         return {
@@ -461,6 +700,222 @@ def dispatch_step(step: AIOrchestrationStep, contract: ToolContract) -> dict[str
             },
         }
     return {"status": "completed", "tool": contract.name, "preview_only": False}
+
+
+def _commit_with_retry(db: Session, attempts: int = 5) -> None:
+    """SQLite 写锁竞争（如启动自检窗口）时短暂退避后重试提交。"""
+
+    import time
+
+    from sqlalchemy.exc import OperationalError
+
+    for attempt in range(attempts):
+        try:
+            db.commit()
+            return
+        except OperationalError as exc:
+            if "database is locked" not in str(exc).lower() or attempt == attempts - 1:
+                raise
+            time.sleep(0.6 * (attempt + 1))
+
+
+def _execute_create_profile(
+    step: AIOrchestrationStep,
+    contract: ToolContract,
+    db: Session | None,
+    user: User | None,
+    request: Any,
+) -> dict[str, Any]:
+    """确认门禁通过后，调用发展党员模块的既有创建逻辑直接建档。"""
+
+    if db is None or user is None:
+        return {
+            "status": "action_required",
+            "tool": contract.name,
+            "preview_only": True,
+            "handoff": _BUSINESS_HANDOFFS[contract.name],
+            "message": "缺少执行上下文，请进入业务页面手动建档。",
+        }
+    from datetime import date
+
+    from .party_development import ensure_reference_plan_profile, rule_metadata
+    from .routers.party_development import _apply_reference_plan, _as_datetime, beijing_iso
+    from .models import PartyDevelopmentCase
+    from .audit import write_audit
+    from .routers.router_utils import client_ip
+
+    args = step.arguments or {}
+    name = str(args.get("name") or "").strip()
+    application_date = str(args.get("application_date") or "").strip()
+    if not name or not application_date:
+        return {
+            "status": "failed",
+            "tool": contract.name,
+            "preview_only": True,
+            "message": "参数不完整：需要姓名与申请书日期。",
+        }
+    # 幂等：同支部同名且申请书日期相同的档案不重复创建。
+    existing = db.scalars(
+        select(PartyDevelopmentCase).where(
+            PartyDevelopmentCase.name == name,
+            PartyDevelopmentCase.status == "active",
+        )
+    ).all()
+    for item in existing:
+        if item.application_at and item.application_at.strftime("%Y-%m-%d") == application_date:
+            return {
+                "status": "completed",
+                "tool": contract.name,
+                "preview_only": False,
+                "message": f"已存在同名且同申请日期的发展档案，未重复创建。",
+                "case_id": item.id,
+                "handoff": _BUSINESS_HANDOFFS[contract.name],
+            }
+    profile = ensure_reference_plan_profile(db, user)
+    snapshot = {
+        "system_key": profile.system_key,
+        "name": profile.name,
+        "version": profile.version,
+        "assumptions": dict(profile.assumptions),
+        "captured_at": beijing_iso(utcnow()),
+    }
+    item = PartyDevelopmentCase(
+        party_committee=str(args.get("party_committee") or "").strip(),
+        party_branch=str(args.get("party_branch") or "").strip(),
+        name=name,
+        gender=str(args.get("gender") or "男").strip() or "男",
+        ethnicity="汉族",
+        birth_date=None,
+        education=str(args.get("education") or "").strip(),
+        application_at=_as_datetime(date.fromisoformat(application_date)),
+        activist_at=None,
+        training_contacts=[],
+        introducers=[],
+        development_object_at=None,
+        probationary_at=None,
+        converted_at=None,
+        rule_version=str(rule_metadata()["version"]),
+        planning_profile_id=profile.id,
+        planning_profile_snapshot=snapshot,
+        created_by=user.id,
+    )
+    db.add(item)
+    db.flush()
+    _apply_reference_plan(db, item, bump_case_version=False)
+    write_audit(
+        db,
+        user,
+        "ai.party_development.create_profile",
+        "party_development_case",
+        item.id,
+        {"name": name, "application_date": application_date, "via": "ai_orchestrator"},
+        client_ip(request) if request else "",
+    )
+    _commit_with_retry(db)
+    return {
+        "status": "completed",
+        "tool": contract.name,
+        "preview_only": False,
+        "message": f"已创建「{name}」的发展党员档案（申请书 {application_date}），参考计划已生成。",
+        "case_id": item.id,
+        "handoff": _BUSINESS_HANDOFFS[contract.name],
+    }
+
+
+_EXTENSION_RESOURCE_ALIASES: dict[str, str] = {
+    "fees": "fees", "reviews": "reviews", "indicators": "indicators",
+    "activities": "activities", "league-members": "league-members",
+    "elections": "elections", "brands": "brands", "opinions": "opinions",
+    "checks": "checks", "trainings": "trainings", "members": "members",
+}
+
+
+def _execute_extension_record(
+    step: AIOrchestrationStep,
+    contract: ToolContract,
+    db: Session | None,
+    user: User | None,
+    request: Any,
+) -> dict[str, Any]:
+    """确认门禁通过后，向党务扩展台账写入一条记录（服务端校验+审计）。"""
+
+    from .routers.extension import RESOURCES, _apply
+    from .audit import write_audit
+    from .routers.router_utils import client_ip
+
+    if db is None or user is None:
+        return {
+            "status": "action_required",
+            "tool": contract.name,
+            "preview_only": True,
+            "handoff": {"route": "/party-members", "label": "打开党务台账"},
+            "message": "缺少执行上下文，请进入业务页面手动登记。",
+        }
+    args = step.arguments or {}
+    resource = str(args.get("resource") or "").strip()
+    values = args.get("values") if isinstance(args.get("values"), dict) else {}
+    spec = RESOURCES.get(_EXTENSION_RESOURCE_ALIASES.get(resource, ""))
+    if not spec or not values:
+        return {
+            "status": "failed",
+            "tool": contract.name,
+            "preview_only": True,
+            "message": "参数不完整：资源类型或登记内容缺失。",
+        }
+    # 数字字段安全转换；文本字段过 _safe_text
+    cleaned: dict[str, Any] = {}
+    for key, value in values.items():
+        if value is None:
+            continue
+        if isinstance(value, (int, float)):
+            cleaned[key] = value
+        elif isinstance(value, str) and value.strip():
+            cleaned[key] = _safe_text(value, 200)
+    _title_fields = {
+        "activities": "title", "brands": "title", "trainings": "title",
+        "opinions": "title", "indicators": "title", "fees": "member_name",
+        "members": "name", "league-members": "name", "reviews": "member_name",
+        "checks": "item", "elections": "branch",
+    }
+    title_field = _title_fields.get(resource, spec["text_fields"][0])
+    if not str(cleaned.get(title_field, "")).strip():
+        return {
+            "status": "failed",
+            "tool": contract.name,
+            "preview_only": True,
+            "message": "参数不完整：请在指令中写明人员姓名或事项标题。",
+        }
+    model = spec["model"]
+    # NOT NULL 且无默认值的字符串/数值列补安全默认，避免指令未提及时 500。
+    from sqlalchemy import Numeric, String, Text as SAText
+
+    for column in model.__table__.columns:
+        if column.name in cleaned or column.nullable or column.server_default is not None:
+            continue
+        if isinstance(column.type, (String, SAText)):
+            cleaned[column.name] = ""
+        elif isinstance(column.type, Numeric):
+            cleaned[column.name] = 0
+        elif isinstance(column.type.__class__, type) and "Integer" in column.type.__class__.__name__:
+            cleaned[column.name] = 0
+    obj = model(created_by=user.id)
+    _apply(spec, obj, cleaned, partial=False)
+    db.add(obj)
+    db.flush()
+    write_audit(
+        db, user, "ai.extension.create_record", model.__tablename__, obj.id,
+        {"resource": resource, "via": "ai_orchestrator"}, client_ip(request) if request else "",
+    )
+    _commit_with_retry(db)
+    first_text = str(cleaned.get(spec["text_fields"][0], ""))[:30]
+    return {
+        "status": "completed",
+        "tool": contract.name,
+        "preview_only": False,
+        "message": f"已在「{resource}」台账登记一条记录：{first_text}",
+        "record_id": obj.id,
+        "handoff": {"route": "/party-members", "label": "打开党务台账"},
+    }
 
 
 __all__ = [

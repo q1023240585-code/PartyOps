@@ -476,7 +476,9 @@ def execute_ai_orchestration(
             break
         step.status = "running"
         try:
-            result = dispatch_step(step, contract)
+            result = dispatch_step(step, contract, db=db, user=user, request=request)
+            if result.get("status") == "failed":
+                raise RuntimeError(str(result.get("message") or "步骤执行失败"))
             step.result_summary = result
             requires_business_action = result.get("status") == "action_required"
             step.status = "awaiting_business_action" if requires_business_action else "completed"
@@ -492,6 +494,10 @@ def execute_ai_orchestration(
                 )
             )
         except Exception:
+            import traceback as _tb
+            _tb.print_exc()
+            db.rollback()
+            step = db.get(AIOrchestrationStep, step.id)
             step.status = "failed"
             step.error_code = "AI_STEP_EXECUTION_FAILED"
             session.state = "failed"

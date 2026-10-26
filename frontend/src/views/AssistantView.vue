@@ -306,7 +306,7 @@ onMounted(load);
         <ol>
           <li v-for="step in orchestration.steps" :key="step.id">
             <span class="step-order">{{ step.step_order }}</span>
-            <div><strong>{{ toolLabel(step) }}</strong><p>{{ step.reason }}</p><small>置信度 {{ Math.round(step.confidence * 100) }}% · 风险 {{ step.risk_level }} · {{ step.status }}</small></div>
+            <div><strong>{{ toolLabel(step) }}</strong><p>{{ step.reason }}</p><p v-if="step.result_summary?.message" class="step-result">{{ step.result_summary.message }}</p><small>置信度 {{ Math.round(step.confidence * 100) }}% · 风险 {{ step.risk_level }} · {{ step.status }}</small></div>
             <a-button v-if="step.requires_confirmation && step.status === 'pending'" size="small" @click="approveStep(step)">查看并确认</a-button>
             <a-button v-else-if="handoffFor(step)" size="small" type="primary" @click="openBusinessHandoff(step)">{{ handoffFor(step)?.label }}</a-button>
             <a-tag v-else :color="step.status === 'completed' ? 'green' : 'gray'">{{ step.status }}</a-tag>
@@ -317,7 +317,7 @@ onMounted(load);
 
     <div class="assistant-layout">
       <section class="prompt-panel">
-        <div class="assistant-mark"><IconRobot /><div><strong>只读助手</strong><span>不会自动修改、发布或整理文件</span></div></div>
+        <div class="assistant-mark"><IconRobot /><div><strong>受控执行助手</strong><span>写入需逐项确认后由系统落库；模型不直接接触数据</span></div></div>
         <div v-if="recommendations.length" class="recommendation-list">
           <label>可解释建议</label>
           <article v-for="item in recommendations.slice(0, 3)" :key="item.id">
@@ -733,5 +733,11 @@ onMounted(load);
 
 .draft-history small {
   color: var(--muted);
+}
+
+.step-result {
+  margin: 4px 0 0;
+  color: #2f7d4c;
+  font-size: 12px;
 }
 </style>
