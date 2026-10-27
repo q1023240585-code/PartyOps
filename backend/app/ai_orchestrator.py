@@ -326,7 +326,7 @@ def _rule_steps(goal: str) -> list[dict[str, Any]]:
             }
         )
 
-    if any(token in text for token in ("党委会", "会议议程", "会议记录", "三会一课", "主题党日")):
+    if any(token in text for token in ("党委会", "会议议程", "会议记录", "三会一课", "主题党日", "党员大会", "会议草稿", "筹备流程", "召开")) and "对标自查" not in text and "标准化" not in text and "民主评议" not in text and "新增党员" not in text:
         add("business_meeting.create_draft", {"title": goal_summary(goal)}, "识别到会议或党建业务筹备目标")
         add("business_meeting.prepare_workflow", {}, "为会议生成固定筹备流程，等待负责人确认", 0.84)
     if any(token in text for token in ("台账", "表格", "导入", "xlsx", "xls", "csv", "档案")):
@@ -338,7 +338,7 @@ def _rule_steps(goal: str) -> list[dict[str, Any]]:
             "只解释本机确定性引擎已识别的问题，不读取文档正文或直接修改 OOXML",
             0.94,
         )
-    if "发展党员" in text or "入党" in text:
+    if ("发展党员" in text or "入党" in text) and "新增党员" not in text:
         profile_params = _extract_profile_params(goal)
         if profile_params["name"] and any(
             token in text for token in ("纳入", "录入", "建立", "新增", "建档", "登记")
@@ -385,13 +385,14 @@ _EXTENSION_RESOURCE_RULES: tuple[tuple[tuple[str, ...], str, dict[str, str]], ..
     (("党费", "缴纳党费", "缴费"), "fees", {"kind": "income", "status": "已缴", "method": "转账"}),
     (("民主评议", "评议党员"), "reviews", {"status": "已完成"}),
     (("考核指标", "责任制考核", "考核项"), "indicators", {}),
-    (("工会活动", "团委活动", "团日活动", "文体活动", "联谊", "活动"), "activities", {"status": "已举办"}),
+    (("工会活动", "团委活动", "团日活动", "文体活动", "联谊", "运动会", "慰问", "活动"), "activities", {"status": "已举办"}),
     (("团员", "入团"), "league-members", {"status": "在册"}),
     (("换届", "团支部换届"), "elections", {"approval_status": "待报批"}),
+    (("新增党员", "党员名册", "党员信息"), "members", {"status": "在册"}),
     (("品牌", ), "brands", {"status": "培育中"}),
     (("舆情", ), "opinions", {"status": "登记"}),
     (("标准化", "对标自查", "规范化自查"), "checks", {"compliant": "达标"}),
-    (("培训", "读书班", "轮训"), "trainings", {}),
+    (("培训", "读书班", "轮训", "学时", "在线学习"), "trainings", {}),
 )
 
 
@@ -455,9 +456,68 @@ def _add_extension_steps(add, text: str, goal: str) -> None:
                 leading = re.search(r"(?:录入|登记|记录)\s*([一-龥]{2,4})\s*\d", goal)
                 if leading:
                     person = _clean_name(leading.group(1))
+            if not person:
+                added = (re.search(r"(?:新增|收到)(?:党员|团员)?\s*([一-龥]{2,4}?)(?=信息|同志|等|[，,、。\s]|$)", goal)
+                         or re.search(r"(?:新增|收到)(?:党员|团员)\s*([一-龥]{2,4}?)(?=信息|同志|等|[，,、。\s]|$)", goal))
+                if added:
+                    person = _clean_name(added.group(1))
+            if not person:
+                review_a = re.search(r"党支部([一-龥]{2,4})[，,]\s*自评", goal)
+                if review_a:
+                    person = _clean_name(review_a.group(1))
+            if not person:
+                review_b = re.search(r"([一-龥]{2,4})[，,]\s*自评", goal)
+                if review_b:
+                    person = _clean_name(review_b.group(1))
             if person:
-                key = "name" if resource in {"members", "league-members", "reviews"} else "member_name"
+                key = "member_name" if resource in {"fees", "reviews"} else "name"
                 values[key] = person
+            gender = re.search(r"[，,]\s*(女|男)(?:同志)?[，,\s]", goal)
+            if gender and resource in {"members", "league-members"}:
+                values["gender"] = gender.group(1)
+            education = re.search(r"(博士研究生|硕士研究生|大学本科|大学专科|中专及以下|高中)", goal)
+            if education and resource in {"members", "league-members"}:
+                values["education"] = education.group(1)
+            kind = re.search(r"(正式党员|预备党员)", goal)
+            if kind and resource == "members":
+                values["member_kind"] = kind.group(1)
+            joined = re.search(r"(\d{4})[-/年.](\d{1,2})[-/月.](\d{1,2})日?\s*入党", goal)
+            if joined and resource == "members":
+                values["joined_party_at"] = f"{joined.group(1)}-{int(joined.group(2)):02d}-{int(joined.group(3)):02d}"
+        if resource == "checks":
+            branch_match = re.search(r"([一-龥]{2,12}党支部)", goal)
+            if branch_match:
+                values["branch"] = re.sub(r"^(?:登记|记录|录入|新增|建立|帮我|帮忙|请|给|把|将|为|替|记)+", "", branch_match.group(1)).strip()
+            category_match = re.search(r"([一-龥]{2,10}类)[，,]", goal)
+            if category_match:
+                values["category"] = category_match.group(1)
+            item_match = re.search(r"类[，,]\s*([^，。；]+?)(?:，\s*(?:达标|基本达标|不达标|未查)|$)", goal)
+            if item_match:
+                values["item"] = item_match.group(1).strip()
+            else:
+                fallback = re.search(r"自查[：:]\s*(.+)", goal)
+                if fallback:
+                    values["item"] = re.sub(r"，\s*(?:达标|基本达标|不达标|未查)\s*$", "", fallback.group(1)).strip()
+        if resource == "reviews":
+            year_match = re.search(r"(\d{4})\s*年度", goal)
+            if year_match:
+                values["year"] = year_match.group(1)
+        if resource == "elections":
+            branch_match = re.search(r"第[一二三四五六七八九十]+团支部", goal)
+            if branch_match:
+                values["branch"] = branch_match.group(0)
+            term_match = re.search(r"(第[一二三四五六七八九十]+届)", goal)
+            if term_match:
+                values["term"] = term_match.group(1)
+            secretary = re.search(r"新任书记\s*([一-龥]{2,4})", goal)
+            if secretary:
+                values["new_secretary"] = secretary.group(1)
+            date_match = re.search(r"(\d{4})[-/年.](\d{1,2})[-/月.](\d{1,2})", goal)
+            if date_match:
+                values["election_date"] = f"{date_match.group(1)}-{int(date_match.group(2)):02d}-{int(date_match.group(3)):02d}"
+            status_match = re.search(r"(待报批|已报批|已批复)", goal)
+            if status_match:
+                values["approval_status"] = status_match.group(1)
         add("extension.create_record", {"resource": resource, "values": values},
             f"识别到{resource}登记目标，参数已按模板填充，待确认后写入台账", 0.84)
     return

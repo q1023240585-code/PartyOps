@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { IconCopy, IconFile, IconRefresh, IconRobot } from "@arco-design/web-vue/es/icon";
 import { Message, Modal } from "@arco-design/web-vue";
 import { ApiError, api } from "../api";
+import { PROMPT_LIBRARY, type PromptCase } from "../promptLibrary";
 import PageHelp from "../components/PageHelp.vue";
 import type {
   AIDraft,
@@ -100,6 +101,30 @@ function handoffFor(step: AIOrchestrationStep): { route: string; label: string }
 function openBusinessHandoff(step: AIOrchestrationStep) {
   const handoff = handoffFor(step);
   if (handoff) window.location.assign(handoff.route);
+}
+
+const promptLibraryOpen = ref(true);
+const copiedCase = ref("");
+
+function fillPrompt(item: PromptCase) {
+  if (item.target === "orchestration") {
+    orchestrationGoal.value = item.prompt;
+    document.querySelector(".orchestration-input")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    form.instruction = item.prompt;
+    document.querySelector(".prompt-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  Message.success("已填入，可修改后执行");
+}
+
+async function copyPrompt(item: PromptCase) {
+  try {
+    await navigator.clipboard.writeText(item.prompt);
+    copiedCase.value = item.prompt;
+    Message.success("已复制到剪贴板");
+  } catch {
+    Message.error("复制失败，请手动选择文本复制");
+  }
 }
 
 async function createOrchestration() {
@@ -275,6 +300,30 @@ onMounted(load);
     <a-alert type="warning" class="security-banner">
       AI 由管理员统一管控，仅读取授权的最小资料片段；所有结果以草稿形式呈现，敏感事项、密钥与目录路径不进入模型。
     </a-alert>
+
+    <section class="prompt-library">
+      <header class="library-head" @click="promptLibraryOpen = !promptLibraryOpen">
+        <div>
+          <p class="page-kicker">十五项功能 · 现成提示词</p>
+          <h2>提示词案例库</h2>
+          <p>点「填入」直接填进对话框，改名字金额即可执行；点「复制」留作模板。</p>
+        </div>
+        <a-button size="small">{{ promptLibraryOpen ? "收起" : "展开全部案例" }}</a-button>
+      </header>
+      <div v-show="promptLibraryOpen" class="library-grid">
+        <article v-for="feature in PROMPT_LIBRARY" :key="feature.id" class="library-card">
+          <h3>{{ feature.feature }}</h3>
+          <div v-for="item in feature.cases" :key="item.title" class="library-case">
+            <small>{{ item.title }}<em v-if="item.target === 'draft'"> · 草稿线</em></small>
+            <p>{{ item.prompt }}</p>
+            <a-space :size="6">
+              <a-button size="mini" type="primary" @click="fillPrompt(item)">填入</a-button>
+              <a-button size="mini" @click="copyPrompt(item)"><template #icon><IconCopy /></template>复制</a-button>
+            </a-space>
+          </div>
+        </article>
+      </div>
+    </section>
 
     <section class="orchestration-panel">
       <div class="orchestration-heading">
@@ -733,6 +782,70 @@ onMounted(load);
 
 .draft-history small {
   color: var(--muted);
+}
+
+.prompt-library {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  background: rgba(251, 248, 241, 0.82);
+  border: 1px solid var(--line);
+}
+
+.library-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.library-head h2 {
+  margin: 2px 0 4px;
+  font-family: var(--serif);
+  font-size: 20px;
+  color: var(--charcoal);
+}
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.library-card {
+  padding: 12px 14px;
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid var(--line);
+}
+
+.library-card h3 {
+  margin: 0 0 8px;
+  color: var(--cinnabar);
+  font-size: 14px;
+}
+
+.library-case {
+  display: grid;
+  gap: 6px;
+  padding: 8px 0;
+  border-top: 1px dashed var(--line);
+}
+
+.library-case small {
+  color: var(--muted);
+}
+
+.library-case small em {
+  font-style: normal;
+  color: var(--amber);
+}
+
+.library-case p {
+  margin: 0;
+  color: var(--charcoal);
+  font-size: 12px;
+  line-height: 1.6;
 }
 
 .step-result {
