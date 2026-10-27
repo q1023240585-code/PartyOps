@@ -147,10 +147,10 @@ def _apply(spec: dict[str, Any], obj: Any, values: dict[str, Any], *, partial: b
         if isinstance(value, str) and value:
             setattr(obj, field, datetime.fromisoformat(value.replace("Z", "+00:00")))
     for field in spec.get("float_fields", ()):
-        if field in values and values[field] is not None:
+        if field in values and values[field] not in (None, ""):
             setattr(obj, field, float(values[field]))
     for field in spec.get("int_fields", ()):
-        if field in values and values[field] is not None:
+        if field in values and values[field] not in (None, ""):
             setattr(obj, field, int(values[field]))
     for field, model in spec.get("fk_fields", {}).items():
         if field in values and values[field]:

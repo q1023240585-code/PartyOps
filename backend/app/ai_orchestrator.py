@@ -419,7 +419,8 @@ def _add_extension_steps(add, text: str, goal: str) -> None:
         if resource == "opinions":
             values.pop("title", None)
             values["title"] = title or _safe_text(goal, 60)
-        amount = re.search(r"(\d+(?:\.\d+)?)\s*(?:元|块钱)", goal)
+        amount = (re.search(r"(\d+(?:\.\d+)?)\s*(?:元|块钱)", goal)
+                  or re.search(r"(\d+(?:\.\d+)?)\s*党费", goal))
         if amount and resource == "fees":
             values["amount"] = amount.group(1)
         month_match = re.search(r"(\d{1,2})\s*月", goal)
@@ -450,6 +451,10 @@ def _add_extension_steps(add, text: str, goal: str) -> None:
                 direct = re.search(r"([一-龥]{2,4})的?党费", goal)
                 if direct:
                     person = _clean_name(direct.group(1))
+            if not person:
+                leading = re.search(r"(?:录入|登记|记录)\s*([一-龥]{2,4})\s*\d", goal)
+                if leading:
+                    person = _clean_name(leading.group(1))
             if person:
                 key = "name" if resource in {"members", "league-members", "reviews"} else "member_name"
                 values[key] = person
