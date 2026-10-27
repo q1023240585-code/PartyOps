@@ -1,4 +1,4 @@
-"""PartyOps 内部 CA 与主机 HTTPS 证书。"""
+"""PartyPlatform 内部 CA 与主机 HTTPS 证书。"""
 
 from __future__ import annotations
 
@@ -53,8 +53,8 @@ def ensure_tls_material(settings: Settings) -> TLSMaterial:
         ca_key = rsa.generate_private_key(public_exponent=65537, key_size=3072)
         ca_subject = x509.Name(
             [
-                x509.NameAttribute(NameOID.ORGANIZATION_NAME, "PartyOps 内部 CA"),
-                x509.NameAttribute(NameOID.COMMON_NAME, "PartyOps Local Root"),
+                x509.NameAttribute(NameOID.ORGANIZATION_NAME, "PartyPlatform 内部 CA"),
+                x509.NameAttribute(NameOID.COMMON_NAME, "PartyPlatform Local Root"),
             ]
         )
         ca_cert = (
@@ -102,7 +102,7 @@ def ensure_tls_material(settings: Settings) -> TLSMaterial:
             x509.BasicConstraints
         ).value
         if not constraints.ca:
-            raise ValueError("PartyOps 内部 CA 证书缺少 CA 约束")
+            raise ValueError("PartyPlatform 内部 CA 证书缺少 CA 约束")
         if (
             ca_key.public_key().public_bytes(
                 serialization.Encoding.DER,
@@ -113,12 +113,12 @@ def ensure_tls_material(settings: Settings) -> TLSMaterial:
                 serialization.PublicFormat.SubjectPublicKeyInfo,
             )
         ):
-            raise ValueError("PartyOps 内部 CA 私钥与证书不匹配")
+            raise ValueError("PartyPlatform 内部 CA 私钥与证书不匹配")
         ca_cert.verify_directly_issued_by(ca_cert)
     except (ValueError, TypeError, x509.ExtensionNotFound) as exc:
         # 不能静默重建根 CA；那会让所有已入网设备失去信任。保留原文件并
         # 给监督服务一个可分类的 TLS 诊断，由管理员决定恢复备份或重置。
-        raise ValueError("PartyOps 内部 CA 完整性校验失败，原证书已保留") from exc
+        raise ValueError("PartyPlatform 内部 CA 完整性校验失败，原证书已保留") from exc
     regenerate_server = not server_key_path.exists() or not server_cert_path.exists()
     if not regenerate_server:
         try:
@@ -167,7 +167,7 @@ def ensure_tls_material(settings: Settings) -> TLSMaterial:
                 names.append(x509.DNSName(advertised[:253]))
         subject = x509.Name(
             [
-                x509.NameAttribute(NameOID.ORGANIZATION_NAME, "PartyOps"),
+                x509.NameAttribute(NameOID.ORGANIZATION_NAME, "PartyPlatform"),
                 x509.NameAttribute(NameOID.COMMON_NAME, socket.gethostname()[:253]),
             ]
         )
@@ -244,7 +244,7 @@ def issue_device_certificate(
         .subject_name(
             x509.Name(
                 [
-                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, "PartyOps Device"),
+                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, "PartyPlatform Device"),
                     x509.NameAttribute(NameOID.COMMON_NAME, device_id),
                 ]
             )

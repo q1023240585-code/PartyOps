@@ -109,5 +109,5 @@ def preview_intent(text: str, *, today: date | None = None) -> dict[str, Any]:
             "due_date": due_date,
             "source_text": normalized,
         },
-        "notice": "这只是结构化预览；任何写操作都必须由用户确认，并由 PartyOps 服务端重新校验权限。",
+        "notice": "这只是结构化预览；任何写操作都必须由用户确认，并由 PartyPlatform 服务端重新校验权限。",
     }

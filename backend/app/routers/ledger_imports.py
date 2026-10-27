@@ -979,7 +979,7 @@ def commit_import(
         raise ProblemException(409, "LEDGER_JOB_FINALIZED", "导入任务已撤销", "已撤销任务不能再次提交。")
     category = _ensure_target_permission(db, request, user, job.target_type, job.target_id)
     if not payload.confirm_shared_storage:
-        raise ProblemException(422, "LEDGER_SHARED_STORAGE_CONFIRM_REQUIRED", "尚未确认共享归档", "请确认台账内容将进入 PartyOps 主机并按权限共享。")
+        raise ProblemException(422, "LEDGER_SHARED_STORAGE_CONFIRM_REQUIRED", "尚未确认共享归档", "请确认台账内容将进入 PartyPlatform 主机并按权限共享。")
     if _needs_derived_year_confirmation(job) and not payload.confirm_derived_candidates:
         years = "、".join(str(item["year"]) for item in job.derived_candidates)
         raise ProblemException(

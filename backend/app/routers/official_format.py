@@ -41,7 +41,7 @@ def _request_origin(request: Request) -> str:
             403,
             "LOCAL_FORMAT_ORIGIN_DENIED",
             "页面来源不受信任",
-            "请在 PartyOps 公文规范排版页面中发起操作。",
+            "请在 PartyPlatform 公文规范排版页面中发起操作。",
         ) from exc
 
 
@@ -61,7 +61,7 @@ def create_local_format_ticket(
             422,
             "LOCAL_FORMAT_ORIGIN_INVALID",
             "页面来源无效",
-            "请刷新 PartyOps 页面后重试。",
+            "请刷新 PartyPlatform 页面后重试。",
         ) from exc
     header_origin = _request_origin(request)
     if header_origin and header_origin != origin:
@@ -90,7 +90,7 @@ def create_local_format_ticket(
         if formatter is None or not formatter.ready or formatter.secret != secret:
             raise ProblemException(
                 503, "LOCAL_FORMAT_NOT_READY", "当前实例的公文排版未就绪",
-                "请重新打开 PartyOps；如仍失败，请查看运行诊断中的排版启动信息。",
+                "请重新打开 PartyPlatform；如仍失败，请查看运行诊断中的排版启动信息。",
             )
         local_port = formatter.port
         device_id = "host-local"
@@ -99,7 +99,7 @@ def create_local_format_ticket(
             409,
             "LOCAL_FORMAT_HELPER_REQUIRED",
             "当前电脑未连接本机助手",
-            "请使用已安装并已授权的 PartyOps 主机或协同电脑打开此页面。",
+            "请使用已安装并已授权的 PartyPlatform 主机或协同电脑打开此页面。",
         )
 
     ticket, expires_at = issue_local_format_ticket(

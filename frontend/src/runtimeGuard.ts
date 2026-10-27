@@ -59,7 +59,7 @@ export async function checkRuntimeCompatibility(
     const response = await fetcher("/api/v1/health", {
       cache: "no-store",
       credentials: "include",
-      headers: { "X-PartyOps-Frontend-Version": FRONTEND_VERSION },
+      headers: { "X-PartyPlatform-Frontend-Version": FRONTEND_VERSION },
     });
     if (!response.ok) {
       return {
@@ -166,7 +166,7 @@ export function renderStartupProblem(
         <p style="margin:18px 0;color:#5f5952">${safeDetail}</p>
         <ol style="margin:18px 0;padding-left:20px;color:#5f5952">
           <li>先关闭其他“党建智能体”浏览器页签。</li>
-          <li>由管理员重启 PartyOps 服务或重新双击桌面图标。</li>
+          <li>由管理员重启 PartyPlatform 服务或重新双击桌面图标。</li>
           <li>再点击下方按钮重新载入，业务数据库不会因刷新而改变。</li>
         </ol>
         <button id="partyops-reload" type="button" style="

@@ -1,4 +1,4 @@
-"""PartyOps 发布版本的统一解析与比较。"""
+"""PartyPlatform 发布版本的统一解析与比较。"""
 
 from __future__ import annotations
 

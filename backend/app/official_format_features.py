@@ -1,6 +1,6 @@
-"""PartyOps 内嵌公文工具的跨平台功能注册表与本地执行器。
+"""PartyPlatform 内嵌公文工具的跨平台功能注册表与本地执行器。
 
-本模块以 ``PartyOps.DocumentFormatter.Source`` 中的 6 个功能、25 条产品能力
+本模块以 ``PartyPlatform.DocumentFormatter.Source`` 中的 6 个功能、25 条产品能力
 契约为兼容边界。所有处理只发生在本机临时目录，源文件始终只读；正式路径
 的六类功能统一调用原源码宿主，禁止用简化 OOXML 实现产生近似结果。
 """
@@ -277,7 +277,7 @@ def _run_libreoffice_conversion(source: Path, workspace: Path, target_extension:
         raise OfficialFormatError(
             "BUNDLED_OFFICE_RUNTIME_MISSING",
             "内置转换引擎不可用",
-            "安装包中的无窗口转换运行时缺失或损坏，请修复安装 PartyOps。",
+            "安装包中的无窗口转换运行时缺失或损坏，请修复安装 PartyPlatform。",
         )
     output_dir = Path(tempfile.mkdtemp(prefix="partyops-convert-", dir=workspace))
     profile = output_dir / "profile"
@@ -764,7 +764,7 @@ def _execute_source_feature(
     if feature_id == "convert" and target_format in {"png", "jpg"}:
         # WPS Linux/macOS 的原生 RPC 不提供 Windows 专属的
         # Range.EnhMetaFileBits。仍由原源码/WPS 先完成分页和 PDF 输出，再由
-        # PartyOps 随包 PDF 运行时只做像素栅格化；不重新解释、不改写公文。
+        # PartyPlatform 随包 PDF 运行时只做像素栅格化；不重新解释、不改写公文。
         pdf_options = dict(options)
         pdf_options["target_format"] = "pdf"
         pdf_outputs = run_source_host(

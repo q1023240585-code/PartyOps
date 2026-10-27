@@ -108,7 +108,7 @@ def read_installed_manifest(executable: Path) -> dict:
     manifest = json.loads(raw.decode("utf-8-sig"), object_pairs_hook=_unique_object)
     if (not isinstance(manifest, dict) or type(manifest.get("schema_version")) is not int
             or manifest.get("schema_version") != 1
-            or manifest.get("product") != "PartyOps" or not isinstance(manifest.get("files"), list)):
+            or manifest.get("product") != "PartyPlatform" or not isinstance(manifest.get("files"), list)):
         raise ValueError("WINDOWS_RELEASE_MANIFEST_INVALID")
     candidates = [entry for entry in manifest["files"] if isinstance(entry, dict)
                   and str(entry.get("path", "")).replace("\\", "/").casefold() == executable.name.casefold()]

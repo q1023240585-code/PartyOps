@@ -1,4 +1,4 @@
-"""PartyOps 全系统智能编排器。
+"""PartyPlatform 全系统智能编排器。
 
 本模块把模型输出限制在一组固定的业务工具契约中。模型只负责提出结构化
 计划，不能生成任意函数、SQL、Shell、URL 或文件路径；真正的权限、版本、
@@ -568,7 +568,7 @@ def build_plan(db: Session, user: User, goal: str, scope: Mapping[str, Any] | No
     pack = active_model_pack(db, "llm")
     if pack and str(pack.model_id).lower().startswith(("deepseek-r1", "deepseek", "qwen3-0.6")):
         instruction = (
-            "请只输出 JSON，不要 Markdown。你是 PartyOps 计划器，不能执行任何操作。\n"
+            "请只输出 JSON，不要 Markdown。你是 PartyPlatform 计划器，不能执行任何操作。\n"
             "只能从下列固定工具中选择：" + ", ".join(sorted(TOOL_REGISTRY)) + "。\n"
             "输出格式：{\"steps\":[{\"tool\":\"…\",\"arguments\":{},\"reason\":\"…\",\"confidence\":0.0}],\"unresolved\":[]}。\n"
             "所有写入、删除、归档、发送、权限、设备和网络操作必须要求确认；不得把预测当作事实。\n"

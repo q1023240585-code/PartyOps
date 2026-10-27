@@ -1,4 +1,4 @@
-"""PartyOps 本地模型包的签名、哈希、路径和安装校验。"""
+"""PartyPlatform 本地模型包的签名、哈希、路径和安装校验。"""
 
 from __future__ import annotations
 
@@ -121,7 +121,7 @@ def _validate_manifest(manifest: dict, archive: zipfile.ZipFile) -> tuple[dict, 
     except (TypeError, ValueError) as exc:
         raise ProblemException(422, "MODEL_PACK_FORMAT_INVALID", "模型包格式无效", "format_version 必须是整数。") from exc
     if manifest.get("format") != "partyops-modelpack" or format_version not in SUPPORTED_MODEL_PACK_FORMAT_VERSIONS:
-        raise ProblemException(422, "MODEL_PACK_FORMAT_INVALID", "模型包格式无效", "请选择 PartyOps 兼容的 .partyops-modelpack 文件。")
+        raise ProblemException(422, "MODEL_PACK_FORMAT_INVALID", "模型包格式无效", "请选择 PartyPlatform 兼容的 .partyops-modelpack 文件。")
     files = manifest.get("files")
     components = manifest.get("components")
     if not isinstance(files, dict) or not isinstance(components, dict):
@@ -164,7 +164,7 @@ def _validate_manifest(manifest: dict, archive: zipfile.ZipFile) -> tuple[dict, 
     if isinstance(intent_router, dict):
         capabilities.append("intent_router")
         # Needle 2 基础运行时把权重烘焙在各平台原生库中；只有经过
-        # PartyOps 单独微调的包才额外携带可选 .cact 权重文件。
+        # PartyPlatform 单独微调的包才额外携带可选 .cact 权重文件。
         required.add(str(intent_router.get("runtime_file", "")))
         model_file = intent_router.get("model_file")
         if model_file is not None:
@@ -394,7 +394,7 @@ def install_model_pack(path: Path, original_name: str, admin: User, db: Session)
             stored_path.unlink(missing_ok=True)
         raise
     record = AIModelPack(
-        name=str(manifest.get("name", "PartyOps 本地智能模型"))[:160],
+        name=str(manifest.get("name", "PartyPlatform 本地智能模型"))[:160],
         version=str(manifest.get("version", "1.0.0"))[:32],
         model_id=str(manifest.get("model_id", "qwen3-1.7b-q8_0"))[:160],
         architecture=str(manifest.get("architecture", "universal"))[:16],
@@ -607,7 +607,7 @@ def activate_model_pack(
             409,
             "MODEL_RUNTIME_TOO_OLD",
             "当前程序版本无法运行该模型",
-            f"请先升级 PartyOps 至 {pack.min_runtime_version} 或更高版本。",
+            f"请先升级 PartyPlatform 至 {pack.min_runtime_version} 或更高版本。",
         )
     if not verify_installed_pack(pack):
         pack.status = ModelPackStatus.CORRUPT

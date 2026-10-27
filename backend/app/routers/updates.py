@@ -388,7 +388,7 @@ def fetch_online_update_catalog() -> dict[str, object]:
         "availability_message": "",
         "current_version": __version__,
         "version": version,
-        "title": str(release.get("title") or "PartyOps 功能与稳定性更新")[:200],
+        "title": str(release.get("title") or "PartyPlatform 功能与稳定性更新")[:200],
         "release_notes": notes[:50],
         "published_at": published_at,
     }
@@ -1637,7 +1637,7 @@ def list_update_runs(
 @router.get("/devices/update-package/{filename}")
 def download_device_update(
     filename: str,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> FileResponse:
     from .fleet import authenticated_device

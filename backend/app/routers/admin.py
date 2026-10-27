@@ -137,9 +137,9 @@ def _role_reconfigure_marker_path() -> Path:
     """返回桌面启动器和当前服务共同可见的短期角色重配请求。"""
 
     if sys.platform == "darwin":
-        root = Path.home() / "Library" / "Application Support" / "PartyOps" / "Config"
+        root = Path.home() / "Library" / "Application Support" / "PartyPlatform" / "Config"
     elif os.name == "nt":
-        root = Path(os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local")) / "PartyOps"
+        root = Path(os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local")) / "PartyPlatform"
     else:
         root = Path(os.getenv("XDG_CONFIG_HOME", Path.home() / ".config")) / "partyops"
     return root / "reconfigure-request.json"
@@ -228,7 +228,7 @@ def _probe_network_health(value: dict[str, object]) -> dict[str, object]:
     if settings.tls_enabled:
         ca_path = settings.secrets_dir / "pki" / "ca.pem"
         if not ca_path.is_file():
-            raise OSError("PartyOps 内部 CA 尚未就绪")
+            raise OSError("PartyPlatform 内部 CA 尚未就绪")
         context = ssl.create_default_context(cafile=str(ca_path))
     request = urllib.request.Request(f"{url}/api/v1/health", headers={"Accept": "application/json"})
     with urllib.request.urlopen(request, timeout=5, context=context) as response:  # nosec B310 - URL 来自受限私网配置。
@@ -662,8 +662,8 @@ def post_backup(
 @router.get("/backups/{backup_id}/download")
 def download_backup(
     backup_id: str,
-    pairing_token: str | None = Header(default=None, alias="X-PartyOps-Pairing"),
-    device_token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    pairing_token: str | None = Header(default=None, alias="X-PartyPlatform-Pairing"),
+    device_token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     admin: User | None = Depends(get_current_user_optional),
     db: Session = Depends(get_session),
 ) -> FileResponse:
@@ -689,14 +689,14 @@ def download_backup(
     if not path.exists():
         raise ProblemException(410, "BACKUP_FILE_MISSING", "备份文件缺失", "请重新创建备份。")
     response = FileResponse(path, media_type="application/zip", filename=record.filename)
-    response.headers["X-PartyOps-SHA256"] = record.sha256
+    response.headers["X-PartyPlatform-SHA256"] = record.sha256
     return response
 
 
 @router.get("/backups/latest", response_model=None)
 def latest_backup(
-    pairing_token: str | None = Header(default=None, alias="X-PartyOps-Pairing"),
-    device_token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    pairing_token: str | None = Header(default=None, alias="X-PartyPlatform-Pairing"),
+    device_token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     if_none_match: str | None = Header(default=None, alias="If-None-Match"),
     db: Session = Depends(get_session),
 ) -> FileResponse | Response:
@@ -721,16 +721,16 @@ def latest_backup(
         return Response(status_code=304, headers={"ETag": f'"{record.sha256}"'})
     path = get_settings().backups_dir / record.filename
     response = FileResponse(path, media_type="application/zip", filename=record.filename)
-    response.headers["X-PartyOps-SHA256"] = record.sha256
-    response.headers["X-PartyOps-Backup-Id"] = record.id
+    response.headers["X-PartyPlatform-SHA256"] = record.sha256
+    response.headers["X-PartyPlatform-Backup-Id"] = record.id
     response.headers["ETag"] = f'"{record.sha256}"'
     return response
 
 
 @router.get("/notifications/paired-summary", response_model=dict)
 def paired_notification_summary(
-    pairing_token: str | None = Header(default=None, alias="X-PartyOps-Pairing"),
-    device_token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    pairing_token: str | None = Header(default=None, alias="X-PartyPlatform-Pairing"),
+    device_token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict[str, object]:
     """供终端伴随进程轮询，只返回数量与修订号，不返回任务标题或正文。"""
@@ -834,7 +834,7 @@ def create_pairing(
             "host_url": host_url,
             "pairing_token": token,
             "pairing_expires_at": serialize_api_datetime(expires_at),
-            "backup_dir": "~/PartyOps-灾备副本",
+            "backup_dir": "~/PartyPlatform-灾备副本",
             "open_browser": True,
             "interval_seconds": 600,
         },
@@ -883,7 +883,7 @@ async def import_backup(
     safe_name = Path(file.filename or "import.partyops-backup").name
     if not safe_name.endswith(".partyops-backup"):
         safe_name += ".partyops-backup"
-    filename = f"PartyOps-imported-{secrets.token_hex(6)}-{safe_name}"[:255]
+    filename = f"PartyPlatform-imported-{secrets.token_hex(6)}-{safe_name}"[:255]
     path = settings.backups_dir / filename
     try:
         await _write_bounded_upload(file, path, settings.backup_import_max_gb * 1024**3)
@@ -1063,7 +1063,7 @@ def request_role_reconfiguration(
             403,
             "ROLE_RECONFIGURE_LOCAL_REQUIRED",
             "只能在这台电脑上重新配置运行角色",
-            "请回到 PartyOps 所在电脑，从系统设置打开配置向导；协同机不能远程改变主机角色。",
+            "请回到 PartyPlatform 所在电脑，从系统设置打开配置向导；协同机不能远程改变主机角色。",
         )
     marker = _role_reconfigure_marker_path()
     marker.parent.mkdir(parents=True, exist_ok=True)
@@ -1085,7 +1085,7 @@ def request_role_reconfiguration(
             500,
             "ROLE_RECONFIGURE_MARKER_FAILED",
             "无法准备配置向导",
-            "本机配置目录暂时不可写；请从桌面重新打开 PartyOps 后重试。",
+            "本机配置目录暂时不可写；请从桌面重新打开 PartyPlatform 后重试。",
         ) from exc
     write_audit(
         db,
@@ -1132,7 +1132,7 @@ def patch_network_configuration(
             403,
             "NETWORK_UPDATE_LOCAL_REQUIRED",
             "只能在主机本机修改协同地址",
-            "请回到主机电脑的 PartyOps 设置页操作；协同电脑不能远程改变主机监听和证书。",
+            "请回到主机电脑的 PartyPlatform 设置页操作；协同电脑不能远程改变主机监听和证书。",
         )
 
     settings = get_settings()
@@ -1274,7 +1274,7 @@ def confirm_network_transaction(
         "port": settings.port,
     }
     if active != requested:
-        raise ProblemException(409, "NETWORK_RESTART_REQUIRED", "新网络配置尚未由服务加载", "请先使用受控方式重启 PartyOps 服务，再执行健康检查。")
+        raise ProblemException(409, "NETWORK_RESTART_REQUIRED", "新网络配置尚未由服务加载", "请先使用受控方式重启 PartyPlatform 服务，再执行健康检查。")
     try:
         health = _probe_network_health(requested)
     except (OSError, ValueError, urllib.error.URLError, urllib.error.HTTPError, ssl.SSLError) as exc:

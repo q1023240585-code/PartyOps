@@ -312,7 +312,7 @@ def authenticated_device(
     db: Session,
 ) -> Device:
     if not token:
-        raise ProblemException(401, "DEVICE_TOKEN_REQUIRED", "缺少设备令牌", "请使用已批准的 PartyOps Agent。")
+        raise ProblemException(401, "DEVICE_TOKEN_REQUIRED", "缺少设备令牌", "请使用已批准的 PartyPlatform Agent。")
     token_digest = hash_token(token)
     credential = db.scalar(
         select(ClientDeviceCredential).where(
@@ -741,7 +741,7 @@ def enroll_device(
     request: Request,
     enrollment_code_header: str | None = Header(
         default=None,
-        alias="X-PartyOps-Enrollment-Code",
+        alias="X-PartyPlatform-Enrollment-Code",
     ),
     db: Session = Depends(get_session),
 ) -> DeviceEnrollOut:
@@ -1079,7 +1079,7 @@ def rotate_device_token(
 @router.post("/client-agents/credential/upgrade", response_model=dict)
 def upgrade_client_agent_credential(
     request: Request,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict[str, typing.Any]:
     """有效旧令牌原地换发 v2；无效令牌必须由主机管理员重新授权。"""
@@ -1354,7 +1354,7 @@ def list_admin_remote_roots(
 
 @router.get("/devices/workspace/roots", response_model=typing.List[dict])
 def list_device_roots(
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> list[dict]:
     device = authenticated_device(token, db)
@@ -1385,7 +1385,7 @@ def list_device_roots(
 def create_device_root(
     payload: DeviceRemoteRootCreate,
     request: Request,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     """终端声明本机所选目录；绝对路径只保存在本机 Agent 配置中。"""
@@ -1506,7 +1506,7 @@ def rename_device_root(
     root_id: str,
     payload: DeviceRemoteRootPatch,
     request: Request,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     device = authenticated_device(token, db)
@@ -1524,7 +1524,7 @@ def rename_device_root(
 def disable_device_root(
     root_id: str,
     request: Request,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     device = authenticated_device(token, db)
@@ -1554,7 +1554,7 @@ def disable_device_root(
 def heartbeat(
     payload: DeviceHeartbeat,
     request: Request,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> Device:
     device = authenticated_device(token, db)
@@ -1600,7 +1600,7 @@ def heartbeat(
 
 @router.post("/devices/browser-token", response_model=DeviceBrowserTokenOut)
 def create_device_browser_token(
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> DeviceBrowserTokenOut:
     device = authenticated_device(token, db)
@@ -1650,7 +1650,7 @@ def start_current_device_update(
 def rotate_certificate(
     payload: DeviceCertificateRotateRequest,
     request: Request,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> DeviceCertificateOut:
     device = authenticated_device(token, db)
@@ -1684,7 +1684,7 @@ def rotate_certificate(
 @router.post("/devices/workspace/index-delta", response_model=dict)
 def upload_index_delta(
     payload: RemoteIndexDelta,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     device = authenticated_device(token, db)
@@ -1796,7 +1796,7 @@ def upload_index_delta(
 
 @router.get("/devices/commands", response_model=typing.List[dict])
 def list_commands(
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> list[dict]:
     device = authenticated_device(token, db)
@@ -1849,7 +1849,7 @@ def list_commands(
 def ack_command(
     command_id: str,
     payload: dict,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     device = authenticated_device(token, db)
@@ -2345,7 +2345,7 @@ def create_workspace_download(
         safe_name(selected[0][0].name)
         if payload.bundle_mode == "single"
         else safe_name(
-            f"{selected[0][0].name if payload.bundle_mode == 'folder_zip' else 'PartyOps所选文件'}.zip"
+            f"{selected[0][0].name if payload.bundle_mode == 'folder_zip' else 'PartyPlatform所选文件'}.zip"
         )
     )
     source_item, source_root = selected[0]
@@ -2638,7 +2638,7 @@ def action_transfer(
 def prepare_device_bundle(
     transfer_id: str,
     payload: dict,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     """设备完成 ZIP 快照后登记真实大小和哈希，再进入统一分块上传。"""
@@ -2689,7 +2689,7 @@ async def upload_chunk(
     transfer_id: str,
     chunk_no: int,
     request: Request,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     chunk_sha256: str | None = Header(default=None, alias="X-Chunk-SHA256"),
     db: Session = Depends(get_session),
 ) -> dict:
@@ -2806,7 +2806,7 @@ async def upload_chunk(
 @router.get("/devices/transfers/{transfer_id}/status", response_model=dict)
 def device_transfer_status(
     transfer_id: str,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     device = authenticated_device(token, db)
@@ -2840,7 +2840,7 @@ def device_transfer_status(
 @router.post("/devices/transfers/{transfer_id}/finalize", response_model=dict)
 def finalize_device_upload(
     transfer_id: str,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> dict:
     device = authenticated_device(token, db)
@@ -2897,7 +2897,7 @@ def finalize_device_upload(
 def download_chunk(
     transfer_id: str,
     chunk_no: int,
-    token: str | None = Header(default=None, alias="X-PartyOps-Device-Token"),
+    token: str | None = Header(default=None, alias="X-PartyPlatform-Device-Token"),
     db: Session = Depends(get_session),
 ) -> Response:
     device = authenticated_device(token, db)

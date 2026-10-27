@@ -58,7 +58,7 @@ def installed_linux_identity(executable: Path, architecture: str) -> dict[str, o
             not isinstance(manifest, dict)
             or type(manifest.get("schema_version")) is not int
             or manifest.get("schema_version") != 1
-            or manifest.get("product") != "PartyOps"
+            or manifest.get("product") != "PartyPlatform"
             or manifest.get("platform") != "linux-deb"
             or manifest.get("architecture") != architecture
             or manifest.get("runtime_profile") != "core"

@@ -1,6 +1,6 @@
 """公文排版的常驻本机回环服务与短时设备票据。
 
-浏览器只把文档发送到当前电脑的 ``127.0.0.1``。PartyOps 主机 API
+浏览器只把文档发送到当前电脑的 ``127.0.0.1``。PartyPlatform 主机 API
 仅签发不含文件信息的短时票据；本模块不把文件名、路径、正文或哈希写入
 日志、数据库或协同链路。
 """
@@ -69,7 +69,7 @@ def _allocate_session_workspace() -> Path:
             "MAC_FORMAT_WORKSPACE_UNAVAILABLE",
             "Mac 文档工作目录不可用",
             "无法在当前用户的“下载”目录创建私有文档工作副本。"
-            "请确认该目录存在、磁盘空间充足，并允许 PartyOps 访问后重新创建任务；原文件未改变。",
+            "请确认该目录存在、磁盘空间充足，并允许 PartyPlatform 访问后重新创建任务；原文件未改变。",
         ) from exc
 
 
@@ -305,7 +305,7 @@ class OfficialFormatLocalService:
             raise OfficialFormatError(
                 "LOCAL_FORMAT_SECRET_INVALID",
                 "本机排版服务未就绪",
-                "设备凭据不完整，请重新打开 PartyOps 或重新授权协同电脑。",
+                "设备凭据不完整，请重新打开 PartyPlatform 或重新授权协同电脑。",
             )
         self.secret = secret
         self.instance_id = uuid.uuid4().hex
@@ -331,7 +331,7 @@ class OfficialFormatLocalService:
         service = self
 
         class Handler(BaseHTTPRequestHandler):
-            server_version = "PartyOpsLocalFormatter/2"
+            server_version = "PartyPlatformLocalFormatter/2"
 
             def _origin(self) -> str:
                 try:
@@ -345,7 +345,7 @@ class OfficialFormatLocalService:
                     self.send_header("Vary", "Origin, Access-Control-Request-Private-Network")
                 self.send_header(
                     "Access-Control-Allow-Headers",
-                    "Authorization, Content-Type, X-PartyOps-Local-Token",
+                    "Authorization, Content-Type, X-PartyPlatform-Local-Token",
                 )
                 self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
                 if self.headers.get("Access-Control-Request-Private-Network", "").lower() == "true":
@@ -405,7 +405,7 @@ class OfficialFormatLocalService:
                 return self.headers.get("Host", "").lower() == f"127.0.0.1:{service.port}"
 
             def _session(self, session_id: str, origin: str) -> LocalFormatSession:
-                token = self.headers.get("X-PartyOps-Local-Token", "")
+                token = self.headers.get("X-PartyPlatform-Local-Token", "")
                 with service.lock:
                     current = service.sessions.get(session_id)
                     if (
@@ -557,7 +557,7 @@ class OfficialFormatLocalService:
                             raise OfficialFormatError(
                                 "LOCAL_TICKET_REQUIRED",
                                 "缺少本机操作票据",
-                                "请从 PartyOps 公文规范排版页面重新开始。",
+                                "请从 PartyPlatform 公文规范排版页面重新开始。",
                             )
                         claims = verify_local_format_ticket(
                             service.secret, header[7:].strip(), origin=origin
@@ -759,7 +759,7 @@ class OfficialFormatLocalService:
         except OSError as exc:
             raise OfficialFormatError(
                 "LOCAL_FORMAT_CONFIG_WRITE_FAILED", "公文排版日志目录不可写",
-                "请检查当前业务数据目录权限后重新打开 PartyOps。",
+                "请检查当前业务数据目录权限后重新打开 PartyPlatform。",
             ) from exc
         try:
             self.server = _ExclusiveLoopbackServer(("127.0.0.1", self.port), Handler)

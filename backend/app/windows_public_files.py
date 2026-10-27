@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 def public_host_ca_path() -> Path:
-    return Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps" / "public-host-ca.pem"
+    return Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform" / "public-host-ca.pem"
 
 
 def write_public_control_file(path: Path, data: bytes) -> None:

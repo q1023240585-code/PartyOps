@@ -2120,7 +2120,7 @@ class MeetingAttendee(Base):
 
 
 class MeetingAction(Base):
-    """会后决议落实项；可关联 PartyOps 事项但不重复保存事项正文。"""
+    """会后决议落实项；可关联 PartyPlatform 事项但不重复保存事项正文。"""
 
     __tablename__ = "meeting_actions"
 

@@ -217,7 +217,7 @@ async function applyProfile() {
 
 function confirmTarget() {
   if (!sharedConfirmed.value) {
-    Message.warning("请确认台账将进入共享 PartyOps 主机");
+    Message.warning("请确认台账将进入共享 PartyPlatform 主机");
     return;
   }
   if (job.value?.derived_candidates?.length && !derivedYear.value) {
@@ -399,8 +399,8 @@ function confidenceLabel(value: string) {
             </a-select>
           </a-form-item>
         </div>
-        <a-alert type="warning">台账导入与“公文规范排版”不同：确认后，所选字段会通过当前认证连接进入 PartyOps 主机，供有权限人员协作。</a-alert>
-        <a-checkbox v-model="sharedConfirmed">我已确认该台账可以进入当前 PartyOps 共享业务系统</a-checkbox>
+        <a-alert type="warning">台账导入与“公文规范排版”不同：确认后，所选字段会通过当前认证连接进入 PartyPlatform 主机，供有权限人员协作。</a-alert>
+        <a-checkbox v-model="sharedConfirmed">我已确认该台账可以进入当前 PartyPlatform 共享业务系统</a-checkbox>
         <footer><a-button @click="step = 1">上一步</a-button><a-button type="primary" @click="confirmTarget">继续字段映射</a-button></footer>
       </section>
 

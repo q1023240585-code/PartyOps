@@ -111,7 +111,7 @@ def cached_lan_addresses(ttl_seconds: float = 30.0) -> tuple[str, ...]:
 
 
 class DataDirectoryInstanceLock:
-    """阻止两个 PartyOps 运行时同时操作同一业务数据根。"""
+    """阻止两个 PartyPlatform 运行时同时操作同一业务数据根。"""
 
     def __init__(self, data_dir: Path) -> None:
         self.path = data_dir / ".partyops-instance.lock"
@@ -142,7 +142,7 @@ class DataDirectoryInstanceLock:
                 errno.EDEADLK,
             } or os.name == "nt":
                 raise RuntimeError(
-                    "[INSTANCE_ALREADY_RUNNING] 当前数据目录已有 PartyOps 在运行；"
+                    "[INSTANCE_ALREADY_RUNNING] 当前数据目录已有 PartyPlatform 在运行；"
                     "请先退出旧模式后重试。"
                 ) from exc
             raise
@@ -555,7 +555,7 @@ async def trace_requests(request: Request, call_next):
                 content={
                     "type": "https://partyops.local/problems/HOST_DENIED",
                     "title": "请求主机地址被拒绝",
-                    "detail": "请使用 PartyOps 配置向导显示的本机或局域网地址访问。",
+                    "detail": "请使用 PartyPlatform 配置向导显示的本机或局域网地址访问。",
                     "code": "HOST_DENIED",
                     "trace_id": request.state.trace_id,
                 },
@@ -566,17 +566,17 @@ async def trace_requests(request: Request, call_next):
     authorization = request.headers.get("Authorization", "").strip().lower()
     non_browser_write = (
         authorization.startswith("bearer ")
-        or bool(request.headers.get("X-PartyOps-Device-Token"))
+        or bool(request.headers.get("X-PartyPlatform-Device-Token"))
         # 首次入网由无会话的本机 Agent 发起。仅允许精确的入网端点携带
         # 一次性入网码头，路由仍会把请求头与正文做常量时间比对；不能把
         # 这一例外扩展到其它 API，也不能把设备令牌当作浏览器端口凭据。
         or (
             request.url.path == "/api/v1/devices/enroll"
-            and bool(request.headers.get("X-PartyOps-Enrollment-Code"))
+            and bool(request.headers.get("X-PartyPlatform-Enrollment-Code"))
         )
         or (
             request.url.path == "/api/v1/bootstrap/host"
-            and bool(request.headers.get("X-PartyOps-Bootstrap-Token"))
+            and bool(request.headers.get("X-PartyPlatform-Bootstrap-Token"))
         )
         or (
             request.url.path.startswith("/api/v1/workspace/open-tokens/")
@@ -595,7 +595,7 @@ async def trace_requests(request: Request, call_next):
                 content={
                     "type": "https://partyops.local/problems/ORIGIN_DENIED",
                     "title": "请求来源被拒绝",
-                    "detail": "浏览器写请求必须来自当前 PartyOps 服务；本机工具需使用专用安全令牌。",
+                    "detail": "浏览器写请求必须来自当前 PartyPlatform 服务；本机工具需使用专用安全令牌。",
                     "code": "ORIGIN_DENIED",
                     "trace_id": request.state.trace_id,
                 },
@@ -607,7 +607,7 @@ async def trace_requests(request: Request, call_next):
     # 局域网内也不能用复制的令牌冒充终端。
     if (
         settings.environment == "production"
-        and request.headers.get("X-PartyOps-Device-Token")
+        and request.headers.get("X-PartyPlatform-Device-Token")
         and (not settings.tls_enabled or request.url.port != settings.agent_port)
     ):
         return _apply_security_headers(

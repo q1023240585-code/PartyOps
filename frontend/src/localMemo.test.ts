@@ -161,7 +161,7 @@ describe("本机私有备忘录", () => {
     expect(encoded).not.toContain("机密备忘");
     expect((await decryptMemoBackup(scope("user-1", "device-b"), encoded, "correct-password"))[0].title).toBe("机密备忘");
     await expect(decryptMemoBackup(sourceScope, encoded, "wrong-password")).rejects.toThrow("密码错误");
-    await expect(decryptMemoBackup(scope("user-2"), encoded, "correct-password")).rejects.toThrow("另一个 PartyOps 账号");
+    await expect(decryptMemoBackup(scope("user-2"), encoded, "correct-password")).rejects.toThrow("另一个 PartyPlatform 账号");
     await expect(encryptMemoBackup(sourceScope, memos, "short")).rejects.toThrow("至少需要 8 位");
   });
 

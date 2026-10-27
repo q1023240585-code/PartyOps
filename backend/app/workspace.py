@@ -42,7 +42,7 @@ _scan_locks_guard = threading.Lock()
 def _scan_lock(root_id: str) -> threading.Lock:
     """返回进程内稳定的根目录扫描锁。
 
-    PartyOps 主机服务使用单进程运行；按根目录串行化可以允许不同目录并行，
+    PartyPlatform 主机服务使用单进程运行；按根目录串行化可以允许不同目录并行，
     同时避免“新建后自动扫描”和用户“立即同步”竞争同一唯一索引键。
     """
 

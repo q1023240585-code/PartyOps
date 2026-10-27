@@ -1,8 +1,8 @@
-"""PartyOps 公文排版的可移植 OOXML 兼容层。
+"""PartyPlatform 公文排版的可移植 OOXML 兼容层。
 
 Windows 一键排版的正式路径由 ``official_format_host`` 复用原源码和本机
 WPS/Word；本模块负责跨平台结构校验、旧格式转换及尚未切换的兼容能力。
-文档始终只在 PartyOps 本机回环服务与私有临时目录中处理。
+文档始终只在 PartyPlatform 本机回环服务与私有临时目录中处理。
 """
 
 from __future__ import annotations
@@ -36,7 +36,7 @@ CT = "http://schemas.openxmlformats.org/package/2006/content-types"
 NS = {"w": W, "r": R}
 XML_PARSER = etree.XMLParser(resolve_entities=False, no_network=True, huge_tree=False)
 
-# 与 PartyOps.DocumentFormatter.Source 的默认配置逐项一致。原工具默认关闭
+# 与 PartyPlatform.DocumentFormatter.Source 的默认配置逐项一致。原工具默认关闭
 # 文档网格，WPS 保存后会保留 312/0 的兼容节点，但不能强制 linesAndChars，
 # 否则会改变换行和分页。页面值以用户确认的正确输出为金标准。
 GRID_CHARACTER_SPACE = 0
@@ -677,9 +677,9 @@ def _add_page_footers(
 
     def next_id() -> str:
         nonlocal next_index
-        while f"rIdPartyOpsFooter{next_index}" in relationship_ids:
+        while f"rIdPartyPlatformFooter{next_index}" in relationship_ids:
             next_index += 1
-        value = f"rIdPartyOpsFooter{next_index}"
+        value = f"rIdPartyPlatformFooter{next_index}"
         relationship_ids.add(value)
         next_index += 1
         return value
@@ -1182,7 +1182,7 @@ def prepare_docx(source: Path, workspace: Path) -> tuple[Path, bool]:
         raise OfficialFormatError(
             "BUNDLED_OFFICE_RUNTIME_MISSING",
             "内置转换引擎不可用",
-            "PartyOps 安装包中的无窗口转换运行时缺失或损坏；不需要安装 Word、WPS 或其他办公软件，请修复安装 PartyOps。",
+            "PartyPlatform 安装包中的无窗口转换运行时缺失或损坏；不需要安装 Word、WPS 或其他办公软件，请修复安装 PartyPlatform。",
         )
     return converted, True
 

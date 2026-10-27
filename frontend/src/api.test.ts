@@ -153,7 +153,7 @@ describe("API 客户端", () => {
     expect(url).toBe("/api/v1/tasks");
     expect(init.credentials).toBe("include");
     expect(init.headers.get("Content-Type")).toBe("application/json");
-    expect(init.headers.get("X-PartyOps-CSRF")).toBe("test-csrf-token");
+    expect(init.headers.get("X-PartyPlatform-CSRF")).toBe("test-csrf-token");
   });
 
   it("保留 FormData 边界并支持 Blob、204 与下载地址", async () => {

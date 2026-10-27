@@ -1,4 +1,4 @@
-"""PartyOps 可选本地模型目录与硬件分档规则。"""
+"""PartyPlatform 可选本地模型目录与硬件分档规则。"""
 
 from __future__ import annotations
 

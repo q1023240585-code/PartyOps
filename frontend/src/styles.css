@@ -722,7 +722,7 @@ html[data-art-level="reduced"] .main-area.oriental-route .empty-state::before {
 }
 
 /*
- * PartyOps 统一弹窗规范：
+ * PartyPlatform 统一弹窗规范：
  * 所有 a-modal 都在视口中央打开，不受页面滚动位置影响。
  * 内容较长时只滚动弹窗正文，标题和操作按钮保持可见，避免在
  * 1366×768 等较小办公屏幕上出现“弹窗跑到右侧/按钮在屏幕外”的问题。

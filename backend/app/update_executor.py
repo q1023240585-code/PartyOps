@@ -104,7 +104,7 @@ def _windows_installer_cache() -> Path:
 
     return (
         Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-        / "PartyOps-System"
+        / "PartyPlatform-System"
         / "installer-cache"
     )
 
@@ -117,11 +117,11 @@ def _update_lock_path(data_dir: Path) -> Path:
     if os.name == "nt":
         return (
             Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-            / "PartyOps-System"
+            / "PartyPlatform-System"
             / "update.lock"
         )
     if sys.platform == "darwin":
-        return Path.home() / "Library" / "Caches" / "PartyOps" / "update.lock"
+        return Path.home() / "Library" / "Caches" / "PartyPlatform" / "update.lock"
     return Path("/var/cache/partyops/update.lock")
 
 
@@ -152,7 +152,7 @@ def _secure_update_backup_root(run_id: str) -> Path:
     elif os.name == "nt":
         base = (
             Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-            / "PartyOps-System"
+            / "PartyPlatform-System"
             / "update-transactions"
         )
     elif sys.platform == "darwin":
@@ -160,7 +160,7 @@ def _secure_update_backup_root(run_id: str) -> Path:
             Path.home()
             / "Library"
             / "Caches"
-            / "PartyOps"
+            / "PartyPlatform"
             / "update-transactions"
         )
     else:
@@ -198,7 +198,7 @@ def _snapshot_managed_tree(source: Path, destination: Path, data_root: Path) -> 
         resolved_source != resolved_root
         and resolved_root not in resolved_source.parents
     ):
-        raise RuntimeError("受管数据源超出 PartyOps 数据目录")
+        raise RuntimeError("受管数据源超出 PartyPlatform 数据目录")
     if not source.is_dir():
         return
     _assert_managed_tree_has_no_links(source)
@@ -568,7 +568,7 @@ def _trusted_public_key() -> str:
         return settings.update_public_key.strip()
     candidates = [Path("/etc/partyops/update-public-key")]
     if sys.platform == "darwin":
-        # PKG 把根公钥放在 root 所有的 PartyOps.app/Contents/Resources。
+        # PKG 把根公钥放在 root 所有的 PartyPlatform.app/Contents/Resources。
         # 公钥不是嵌套代码，不能放进 MacOS；也不从用户 Application
         # Support 或环境变量回退。
         executable_parent = Path(sys.executable).resolve().parent
@@ -708,7 +708,7 @@ def _architecture() -> str:
     if sys.platform.startswith("linux"):
         supported.add("loong64")
     if value not in supported:
-        raise RuntimeError("当前系统架构不在 PartyOps 支持范围")
+        raise RuntimeError("当前系统架构不在 PartyPlatform 支持范围")
     return value
 
 
@@ -721,7 +721,7 @@ def _manifest_platform_name(manifest: dict) -> str:
     if raw_format_version >= 3:
         value = update_platform_key(detect_platform_info())
         if not value:
-            raise RuntimeError("当前系统无法匹配 PartyOps 更新制品")
+            raise RuntimeError("当前系统无法匹配 PartyPlatform 更新制品")
         return value
     if os.name == "nt" and getattr(sys, "frozen", False):
         if update_platform_key(detect_platform_info()) != "windows":
@@ -762,7 +762,7 @@ def _run_linux_package_manager(
 
 
 def _ensure_dpkg_ready() -> bool:
-    """只收敛 PartyOps 自己的半配置状态，不擅自修改其他系统软件包。"""
+    """只收敛 PartyPlatform 自己的半配置状态，不擅自修改其他系统软件包。"""
 
     audit = _run(["dpkg", "--audit"], timeout=60)
     if audit.returncode != 0:
@@ -1187,7 +1187,7 @@ def _execute_linux_rpm_host_update(
 
 
 def _create_installed_package_snapshot(destination: Path) -> None:
-    """把 dpkg 当前登记的 PartyOps 重建为可安装回滚包。
+    """把 dpkg 当前登记的 PartyPlatform 重建为可安装回滚包。
 
     这一步在停止服务和改动程序前完成。回滚时仍通过 dpkg 恢复程序版本，
     避免只复制 /opt 导致包管理器记录与实际程序不一致。
@@ -1195,11 +1195,11 @@ def _create_installed_package_snapshot(destination: Path) -> None:
 
     version = _installed_package_version()
     if not version:
-        raise RuntimeError("无法读取当前 PartyOps 系统包版本")
+        raise RuntimeError("无法读取当前 PartyPlatform 系统包版本")
     architecture = _architecture()
     listed = _run(["dpkg-query", "-L", "partyops"], timeout=30)
     if listed.returncode != 0:
-        raise RuntimeError("无法读取当前 PartyOps 系统包文件清单")
+        raise RuntimeError("无法读取当前 PartyPlatform 系统包文件清单")
     with tempfile.TemporaryDirectory(prefix="partyops-rollback-") as temporary:
         package_root = Path(temporary) / "package"
         control_root = package_root / "DEBIAN"
@@ -1233,7 +1233,7 @@ def _create_installed_package_snapshot(destination: Path) -> None:
                     "Section: office",
                     "Priority: optional",
                     f"Architecture: {architecture}",
-                    "Maintainer: PartyOps",
+                    "Maintainer: PartyPlatform",
                     "Description: 党建智能体升级回滚快照",
                     "",
                 ]
@@ -1256,7 +1256,7 @@ def _restore_managed_tree(backup: Path, destination: Path, data_root: Path) -> N
         resolved_destination != resolved_root
         and resolved_root not in resolved_destination.parents
     ):
-        raise RuntimeError("回滚目录超出 PartyOps 数据目录")
+        raise RuntimeError("回滚目录超出 PartyPlatform 数据目录")
     if not backup.is_dir():
         return
     _assert_managed_tree_has_no_links(backup)
@@ -1346,7 +1346,7 @@ def _restore_database_snapshot(snapshot: Path, destination: Path) -> None:
 
 
 def _health_check(expected_version: str | None = None) -> bool:
-    """确认升级后的 PartyOps 主机已运行目标版本且数据库能力完整。
+    """确认升级后的 PartyPlatform 主机已运行目标版本且数据库能力完整。
 
     仅有 HTTP 200 不能证明更新成功。旧进程、错误模式进程或被本机其他
     服务占用的端口都可能返回 200，因此这里同时校验内部 CA、响应结构、
@@ -1456,7 +1456,7 @@ def _run_windows_installer(path: Path, *, service_handoff: bool = False) -> bool
         "/CLOSEAPPLICATIONS",
     ]
     if service_handoff:
-        # 主机更新器正由 PartyOpsUpdateService 承载，安装器不能停止自己的
+        # 主机更新器正由 PartyPlatformUpdateService 承载，安装器不能停止自己的
         # 父服务。两个更新进程采用 Windows 重启替换，其余程序立即升级，
         # 当前事务才能继续执行健康检查和失败回滚。
         command.append("/INAPPUPDATE=1")
@@ -1471,7 +1471,7 @@ def _macos_application_path() -> Path:
         override = _getenv("PARTYOPS_MACOS_APP_PATH", "").strip()
         if override:
             return Path(override).expanduser().resolve()
-    return Path("/Applications/PartyOps.app")
+    return Path("/Applications/PartyPlatform.app")
 
 
 def _macos_bundle_version(app_path: Path) -> str:
@@ -1530,7 +1530,7 @@ def _macos_process_path(pid: int) -> Path | None:
 
 
 def _stop_macos_runtime(app_path: Path, port: int) -> bool:
-    """只终止固定 app 内、真实监听 PartyOps 端口的进程。"""
+    """只终止固定 app 内、真实监听 PartyPlatform 端口的进程。"""
 
     if sys.platform != "darwin" or not 1024 <= port <= 65534:
         return False
@@ -1557,14 +1557,14 @@ def _stop_macos_runtime(app_path: Path, port: int) -> bool:
     expected = (app_path / "Contents" / "MacOS" / "partyops").resolve()
     for pid in pids:
         if _macos_process_path(pid) != expected:
-            raise RuntimeError("macOS PartyOps 端口被身份不明的进程占用，拒绝更新")
+            raise RuntimeError("macOS PartyPlatform 端口被身份不明的进程占用，拒绝更新")
         os.kill(pid, signal.SIGTERM)
     deadline = time.monotonic() + 30
     while time.monotonic() < deadline:
         if all(_macos_process_path(pid) is None for pid in pids):
             return True
         time.sleep(0.25)
-    raise RuntimeError("macOS 旧版 PartyOps 进程未能安全退出")
+    raise RuntimeError("macOS 旧版 PartyPlatform 进程未能安全退出")
 
 
 def _run_macos_privileged_installer(package_path: Path) -> bool:
@@ -1617,7 +1617,7 @@ def _restore_macos_application(snapshot: Path, app_path: Path, failed: Path) -> 
     # 快照在验证与特权复制之间仍可能被同账号进程替换。
     # 如恢复后签名不再可信，必须把它移出 Applications 并放回
     # 刚才的官方新 app，不能在失败路径留下未验签应用。
-    invalid = failed.with_name("PartyOps-invalid-restored.app")
+    invalid = failed.with_name("PartyPlatform-invalid-restored.app")
     recovery_script = (
         "on run argv\n"
         "set appPath to item 1 of argv\n"
@@ -1663,18 +1663,18 @@ def _launch_macos_application() -> bool:
 def _stop_windows_host_service() -> tuple[bool, bool]:
     """停止并等待主机服务；返回（成功，停止前需要恢复运行）。"""
 
-    query_before = _run(["sc.exe", "query", "PartyOpsHost"], timeout=10)
+    query_before = _run(["sc.exe", "query", "PartyPlatformHost"], timeout=10)
     if query_before.returncode == 0 and re.search(
         r"STATE\s*:\s*1\b",
         f"{query_before.stdout}\n{query_before.stderr}",
         re.IGNORECASE,
     ):
         return True, False
-    service_executable = Path(sys.executable).resolve().with_name("PartyOpsService.exe")
+    service_executable = Path(sys.executable).resolve().with_name("PartyPlatformService.exe")
     if service_executable.is_file():
         result = _run([str(service_executable), "--wait=60", "stop"], timeout=75)
         return result.returncode == 0, result.returncode == 0
-    result = _run(["sc.exe", "stop", "PartyOpsHost"], timeout=60)
+    result = _run(["sc.exe", "stop", "PartyPlatformHost"], timeout=60)
     if result.returncode == 1062:
         return True, False
     if result.returncode != 0:
@@ -1683,7 +1683,7 @@ def _stop_windows_host_service() -> tuple[bool, bool]:
         return True, True
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
-        query = _run(["sc.exe", "query", "PartyOpsHost"], timeout=10)
+        query = _run(["sc.exe", "query", "PartyPlatformHost"], timeout=10)
         if query.returncode == 0 and re.search(
             r"STATE\s*:\s*1\b",
             f"{query.stdout}\n{query.stderr}",
@@ -1697,7 +1697,7 @@ def _stop_windows_host_service() -> tuple[bool, bool]:
 def _start_windows_host_service_after_update() -> bool:
     """启动升级后的主机服务；1056 表示安装器已先一步启动成功。"""
 
-    result = _run(["sc.exe", "start", "PartyOpsHost"], timeout=60)
+    result = _run(["sc.exe", "start", "PartyPlatformHost"], timeout=60)
     return result.returncode in {0, 1056}
 
 
@@ -1753,7 +1753,7 @@ def _execute_windows_host_update(
                 package_path,
                 manifest,
                 architecture,
-                Path(temporary) / "PartyOps-update.exe",
+                Path(temporary) / "PartyPlatform-update.exe",
                 platform_name,
             )
             _ensure_update_snapshot_space(backup_root, settings)
@@ -1845,7 +1845,7 @@ def _execute_windows_host_update(
                 ),
             )
             return False
-        _run(["sc.exe", "stop", "PartyOpsHost"], timeout=60)
+        _run(["sc.exe", "stop", "PartyPlatformHost"], timeout=60)
         program_restored = False
         try:
             program_restored = _verify_cached_rollback_artifact(
@@ -1874,7 +1874,7 @@ def _execute_windows_host_update(
                     rollback_installer.unlink(missing_ok=True)
                     _rollback_digest_path(rollback_installer).unlink(missing_ok=True)
                 else:
-                    _run(["sc.exe", "stop", "PartyOpsHost"], timeout=60)
+                    _run(["sc.exe", "stop", "PartyPlatformHost"], timeout=60)
         except Exception:
             logger.exception("Windows 回滚未完成，诊断编号=%s", run_id)
             program_restored = False
@@ -1971,7 +1971,7 @@ def execute_windows_personal_update(run_id: str) -> bool:
                 staged_package,
                 manifest,
                 _architecture(),
-                Path(temporary) / "PartyOps-update.exe",
+                Path(temporary) / "PartyPlatform-update.exe",
                 _manifest_platform_name(manifest),
             )
             _set_run(
@@ -2076,7 +2076,7 @@ def launch_windows_personal_update(run_id: str) -> bool:
             ]
 
         if getattr(sys, "frozen", False):
-            executable = Path(sys.executable).resolve().with_name("PartyOpsUpdater.exe")
+            executable = Path(sys.executable).resolve().with_name("PartyPlatformUpdater.exe")
             arguments = subprocess.list2cmdline(["--personal-run-id", run_id])
         else:
             executable = Path(sys.executable).resolve()
@@ -2108,9 +2108,9 @@ def launch_windows_personal_update(run_id: str) -> bool:
             status=UpdateStatus.FAILED,
             progress=0,
             message=(
-                "[ADMIN_POLICY_BLOCKED] Windows 组织策略阻止了 PartyOps 更新器。"
+                "[ADMIN_POLICY_BLOCKED] Windows 组织策略阻止了 PartyPlatform 更新器。"
                 "程序和数据均未修改；请让单位电脑管理员允许安装目录中的 "
-                "PartyOpsUpdater.exe 后重试，系统不会绕过安全策略。"
+                "PartyPlatformUpdater.exe 后重试，系统不会绕过安全策略。"
                 if policy_blocked
                 else "管理员授权未完成，程序和数据均未修改；可重新点击更新。"
             ),
@@ -2665,13 +2665,13 @@ def execute_macos_update(run_id: str) -> bool:
         target_version = str(manifest.get("version") or "").strip()
         previous_version = _macos_bundle_version(app_path)
         if not previous_version or not _macos_application_is_trusted(app_path):
-            raise RuntimeError("未找到可验签、可回滚的 PartyOps.app 正式安装")
+            raise RuntimeError("未找到可验签、可回滚的 PartyPlatform.app 正式安装")
         with tempfile.TemporaryDirectory(prefix="payload-", dir=transaction) as temporary:
             artifact = _select_artifact(
                 staged_update,
                 manifest,
                 _architecture(),
-                Path(temporary) / "PartyOps-update.pkg",
+                Path(temporary) / "PartyPlatform-update.pkg",
                 "macos",
             )
             signature = _run(
@@ -2694,8 +2694,8 @@ def execute_macos_update(run_id: str) -> bool:
                 _remove_secure_update_transaction(transaction)
                 transaction = None
                 return True
-            snapshot = transaction / "PartyOps-previous.app"
-            failed_app = transaction / "PartyOps-failed.app"
+            snapshot = transaction / "PartyPlatform-previous.app"
+            failed_app = transaction / "PartyPlatform-failed.app"
             _set_run(
                 run_id,
                 status=UpdateStatus.APPLYING,
@@ -2754,8 +2754,8 @@ def execute_macos_update(run_id: str) -> bool:
         if transaction is not None and mutation_started and previous_version:
             try:
                 _stop_macos_runtime(app_path, settings.port)
-                snapshot = transaction / "PartyOps-previous.app"
-                failed_app = transaction / "PartyOps-failed.app"
+                snapshot = transaction / "PartyPlatform-previous.app"
+                failed_app = transaction / "PartyPlatform-failed.app"
                 restored = _restore_macos_application(snapshot, app_path, failed_app)
                 if restored:
                     db_runtime.dispose()
@@ -2862,13 +2862,13 @@ def install_macos_device_package(package_path: Path) -> bool:
         target_version = str(manifest.get("version") or "").strip()
         previous_version = _macos_bundle_version(app_path)
         if not previous_version or not _macos_application_is_trusted(app_path):
-            raise RuntimeError("当前 PartyOps.app 不是可验签、可回滚的正式安装")
+            raise RuntimeError("当前 PartyPlatform.app 不是可验签、可回滚的正式安装")
         with tempfile.TemporaryDirectory(prefix="payload-", dir=transaction) as temporary:
             artifact = _select_artifact(
                 staged_update,
                 manifest,
                 _architecture(),
-                Path(temporary) / "PartyOps-update.pkg",
+                Path(temporary) / "PartyPlatform-update.pkg",
                 "macos",
             )
             signature = _run(
@@ -2888,7 +2888,7 @@ def install_macos_device_package(package_path: Path) -> bool:
                 _remove_secure_update_transaction(transaction)
                 transaction = None
                 return True
-            snapshot = transaction / "PartyOps-previous.app"
+            snapshot = transaction / "PartyPlatform-previous.app"
             copy_result = _run(
                 [
                     "/usr/bin/ditto",
@@ -2920,8 +2920,8 @@ def install_macos_device_package(package_path: Path) -> bool:
     except Exception:
         logger.exception("macOS 协同设备更新失败")
         if transaction is not None and mutation_started and previous_version:
-            snapshot = transaction / "PartyOps-previous.app"
-            failed = transaction / "PartyOps-failed.app"
+            snapshot = transaction / "PartyPlatform-previous.app"
+            failed = transaction / "PartyPlatform-failed.app"
             if _restore_macos_application(snapshot, app_path, failed):
                 _remove_secure_update_transaction(transaction)
                 transaction = None
@@ -3423,7 +3423,7 @@ def _candidate_host_environments() -> list[dict[str, str]]:
     seen: set[str] = set()
     for path in candidates:
         if not _trusted_system_environment_file(path):
-            logger.error("拒绝读取权限或归属不安全的 PartyOps 系统配置：%s", path)
+            logger.error("拒绝读取权限或归属不安全的 PartyPlatform 系统配置：%s", path)
             continue
         values = _read_environment(path)
         # 系统服务安装使用默认数据目录时环境文件可以不存在或未显式填写。
@@ -3525,7 +3525,7 @@ def run_supervisor(once: bool = False) -> int:
 def main() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(description="PartyOps 受限主机更新服务")
+    parser = argparse.ArgumentParser(description="PartyPlatform 受限主机更新服务")
     parser.add_argument("--run-id", default="")
     parser.add_argument("--personal-run-id", default="")
     parser.add_argument("--linux-personal-run-id", default="")

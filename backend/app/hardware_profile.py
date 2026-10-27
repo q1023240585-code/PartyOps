@@ -254,7 +254,7 @@ def run_light_benchmark() -> dict[str, object]:
             "message": "当前冻结运行时未启用隔离性能测试；硬件容量判断仍然有效。",
         }
     script = (
-        "import hashlib,time;d=b'PartyOps-local-benchmark'*4096;"
+        "import hashlib,time;d=b'PartyPlatform-local-benchmark'*4096;"
         "s=time.perf_counter();n=0;"
         "\nwhile time.perf_counter()-s<0.75: hashlib.sha256(d).digest();n+=1"
         "\nprint(n)"

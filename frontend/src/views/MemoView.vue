@@ -206,7 +206,7 @@ async function confirmBackup() {
       const url = URL.createObjectURL(new Blob([encoded], { type: "application/json" }));
       const anchor = document.createElement("a");
       anchor.href = url;
-      anchor.download = `PartyOps-本机备忘录-${beijingNow().format("YYYY-MM-DD")}.partyops-memos`;
+      anchor.download = `PartyPlatform-本机备忘录-${beijingNow().format("YYYY-MM-DD")}.partyops-memos`;
       anchor.click();
       URL.revokeObjectURL(url);
       Message.success("加密备份已导出，请妥善保管密码");
@@ -360,7 +360,7 @@ onBeforeUnmount(() => {
       :mask-closable="false"
       :on-before-ok="confirmBackup"
     >
-      <a-alert type="info" show-icon>{{ backupMode === 'export' ? '密码不会保存；忘记密码将无法恢复备份。' : '只有同一 PartyOps 账号导出的文件可以导入。' }}</a-alert>
+      <a-alert type="info" show-icon>{{ backupMode === 'export' ? '密码不会保存；忘记密码将无法恢复备份。' : '只有同一 PartyPlatform 账号导出的文件可以导入。' }}</a-alert>
       <a-form :model="{ backupPassword, backupPasswordConfirm, importPolicy }" layout="vertical" class="backup-form">
         <a-form-item label="备份密码（至少 8 位）"><a-input-password v-model="backupPassword" /></a-form-item>
         <a-form-item v-if="backupMode === 'export'" label="再次输入密码"><a-input-password v-model="backupPasswordConfirm" /></a-form-item>

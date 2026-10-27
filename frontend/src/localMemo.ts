@@ -242,7 +242,7 @@ export class LocalMemoRepository {
       };
       request.onblocked = () => {
         this.databasePromise = null;
-        reject(new MemoStorageError("备忘录数据库正被旧页面占用，请关闭其他 PartyOps 页面后重试。"));
+        reject(new MemoStorageError("备忘录数据库正被旧页面占用，请关闭其他 PartyPlatform 页面后重试。"));
       };
     });
     return this.databasePromise;
@@ -436,7 +436,7 @@ export async function decryptMemoBackup(
   try {
     envelope = JSON.parse(encoded);
   } catch {
-    throw new MemoStorageError("备份文件不是有效的 PartyOps 备忘录文件。");
+    throw new MemoStorageError("备份文件不是有效的 PartyPlatform 备忘录文件。");
   }
   if (!isEnvelope(envelope)) throw new MemoStorageError("备份文件格式或版本不受支持。");
   try {
@@ -456,7 +456,7 @@ export async function decryptMemoBackup(
       || !Array.isArray(payload.memos)
     ) throw new Error("invalid payload");
     if (payload.ownerFingerprint !== await ownerFingerprint(scope.ownerId)) {
-      throw new MemoStorageError("该备份属于另一个 PartyOps 账号，未导入任何内容。");
+      throw new MemoStorageError("该备份属于另一个 PartyPlatform 账号，未导入任何内容。");
     }
     return payload.memos.map((memo) => validateMemo(memo));
   } catch (error) {

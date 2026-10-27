@@ -742,7 +742,7 @@ def uninstall_local_model_pack(
             409,
             "MODEL_PACK_FILES_BUSY",
             "模型文件仍被系统占用",
-            "请确认全部模型能力已停用，重新启动 PartyOps 后再试。",
+            "请确认全部模型能力已停用，重新启动 PartyPlatform 后再试。",
         ) from exc
     try:
         write_audit(

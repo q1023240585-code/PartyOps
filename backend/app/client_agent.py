@@ -289,7 +289,7 @@ def verify_local_backup(path: Path) -> dict[str, object]:
             if digest.hexdigest() != expected_hash:
                 raise ValueError(f"备份文件哈希不匹配：{item_path}")
         if "database/partyops.db" not in verified_names:
-            raise ValueError("备份缺少 PartyOps 数据库")
+            raise ValueError("备份缺少 PartyPlatform 数据库")
         allowed_members = verified_names | {"manifest.json", "config/config.json"}
         unexpected = [
             info.filename
@@ -313,7 +313,7 @@ def _response_filename(disposition: str) -> str:
             return Path(urllib.parse.unquote(encoded)).name
         if key.lower() == "filename":
             return Path(value.strip('"; ')).name
-    return "PartyOps-latest.partyops-backup"
+    return "PartyPlatform-latest.partyops-backup"
 
 
 def validate_config(config: dict[str, object]) -> tuple[str, str, Path]:
@@ -455,10 +455,10 @@ def _json_request(
     headers: dict[str, str] = {}
     data = None
     if token:
-        headers["X-PartyOps-Device-Token"] = token
+        headers["X-PartyPlatform-Device-Token"] = token
     if enrollment_code:
         # 入网码只用于 /devices/enroll；调用方不得把它复用为设备令牌。
-        headers["X-PartyOps-Enrollment-Code"] = enrollment_code
+        headers["X-PartyPlatform-Enrollment-Code"] = enrollment_code
     if payload is not None:
         headers["Content-Type"] = "application/json"
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -1215,7 +1215,7 @@ def send_device_heartbeat(
         data=json.dumps(payload).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "X-PartyOps-Device-Token": token,
+            "X-PartyPlatform-Device-Token": token,
         },
         method="POST",
     )
@@ -1236,7 +1236,7 @@ def send_device_heartbeat(
 def poll_device_commands(host_url: str, token: str) -> list[dict[str, object]]:
     request = urllib.request.Request(
         f"{host_url.rstrip('/')}/api/v1/devices/commands",
-        headers={"X-PartyOps-Device-Token": token},
+        headers={"X-PartyPlatform-Device-Token": token},
     )
     try:
         with _urlopen(request, 10) as response:
@@ -1252,7 +1252,7 @@ def ack_device_command(host_url: str, token: str, command_id: str, result: dict[
         data=json.dumps(result).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "X-PartyOps-Device-Token": token,
+            "X-PartyPlatform-Device-Token": token,
         },
         method="POST",
     )
@@ -1376,7 +1376,7 @@ def upload_transfer(
                 data=chunk,
                 headers={
                     "Content-Type": "application/octet-stream",
-                    "X-PartyOps-Device-Token": token,
+                    "X-PartyPlatform-Device-Token": token,
                     "X-Chunk-SHA256": digest,
                 },
                 method="PUT",
@@ -1449,7 +1449,7 @@ def _upload_local_path(
                 data=chunk,
                 headers={
                     "Content-Type": "application/octet-stream",
-                    "X-PartyOps-Device-Token": token,
+                    "X-PartyPlatform-Device-Token": token,
                     "X-Chunk-SHA256": digest,
                 },
                 method="PUT",
@@ -1489,7 +1489,7 @@ def upload_bundle_transfer(
     transfer_id = _validated_transfer_id(payload.get("transfer_id", ""))
     max_bytes = int(cast(str | int | float, payload.get("max_bytes", 20 * 1024**3) or 20 * 1024**3))
     receive_dir = Path(
-        str(config.get("receive_dir", Path.home() / "PartyOps-接收文件"))
+        str(config.get("receive_dir", Path.home() / "PartyPlatform-接收文件"))
     ).expanduser().resolve()
     staging = receive_dir / ".partyops-transfers"
     staging.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -1587,7 +1587,7 @@ def download_transfer(
     )
     expected_hash = str(status.get("sha256", payload.get("sha256", ""))).lower()
     receive_dir = Path(
-        str(config.get("receive_dir", Path.home() / "PartyOps-接收文件"))
+        str(config.get("receive_dir", Path.home() / "PartyPlatform-接收文件"))
     ).expanduser().resolve()
     receive_dir.mkdir(parents=True, exist_ok=True)
     staging = receive_dir / ".partyops-transfers"
@@ -1605,7 +1605,7 @@ def download_transfer(
                     f"{host_url.rstrip('/')}/api/v1/devices/transfers/"
                     f"{urllib.parse.quote(transfer_id)}/chunks/{chunk_no}"
                 ),
-                headers={"X-PartyOps-Device-Token": token},
+                headers={"X-PartyPlatform-Device-Token": token},
             )
             try:
                 with _urlopen(request, 180) as response:
@@ -1768,7 +1768,7 @@ def _run_windows_elevated_update(helper: Path, package: Path, timeout_seconds: i
             if wait_result == 0x00000102:  # WAIT_TIMEOUT
                 raise AgentCommandError(
                     "UPDATE_STATE_UNKNOWN",
-                    "管理员更新器仍在运行，请勿重复点击；PartyOps 会在下一次心跳确认最终版本。",
+                    "管理员更新器仍在运行，请勿重复点击；PartyPlatform 会在下一次心跳确认最终版本。",
                     retryable=False,
                 )
             if wait_result == 0xFFFFFFFF:  # WAIT_FAILED
@@ -1793,8 +1793,8 @@ def _run_windows_elevated_update(helper: Path, package: Path, timeout_seconds: i
             raise AgentCommandError(
                 "ADMIN_POLICY_BLOCKED",
                 (
-                    "Windows 组织策略阻止了 PartyOps 更新器。请让单位电脑管理员允许"
-                    "安装目录中的 PartyOpsUpdater.exe 后重试；系统不会绕过安全策略。"
+                    "Windows 组织策略阻止了 PartyPlatform 更新器。请让单位电脑管理员允许"
+                    "安装目录中的 PartyPlatformUpdater.exe 后重试；系统不会绕过安全策略。"
                 ),
             ) from exc
         logger.exception("Windows 更新管理员授权或执行未完成")
@@ -1869,11 +1869,11 @@ def apply_update_command(
                 f"{host_url.rstrip('/')}/api/v1/devices/update-package/"
                 f"{urllib.parse.quote(filename)}"
             ),
-            headers={"X-PartyOps-Device-Token": token},
+            headers={"X-PartyPlatform-Device-Token": token},
         )
         response_factory = lambda _offset=0: _urlopen(request, 300)
     updates_dir = Path(
-        str(config.get("updates_dir", Path.home() / "PartyOps-更新"))
+        str(config.get("updates_dir", Path.home() / "PartyPlatform-更新"))
     ).expanduser().resolve()
     updates_dir.mkdir(parents=True, exist_ok=True)
     target = updates_dir / filename
@@ -2027,7 +2027,7 @@ def apply_update_command(
             temporary.unlink(missing_ok=True)
         raise
     helper = (
-        Path(sys.executable).resolve().with_name("PartyOpsUpdater.exe")
+        Path(sys.executable).resolve().with_name("PartyPlatformUpdater.exe")
         if os.name == "nt"
         else Path(sys.executable).resolve().with_name("partyops-updater")
         if sys.platform == "darwin"
@@ -2076,7 +2076,7 @@ def apply_update_command(
 def _agent_headers(token: str, device_auth: bool = False) -> dict[str, str]:
     """为新版设备证书令牌和旧版灾备配对令牌选择互不混用的请求头。"""
 
-    header = "X-PartyOps-Device-Token" if device_auth else "X-PartyOps-Pairing"
+    header = "X-PartyPlatform-Device-Token" if device_auth else "X-PartyPlatform-Pairing"
     return {header: token}
 
 
@@ -2143,7 +2143,7 @@ def pull_backup(
                     os.fsync(handle.fileno())
                 if raw_length and written != declared_length:
                     raise ValueError("灾备副本实际长度与主机声明不一致")
-                expected = response.headers.get("X-PartyOps-SHA256", "")
+                expected = response.headers.get("X-PartyPlatform-SHA256", "")
                 actual = digest.hexdigest()
                 if expected and expected.lower() != actual:
                     raise ValueError("下载文件与主机校验值不一致")

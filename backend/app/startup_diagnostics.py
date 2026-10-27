@@ -16,7 +16,7 @@ INSTANCE_ALREADY_RUNNING = "INSTANCE_ALREADY_RUNNING"
 
 
 PUBLIC_STARTUP_MESSAGES = {
-    DATABASE_LOCKED: "数据库正被其他 PartyOps 进程占用。请关闭旧程序后重试；系统没有改动原数据。",
+    DATABASE_LOCKED: "数据库正被其他 PartyPlatform 进程占用。请关闭旧程序后重试；系统没有改动原数据。",
     DATABASE_CORRUPT: "数据库完整性检查未通过。系统已保留原文件和升级前备份，请打开日志目录获取诊断。",
     DATABASE_SCHEMA_FAILED: "数据库结构升级未完成。系统已回滚到升级前数据，请勿删除数据目录，重新安装后再试。",
     DATABASE_IO_FAILED: "数据库所在磁盘无法可靠读写。请检查磁盘、目录权限和安全软件拦截后重试。",
@@ -24,7 +24,7 @@ PUBLIC_STARTUP_MESSAGES = {
     DATABASE_STARTUP_FAILED: "数据库初始化未完成。系统已保留原数据，请打开日志目录并提供诊断编号。",
     UPGRADE_BACKUP_FAILED: "升级前安全备份未完成，系统没有迁移或改动原数据库。请检查磁盘空间、数据目录权限和安全软件拦截后重试。",
     SQLITE_RUNTIME_FAILED: "SQLite 运行时、版本或 FTS5 能力不满足启动要求。系统已保留原数据，请重新安装与当前系统匹配的完整安装包。",
-    INSTANCE_ALREADY_RUNNING: "同一数据目录已有 PartyOps 进程运行。系统没有启动第二个进程，也没有改动或删除业务数据。",
+    INSTANCE_ALREADY_RUNNING: "同一数据目录已有 PartyPlatform 进程运行。系统没有启动第二个进程，也没有改动或删除业务数据。",
 }
 
 

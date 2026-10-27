@@ -291,9 +291,9 @@ def probe_loopback_health(
     expected_version: str | None = None,
     bind_host: str = "127.0.0.1",
 ) -> tuple[bool, str]:
-    """探测本机 PartyOps 健康接口，供 Windows 监督服务持续上报阶段。
+    """探测本机 PartyPlatform 健康接口，供 Windows 监督服务持续上报阶段。
 
-    通配监听探测回环，显式本机监听探测该地址；TLS 由 PartyOps 内部 CA 校验，
+    通配监听探测回环，显式本机监听探测该地址；TLS 由 PartyPlatform 内部 CA 校验，
     服务进程尚未把 CA 安装到系统信任区时也必须能够完成本机就绪探测。
     """
 
@@ -302,15 +302,15 @@ def probe_loopback_health(
     scheme = "https" if tls else "http"
     if tls and ca_file is not None:
         if not ca_file.is_file():
-            return False, "PartyOps 内部 CA 尚未生成"
+            return False, "PartyPlatform 内部 CA 尚未生成"
         try:
-            # 即使目标固定为回环地址，也校验 PartyOps 自己的 CA，避免其他本机
+            # 即使目标固定为回环地址，也校验 PartyPlatform 自己的 CA，避免其他本机
             # 进程抢占端口后伪造健康响应。
             context = ssl.create_default_context(cafile=str(ca_file.resolve()))
         except (OSError, ssl.SSLError, ValueError) as exc:
-            return False, f"PartyOps 内部 CA 无法读取：{exc}"
+            return False, f"PartyPlatform 内部 CA 无法读取：{exc}"
     elif tls:
-        return False, "TLS 健康检查缺少 PartyOps 内部 CA"
+        return False, "TLS 健康检查缺少 PartyPlatform 内部 CA"
     else:
         context = None
     request = urllib.request.Request(f"{scheme}://{local_health_probe_host(bind_host)}:{port}/api/v1/health")
@@ -343,7 +343,7 @@ def health_payload_ready(
     expected_version: str | None = None,
     expected_mode: str = "host",
 ) -> bool:
-    """只有完整且模式匹配的 PartyOps 健康契约才能标记进程就绪。"""
+    """只有完整且模式匹配的 PartyPlatform 健康契约才能标记进程就绪。"""
 
     if not isinstance(payload, dict) or expected_mode not in {"host", "personal"}:
         return False

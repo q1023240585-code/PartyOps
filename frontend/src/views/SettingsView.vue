@@ -344,7 +344,7 @@ function openRoleConfigurationWizard() {
       document.body.appendChild(launcher);
       launcher.click();
       launcher.remove();
-      Message.info("正在打开 PartyOps 配置向导；若系统询问是否打开，请选择允许");
+      Message.info("正在打开 PartyPlatform 配置向导；若系统询问是否打开，请选择允许");
     },
   });
 }
@@ -353,7 +353,7 @@ async function load() {
   const failures: string[] = [];
   const recordFailure = (label: string) => {
     failures.push(label);
-    console.warn(`PartyOps 设置页部分数据暂不可用：${label}`);
+    console.warn(`PartyPlatform 设置页部分数据暂不可用：${label}`);
   };
   try {
     health.value = await api.get("/health");
@@ -1444,7 +1444,7 @@ onBeforeUnmount(() => {
           <p>在系统内完成检查、下载、校验、安装和失败回滚；无需重新到官网下载安装包。</p>
           <a-space>
             <a-button :loading="onlineUpdateChecking" @click="checkOnlineUpdate()"><template #icon><IconRefresh /></template>检查官方更新</a-button>
-            <a-button aria-label="导入 PartyOps 更新包" @click="updateInput?.click()"><template #icon><IconUpload /></template>导入 .partyops-update</a-button>
+            <a-button aria-label="导入 PartyPlatform 更新包" @click="updateInput?.click()"><template #icon><IconUpload /></template>导入 .partyops-update</a-button>
             <input ref="updateInput" type="file" accept=".partyops-update" hidden @change="uploadUpdate(($event.target as HTMLInputElement).files?.[0] || null)" />
           </a-space>
         </div>

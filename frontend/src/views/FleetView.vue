@@ -638,7 +638,7 @@ onBeforeUnmount(() => {
     </section>
 
     <section v-if="!isAdmin && activeSection === 'devices'" class="staff-collaboration-grid">
-      <article class="panel"><h2>本机协同状态</h2><strong>{{ localGate?.identified ? localGate.device_name : "当前浏览器未绑定协同设备" }}</strong><p>{{ localGate?.identified ? `版本 ${localGate.current_version || '未上报'} · ${localGate.message || '连接正常'}` : "请从本机 PartyOps 桌面入口进入，系统会自动绑定设备上下文。" }}</p></article>
+      <article class="panel"><h2>本机协同状态</h2><strong>{{ localGate?.identified ? localGate.device_name : "当前浏览器未绑定协同设备" }}</strong><p>{{ localGate?.identified ? `版本 ${localGate.current_version || '未上报'} · ${localGate.message || '连接正常'}` : "请从本机 PartyPlatform 桌面入口进入，系统会自动绑定设备上下文。" }}</p></article>
       <article class="panel"><h2>我发布的共享目录</h2><strong>{{ ownRoots.length }} 个</strong><p>{{ ownRoots.length ? ownRoots.map((item) => item.name).join("、") : "尚未发布本机目录，可点击上方“共享本机文件夹”。" }}</p><a-button v-if="session.runtimeContext?.capabilities.includes('workspace.local_share')" size="small" type="primary" @click="openLocalShareManager">添加、重命名或移除</a-button></article>
       <article class="panel"><h2>我的传输</h2><strong>{{ transfers.length }} 项</strong><p>{{ transfers.filter((item) => ["queued", "transferring", "awaiting_approval"].includes(item.status)).length }} 项正在等待或传输中。</p></article>
       <article class="panel"><h2>权限说明</h2><p>共享文件操作同时校验当前账号、协同设备和已批准目录。没有权限的按钮会被隐藏，授权撤销后传输会立即停止。</p></article>
@@ -767,15 +767,15 @@ onBeforeUnmount(() => {
           <template #extra>不要填写 127.0.0.1；多网卡时请选择与协同电脑同一网段的地址。</template>
         </a-form-item>
         <a-alert v-if="!enrollmentHostOptions.length" type="error" class="enrollment-network-error">
-          未检测到可共享的局域网地址。请先退出并重新运行“PartyOps 配置向导”，选择主机模式和真实网卡地址，再返回此处。
+          未检测到可共享的局域网地址。请先退出并重新运行“PartyPlatform 配置向导”，选择主机模式和真实网卡地址，再返回此处。
         </a-alert>
         <a-button type="primary" :disabled="!enrollmentForm.name.trim() || !enrollmentForm.advertised_host" @click="createEnrollment">地址已确认，生成 10 分钟入网码</a-button>
       </a-form>
       <a-alert v-if="enrollment" type="warning" class="enrollment-alert">
         <strong>现在转到协同电脑完成以下操作：</strong>
         <ol>
-          <li>安装同版本 PartyOps，首次配置选择“协同机”。</li>
-          <li>打开 PartyOps Agent，把下方主机地址和完整入网码粘贴进去。</li>
+          <li>安装同版本 PartyPlatform，首次配置选择“协同机”。</li>
+          <li>打开 PartyPlatform Agent，把下方主机地址和完整入网码粘贴进去。</li>
           <li>核对 CA 指纹后确认；本窗口会自动显示真实连接结果。</li>
         </ol>
         <p><strong>主机地址：</strong>{{ enrollment.host_url }}</p>

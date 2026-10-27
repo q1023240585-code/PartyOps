@@ -50,7 +50,7 @@ async function startApplication() {
       window.location.reload();
       return;
     }
-    console.error("PartyOps route load failed", error);
+    console.error("PartyPlatform route load failed", error);
     renderStartupProblem(
       "页面资源加载失败",
       "升级后仍有旧页面资源留在浏览器中，或者安装包中的页面文件不完整。系统已停止继续加载，避免出现没有说明的白屏。",
@@ -65,7 +65,7 @@ async function startApplication() {
 
   const app = createApp(App);
   app.config.errorHandler = (error, _instance, info) => {
-    console.error("PartyOps page render failed", error, info);
+    console.error("PartyPlatform page render failed", error, info);
     renderStartupProblem(
       "页面运行异常",
       "当前页面与主机返回的数据不兼容，常见原因是旧版服务进程尚未退出。请按页面提示重启服务后重新载入。",

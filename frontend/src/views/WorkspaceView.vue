@@ -763,7 +763,7 @@ async function createDownload(
       if (target && !target.closed) target.location.href = url;
       else window.open(url, "_blank", "noopener");
     } else {
-      if (target) target.document.title = "PartyOps 正在准备文件";
+      if (target) target.document.title = "PartyPlatform 正在准备文件";
       Message.info("正在从共享电脑安全拉取并校验文件，请稍候");
       await waitForBrowserTransfer(result.transfer_id, result.content_url, target, preview);
     }

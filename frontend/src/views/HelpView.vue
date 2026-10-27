@@ -79,11 +79,11 @@ const guides = [
     title: "公文规范排版",
     summary: "系统内嵌完成排版、替换、套红、命名、转换与 PDF 转 Word",
     steps: [
-      "进入“资料 → 公文规范排版”，在朱批案台左栏批量加入文件；排版过程始终留在 PartyOps 页面内，不打开系统外窗口。",
+      "进入“资料 → 公文规范排版”，在朱批案台左栏批量加入文件；排版过程始终留在 PartyPlatform 页面内，不打开系统外窗口。",
       "六类功能及二十五项能力使用安装包自带的本地引擎；无需安装或启动 WPS、Microsoft Office、LibreOffice 等其他软件。",
       "在中栏选择排版、替换、套红、命名、转换或 PDF 转 Word，在右栏设置原工具对应参数并查看结果。",
       "输出默认生成副本，不覆盖原文件；任务可取消，完成后可逐个下载或保存到所选目录。",
-      "文件不上传服务器；导出、取消、异常或空闲十五分钟后清理临时副本，不得使用 PartyOps 处理涉密文件。",
+      "文件不上传服务器；导出、取消、异常或空闲十五分钟后清理临时副本，不得使用 PartyPlatform 处理涉密文件。",
     ],
   },
   {
@@ -155,7 +155,7 @@ const guides = [
     steps: [
       "安装或启动失败时先复制界面显示的诊断摘要和日志位置；系统会分别检查可执行文件、运行库、SQLite、配置迁移、端口、权限、子进程输出和健康端点。",
       "出现 RUNTIME_PERMISSION_DENIED 时按摘要中的故障阶段处理：程序或配置不可读请用当前安装包执行修复安装；个人数据目录不可写请回到配置向导选择当前账号可写的本机固定磁盘目录。不要给 Everyone 完全控制，也不要删除原数据。",
-      "Windows 10/11 与 Windows 7 都会在配置前核验 PartyOps 主程序、向导、Python、UCRT、VC、SQLite、Tcl/Tk 和前端文件。RUNTIME_DEPENDENCY_MISSING 会直接列出缺失或哈希异常项，请用同一版本安装包执行修复安装，不要从第三方网站单独下载 DLL。",
+      "Windows 10/11 与 Windows 7 都会在配置前核验 PartyPlatform 主程序、向导、Python、UCRT、VC、SQLite、Tcl/Tk 和前端文件。RUNTIME_DEPENDENCY_MISSING 会直接列出缺失或哈希异常项，请用同一版本安装包执行修复安装，不要从第三方网站单独下载 DLL。",
       "Windows 7 必须使用文件名含 windows7_amd64 或 windows7_x86 的专用包。RUNTIME_PACKAGE_MISMATCH 表示装错包或 Python 运行时不一致；RUNTIME_SYSTEM_UPDATE_REQUIRED 表示缺少 KB2533623 或包含等效 Loader API 的汇总更新。",
       "配置切换后若看到 AUTOSTART_RESTORE_DEFERRED，表示登录自启动入口被策略或安全软件暂时阻止，个人/主机/协同模式和业务数据仍已保留；请使用同一版本安装包执行修复安装，或在当前用户 Startup 中恢复入口，不要反复切换模式。",
       "麒麟安装完成后由可观察验证服务继续启动检查，图形安装器不再长时间卡在 1%；验证失败应查看安装验证日志。",
@@ -173,7 +173,7 @@ const guides = [
       "检查更新失败时复制脱敏诊断；DNS、TLS、代理、超时、HTTP 状态、清单格式、签名、哈希和平台不匹配会分别显示。",
       "更新清单必须来自官网 /releases/update-v3.json，若返回网页 HTML、缺少必填字段或签名不匹配，客户端会拒绝使用。",
       "正式 Ed25519 私钥只通过本机文件路径交给发布工具；不得粘贴到聊天、写入源码、日志或安装包。",
-      "本机私钥与 PartyOps 内置信任公钥不匹配时，更新清单、安装包和模型发布会整体停止，不能用临时测试密钥替代。",
+      "本机私钥与 PartyPlatform 内置信任公钥不匹配时，更新清单、安装包和模型发布会整体停止，不能用临时测试密钥替代。",
       "小模型只有在许可、哈希和正式签名全部验证后才提供国内直链；大模型继续跳转官方来源。",
     ],
   },
@@ -185,7 +185,7 @@ const guides = [
       "内置组合按 DeepSeek 主编排、Needle 2 安全路由、BGE 中文检索、Qwen3 低配回退和规则引擎最终兜底运行；任一模型不可用都不能阻断核心业务。",
       "描述目标后先核对步骤、参数范围、证据、置信度和风险。模型只能选择固定工具，不能生成 SQL、Shell、文件路径或任意网络请求。",
       "逐项确认写入、归档、删除、权限、设备或网络步骤。确认只通过编排门禁，页面随后跳转到对应业务模块，由该模块再次校验权限、版本和实际参数后写入。",
-      "外部模型默认关闭；逐次同意时只发送最小脱敏候选作为第二意见，不能执行 PartyOps 操作。两个模型结论不一致时必须由用户选择。",
+      "外部模型默认关闭；逐次同意时只发送最小脱敏候选作为第二意见，不能执行 PartyPlatform 操作。两个模型结论不一致时必须由用户选择。",
       "检查草稿、引用和审计记录。预测日期、识别候选和建议内容不能当作已经发生的业务事实。",
     ],
   },
@@ -307,8 +307,8 @@ onMounted(loadEnablement);
 
     <section class="source-notice">
       <div><span>开源与许可</span><strong>查看并获取当前对应源代码</strong></div>
-      <p>PartyOps 使用 GPL-3.0 开源组件，并组合使用 AGPL-3.0 的 PyMuPDF。你可以审查、下载和改进与当前版本对应的完整源代码。</p>
-      <a href="https://github.com/linsky-dev/PartyOps" target="_blank" rel="noopener noreferrer">前往 GitHub 源代码仓库</a>
+      <p>PartyPlatform 使用 GPL-3.0 开源组件，并组合使用 AGPL-3.0 的 PyMuPDF。你可以审查、下载和改进与当前版本对应的完整源代码。</p>
+      <a href="https://github.com/linsky-dev/PartyPlatform" target="_blank" rel="noopener noreferrer">前往 GitHub 源代码仓库</a>
     </section>
   </div>
 </template>

@@ -226,7 +226,7 @@ def create_backup_archive(
     settings.attachments_dir.mkdir(parents=True, exist_ok=True)
     settings.archives_dir.mkdir(parents=True, exist_ok=True)
     stamp = beijing_now().strftime("%Y%m%d-%H%M%S-%f")
-    target_name = filename or f"PartyOps-{kind}-{stamp}.partyops-backup"
+    target_name = filename or f"PartyPlatform-{kind}-{stamp}.partyops-backup"
     if Path(target_name).name != target_name:
         raise RuntimeError("备份文件名包含目录或越界语义")
     output = settings.backups_dir / target_name
@@ -332,7 +332,7 @@ def create_backup(
     settings = get_settings()
     stamp = beijing_now().strftime("%Y%m%d-%H%M%S-%f")
     record = BackupRun(
-        filename=f"PartyOps-{kind}-{stamp}.partyops-backup",
+        filename=f"PartyPlatform-{kind}-{stamp}.partyops-backup",
         kind=kind,
         created_by=actor.id if actor else None,
     )

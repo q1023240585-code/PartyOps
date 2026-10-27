@@ -21,7 +21,7 @@ from .problems import ProblemException
 password_hasher = PasswordHasher()
 SESSION_COOKIE = "partyops_session"
 CSRF_COOKIE = "partyops_csrf"
-CSRF_HEADER = "X-PartyOps-CSRF"
+CSRF_HEADER = "X-PartyPlatform-CSRF"
 
 
 def hash_password(password: str) -> str:

@@ -91,11 +91,11 @@ def _executable_names() -> tuple[str, ...]:
         return ("partyops-document-formatter-host",)
     machine = platform.machine().lower()
     if machine in {"x86", "i386", "i686"} or sys.maxsize <= 2**32:
-        return ("PartyOps.DocumentFormatter.Host-x86.exe", "PartyOps.DocumentFormatter.Host.exe")
+        return ("PartyPlatform.DocumentFormatter.Host-x86.exe", "PartyPlatform.DocumentFormatter.Host.exe")
     return (
-        "PartyOps.DocumentFormatter.Host-x64.exe",
-        "PartyOps.DocumentFormatter.Host.exe",
-        "PartyOps.DocumentFormatter.Host-x86.exe",
+        "PartyPlatform.DocumentFormatter.Host-x64.exe",
+        "PartyPlatform.DocumentFormatter.Host.exe",
+        "PartyPlatform.DocumentFormatter.Host-x86.exe",
     )
 
 
@@ -176,7 +176,7 @@ def _check_windows_source_paths(source: Path, control: Path, output: Path, suffi
             "文档临时路径过长",
             f"WPS/Word 兼容工作路径需不超过 259 个 UTF-16 单位（当前 {longest}）。"
             "请将当前用户的 TEMP/TMP 设为同一磁盘内较短且可写的目录，"
-            "完全退出并重启 PartyOps 后再试；原文件未改变。",
+            "完全退出并重启 PartyPlatform 后再试；原文件未改变。",
         )
 
 
@@ -196,7 +196,7 @@ def run_source_host(
         raise OfficialFormatError(
             "SOURCE_FORMATTER_HOST_MISSING",
             "原排版引擎未就绪",
-            "安装包缺少与当前系统匹配的原排版源码宿主；为防止格式偏差，已停止处理。请修复安装 PartyOps。",
+            "安装包缺少与当前系统匹配的原排版源码宿主；为防止格式偏差，已停止处理。请修复安装 PartyPlatform。",
         )
 
     workspace = workspace.resolve()

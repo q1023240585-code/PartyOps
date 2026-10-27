@@ -83,7 +83,7 @@ INTENT_TOOLS: list[dict[str, Any]] = [
     },
     {
         "name": "navigation_find",
-        "description": "定位 PartyOps 中用户询问在哪里、怎么打开或如何进入的功能",
+        "description": "定位 PartyPlatform 中用户询问在哪里、怎么打开或如何进入的功能",
         "parameters": {
             "type": "object",
             "properties": {"target": {"type": "string"}},
@@ -218,7 +218,7 @@ class NeedleIntentRuntime:
     def complete(self, pack: AIModelPack, text: str, *, today: date) -> dict[str, Any]:
         with self._lock:
             library = self._load(pack)
-            system = f"date: {today.isoformat()}; locale: zh-CN; assistant: PartyOps".encode()
+            system = f"date: {today.isoformat()}; locale: zh-CN; assistant: PartyPlatform".encode()
             tools = json.dumps(
                 INTENT_TOOLS,
                 ensure_ascii=False,
@@ -337,7 +337,7 @@ def preview_intent_with_needle(
             "due_date": arguments.get("due_date"),
             "source_text": " ".join(text.strip().split()),
         },
-        "notice": "Needle 仅生成结构化预览；任何写操作都必须由用户确认，并由 PartyOps 服务端重新校验权限和参数。",
+        "notice": "Needle 仅生成结构化预览；任何写操作都必须由用户确认，并由 PartyPlatform 服务端重新校验权限和参数。",
     }
 
 

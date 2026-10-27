@@ -76,7 +76,7 @@ onBeforeUnmount(() => window.clearTimeout(pollTimer));
 <template>
   <main class="update-gate-page">
     <section class="update-card">
-      <p class="eyebrow">PartyOps · 设备更新</p>
+      <p class="eyebrow">PartyPlatform · 设备更新</p>
       <div class="heading">
         <div>
           <h1>协同电脑需要更新</h1>

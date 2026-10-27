@@ -50,7 +50,7 @@ export function uploadFormWithProgress<T>(
     const headers = new Headers(options.headers);
     const csrfToken = cookieValue("partyops_csrf");
     if (csrfToken && !headers.has("Authorization")) {
-      headers.set("X-PartyOps-CSRF", csrfToken);
+      headers.set("X-PartyPlatform-CSRF", csrfToken);
     }
     headers.forEach((value, key) => xhr.setRequestHeader(key, value));
     xhr.upload.addEventListener("progress", (event) => {
@@ -97,7 +97,7 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const method = (init.method || "GET").toUpperCase();
   if (!["GET", "HEAD", "OPTIONS"].includes(method) && !headers.has("Authorization")) {
     const csrfToken = cookieValue("partyops_csrf");
-    if (csrfToken) headers.set("X-PartyOps-CSRF", csrfToken);
+    if (csrfToken) headers.set("X-PartyPlatform-CSRF", csrfToken);
   }
   const response = await fetch(`/api/v1${path}`, {
     ...init,

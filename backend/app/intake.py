@@ -44,7 +44,7 @@ MAX_PDF_PAGES = 500
 MAX_PDF_OCR_PAGES = 20
 MAX_IMAGE_PIXELS = 50_000_000
 # Pillow 默认会按内容而不是扩展名加载大量插件。收件文件属于不可信输入，
-# 因此 PartyOps 只允许 OCR 实际用到的常见位图签名，避免把伪装成 PNG/JPEG
+# 因此 PartyPlatform 只允许 OCR 实际用到的常见位图签名，避免把伪装成 PNG/JPEG
 # 的 PSD、FITS、GD、字体或 PDF 交给无关解码器。
 _IMAGE_SIGNATURES = (
     b"\x89PNG\r\n\x1a\n",

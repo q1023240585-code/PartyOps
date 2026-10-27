@@ -288,7 +288,7 @@ function responseFor(path: string): unknown {
   if (path === "/tasks/my-work-summary") return { owned: 1, collaborating: 1, reviewing: 1, step_assigned: 1 };
   if (path.startsWith("/tasks?")) return { items: [task] };
   if (path.startsWith("/search?")) return { items: [task], total: 1 };
-  if (path === "/bootstrap/status") return { configured: true, mode: "host", app_name: "PartyOps", host: "127.0.0.1", port: 18765, service_url: "http://127.0.0.1:18765", lan_candidates: ["192.168.1.10"] };
+  if (path === "/bootstrap/status") return { configured: true, mode: "host", app_name: "PartyPlatform", host: "127.0.0.1", port: 18765, service_url: "http://127.0.0.1:18765", lan_candidates: ["192.168.1.10"] };
   if (path === "/saved-views") return [{ id: "view-1", name: "本周", view_type: "task", filters: {}, columns: [], pinned: true, owner_id: "user-1", version: 1, created_at: now, updated_at: now }];
   if (path.startsWith("/notifications")) return [notification];
   if (path === "/device/update-gate") {
@@ -367,7 +367,7 @@ async function mountView(component: Component, path = "/", admin = false) {
   if (admin) {
     const session = useSessionStore();
     session.user = { id: "user-1", username: "admin", display_name: "测试管理员", role: "admin", active: true, version: 1, created_at: now };
-    session.bootstrap = { configured: true, mode: "host", app_name: "PartyOps", host: "192.168.1.10", port: 18765, service_url: "http://192.168.1.10:18765", lan_candidates: ["192.168.1.10"] };
+    session.bootstrap = { configured: true, mode: "host", app_name: "PartyPlatform", host: "192.168.1.10", port: 18765, service_url: "http://192.168.1.10:18765", lan_candidates: ["192.168.1.10"] };
     session.runtimeContext = {
       node_mode: "host", platform: "windows", user_role: "admin", device_id: null, device_name: "主机",
       capabilities: ["admin.access", "fleet.manage", "workspace.local_share", "workspace.manage_host_roots", "updates.manage", "backups.manage", "ai.manage"],
@@ -1001,7 +1001,7 @@ describe("核心页面真实挂载", () => {
 
   it("登录页覆盖表单校验、首次管理员创建和既有账号登录", async () => {
     apiMocks.get.mockImplementation(async (path) => {
-      if (path === "/bootstrap/status") return { configured: true, mode: "host", app_name: "PartyOps", host: "192.168.1.10", port: 18765, service_url: "http://192.168.1.10:18765", lan_candidates: ["192.168.1.10"] };
+      if (path === "/bootstrap/status") return { configured: true, mode: "host", app_name: "PartyPlatform", host: "192.168.1.10", port: 18765, service_url: "http://192.168.1.10:18765", lan_candidates: ["192.168.1.10"] };
       if (path === "/auth/me") throw new Error("未登录");
       if (path === "/runtime/context") return { node_mode: "host", platform: "windows", user_role: "admin", device_id: null, device_name: "主机", capabilities: ["admin.access"] };
       return responseFor(path);
@@ -2778,7 +2778,7 @@ describe("核心页面真实挂载", () => {
       if (path === "/admin/updates/online/prepare") return { id: "package-online", version: "1.4.3-rc.3" };
       return {};
     });
-    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("PartyOps 运行正常", { status: 200 }));
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("PartyPlatform 运行正常", { status: 200 }));
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: vi.fn(async () => undefined) } });
     const wrapper = await mountView(SettingsView, "/settings", true);
     const state = setupState(wrapper);
@@ -3943,7 +3943,7 @@ describe("核心页面真实挂载", () => {
     apiMocks.post.mockRejectedValueOnce("接收转换失败");
     await runAction(state, "attachReceivedFile");
 
-    session.bootstrap = { configured: true, mode: "host", app_name: "PartyOps", host: "127.0.0.1", port: 18765, service_url: "https://127.0.0.1:18765", lan_candidates: ["192.168.1.10"] };
+    session.bootstrap = { configured: true, mode: "host", app_name: "PartyPlatform", host: "127.0.0.1", port: 18765, service_url: "https://127.0.0.1:18765", lan_candidates: ["192.168.1.10"] };
     await runAction(state, "openEnrollment");
     expect((state.enrollmentForm as { advertised_host: string }).advertised_host).toBe("192.168.1.10");
     apiMocks.get.mockRejectedValueOnce("网络信息失败");
@@ -3963,7 +3963,7 @@ describe("核心页面真实挂载", () => {
     const state = setupState(wrapper);
     const session = state.session as ReturnType<typeof useSessionStore>;
     session.bootstrap = {
-      configured: true, mode: "host", app_name: "PartyOps", host: "192.168.1.10", port: 18765,
+      configured: true, mode: "host", app_name: "PartyPlatform", host: "192.168.1.10", port: 18765,
       service_url: "https://192.168.1.10:18765", lan_candidates: ["192.168.1.10", "192.168.1.11"],
     };
     Object.assign(state.enrollmentForm as object, { name: "测试协同机", advertised_host: "192.168.1.10" });

@@ -1329,7 +1329,7 @@ def export_business_document(
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
-    filename = "".join(char if char not in '\\/:*?\"<>|' else "_" for char in item.title)[:80] or "PartyOps文档"
+    filename = "".join(char if char not in '\\/:*?\"<>|' else "_" for char in item.title)[:80] or "PartyPlatform文档"
     write_audit(db, user, "business_document.export", "business_document", item.id, {"version": item.version}, client_ip(request))
     db.commit()
     return StreamingResponse(buffer, media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document", headers={"Content-Disposition": f"attachment; filename*=UTF-8''{quote(filename)}.docx", "Cache-Control": "no-store"})

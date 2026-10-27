@@ -278,7 +278,7 @@ def create_local_share_action(
             409,
             "CLIENT_DEVICE_REQUIRED",
             "请在协同电脑上操作",
-            "共享本机文件夹必须从已入网协同电脑的 PartyOps 页面发起。",
+            "共享本机文件夹必须从已入网协同电脑的 PartyPlatform 页面发起。",
         )
     if (
         not device.active
@@ -1367,7 +1367,7 @@ def resolve_local_open_token(
         )
     db.commit()
     response = PlainTextResponse(str(path), media_type="text/plain; charset=utf-8")
-    response.headers["X-PartyOps-Open-Grant-Id"] = grant.id
+    response.headers["X-PartyPlatform-Open-Grant-Id"] = grant.id
     return response
 
 

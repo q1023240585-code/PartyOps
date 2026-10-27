@@ -174,7 +174,7 @@ def _check_windows_elevation_result(result: subprocess.CompletedProcess[str], ac
     if _windows_policy_blocked(detail, result.returncode):
         raise HostStartupError(
             ADMIN_POLICY_BLOCKED,
-            f"单位策略阻止 PartyOps 完成{action}。请联系管理员允许 PartyOpsWizard.exe、PartyOpsService.exe 和 PartyOpsUpdater.exe 后在原数据目录重试；只在本机使用可选择“个人使用”。",
+            f"单位策略阻止 PartyPlatform 完成{action}。请联系管理员允许 PartyPlatformWizard.exe、PartyPlatformService.exe 和 PartyPlatformUpdater.exe 后在原数据目录重试；只在本机使用可选择“个人使用”。",
             detail=detail,
         )
     if result.returncode == 1223 and "PARTYOPS_ELEVATION_START_FAILED" in detail:
@@ -186,9 +186,9 @@ def _check_windows_elevation_result(result: subprocess.CompletedProcess[str], ac
 
 def config_root() -> Path:
     if os.name == "nt":
-        root = Path(os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local")) / "PartyOps"
+        root = Path(os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local")) / "PartyPlatform"
     elif sys.platform == "darwin":
-        root = Path.home() / "Library" / "Application Support" / "PartyOps" / "Config"
+        root = Path.home() / "Library" / "Application Support" / "PartyPlatform" / "Config"
     else:
         root = Path(os.getenv("XDG_CONFIG_HOME", Path.home() / ".config")) / "partyops"
     root.mkdir(parents=True, exist_ok=True)
@@ -232,7 +232,7 @@ def _candidate_windows_runtime_roots() -> tuple[Path, ...]:
     marker_paths = (
         config_root() / "install-root.txt",
         Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-        / "PartyOps"
+        / "PartyPlatform"
         / "install-root.txt",
     )
     for marker in marker_paths:
@@ -245,12 +245,12 @@ def _candidate_windows_runtime_roots() -> tuple[Path, ...]:
 def installer_default_data_dir() -> Path:
     """读取安装器预选目录；损坏或相对路径不会影响向导启动。"""
 
-    control_root = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps"
-    fallback = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps-Data"
+    control_root = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform"
+    fallback = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform-Data"
     if sys.platform == "darwin":
-        return Path.home() / "Library" / "Application Support" / "PartyOps" / "HostData"
+        return Path.home() / "Library" / "Application Support" / "PartyPlatform" / "HostData"
     if os.name != "nt":
-        return Path.home() / "PartyOps-数据"
+        return Path.home() / "PartyPlatform-数据"
     marker = control_root / "install-data-dir.txt"
     try:
         raw = marker.read_text(encoding="utf-8").strip()
@@ -346,9 +346,9 @@ def personal_default_data_dir() -> Path:
 
     if os.name == "nt":
         base = Path(os.getenv("LOCALAPPDATA", Path.home() / "AppData" / "Local"))
-        return base / "PartyOps-个人数据"
+        return base / "PartyPlatform-个人数据"
     if sys.platform == "darwin":
-        return Path.home() / "Library" / "Application Support" / "PartyOps" / "PersonalData"
+        return Path.home() / "Library" / "Application Support" / "PartyPlatform" / "PersonalData"
     return (
         Path(os.getenv("XDG_DATA_HOME", Path.home() / ".local" / "share"))
         / "partyops-personal"
@@ -367,16 +367,16 @@ def _write_data_root_marker(data_dir: Path, scope: str) -> None:
     """写入卸载边界标记；卸载器绝不凭一个配置路径直接递归删除。"""
 
     if scope not in {"host", "personal", "client"}:
-        raise ValueError("PartyOps 数据目录范围无效")
+        raise ValueError("PartyPlatform 数据目录范围无效")
     marker_path = data_dir / ".partyops-data-root.json"
     scopes = {scope}
     if marker_path.is_symlink():
-        raise ValueError("现有 PartyOps 数据目录标记是链接，请更换空目录")
+        raise ValueError("现有 PartyPlatform 数据目录标记是链接，请更换空目录")
     if marker_path.is_file():
         try:
             previous = json.loads(marker_path.read_text(encoding="utf-8"))
             if not isinstance(previous, dict) or (
-                previous.get("product") != "PartyOps"
+                previous.get("product") != "PartyPlatform"
                 or previous.get("app_id") != "1C8EFC63-CAFC-46EF-A5E3-D3D119B5BB3A"
             ):
                 raise ValueError("所有权不匹配")
@@ -394,10 +394,10 @@ def _write_data_root_marker(data_dir: Path, scope: str) -> None:
             scopes.update(normalized)
         except (OSError, ValueError, TypeError, json.JSONDecodeError):
             # 损坏或伪造的旧标记绝不能被“修复”为受信标记。
-            raise ValueError("现有 PartyOps 数据目录标记损坏，请更换空目录") from None
+            raise ValueError("现有 PartyPlatform 数据目录标记损坏，请更换空目录") from None
     marker = {
         "format_version": 2,
-        "product": "PartyOps",
+        "product": "PartyPlatform",
         "app_id": "1C8EFC63-CAFC-46EF-A5E3-D3D119B5BB3A",
         "scopes": sorted(scopes),
     }
@@ -456,7 +456,7 @@ def assert_windows_service_data_path_security(
 ) -> None:
     """核验 SYSTEM 服务最终数据目录的所有者和写入权限。
 
-    用户可以把 PartyOps 放在任意本地固定磁盘的自建父目录中；这些父目录常会
+    用户可以把 PartyPlatform 放在任意本地固定磁盘的自建父目录中；这些父目录常会
     继承 ``Authenticated Users: Modify``，不能因此误判为数据目录本身不可用。
     真正由服务使用的最终目录必须关闭这类写权限，并持续拒绝重解析点。
     """
@@ -575,10 +575,10 @@ def _validate_windows_data_dir(data_dir: Path, *, check_access: bool = True) -> 
     """Windows 正式模式：允许用户自定义数据目录，但拒绝系统关键目录。
 
     数据目录承载业务数据库、备份与证书。Windows 主机服务以 SYSTEM 运行，
-    只要不是系统关键目录即可；推荐放在数据盘（如 D:\\PartyOps-数据）。
+    只要不是系统关键目录即可；推荐放在数据盘（如 D:\\PartyPlatform-数据）。
     """
     if not str(data_dir).strip():
-        data_dir = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps-Data"
+        data_dir = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform-Data"
     expanded = data_dir.expanduser()
     if str(expanded).startswith("\\\\"):
         raise ValueError("主机数据目录不能使用网络共享路径，请选择本机固定磁盘")
@@ -589,7 +589,7 @@ def _validate_windows_data_dir(data_dir: Path, *, check_access: bool = True) -> 
     root = Path(resolved.anchor)
     if resolved == root:
         raise ValueError(
-            "数据目录不能是磁盘根目录，请选择具体文件夹，例如 D:\\PartyOps-数据"
+            "数据目录不能是磁盘根目录，请选择具体文件夹，例如 D:\\PartyPlatform-数据"
         )
     system_markers = []
     for env_name, fallback in (
@@ -605,7 +605,7 @@ def _validate_windows_data_dir(data_dir: Path, *, check_access: bool = True) -> 
     for marker in system_markers:
         if resolved == marker or marker in resolved.parents:
             raise ValueError(
-                "数据目录不能放在系统目录中，请选择普通数据盘目录，例如 D:\\PartyOps-数据"
+                "数据目录不能放在系统目录中，请选择普通数据盘目录，例如 D:\\PartyPlatform-数据"
             )
     reserved_roots = []
     for env_name in ("PROGRAMDATA", "USERPROFILE"):
@@ -623,7 +623,7 @@ def _validate_windows_data_dir(data_dir: Path, *, check_access: bool = True) -> 
             pass
     if resolved in reserved_roots:
         raise ValueError(
-            "数据目录不能直接使用系统共享目录或用户主目录，请在其中选择 PartyOps 专用子目录"
+            "数据目录不能直接使用系统共享目录或用户主目录，请在其中选择 PartyPlatform 专用子目录"
         )
     user_profile = os.getenv("USERPROFILE")
     if user_profile:
@@ -656,7 +656,7 @@ def _validate_windows_data_dir(data_dir: Path, *, check_access: bool = True) -> 
         if shutil.disk_usage(resolved).free < 2 * 1024**3:
             raise ValueError("所选数据目录可用空间不足 2GB，请清理空间或更换目录")
         probe = resolved / f".partyops-write-test-{secrets.token_hex(8)}"
-        probe.write_bytes(b"PartyOps")
+        probe.write_bytes(b"PartyPlatform")
         probe.unlink()
     except ValueError:
         raise
@@ -697,7 +697,7 @@ def _validate_personal_data_dir(data_dir: Path) -> Path:
         if shutil.disk_usage(resolved).free < 2 * 1024**3:
             raise ValueError("所选个人数据目录可用空间不足 2GB")
         probe = resolved / f".partyops-write-test-{secrets.token_hex(8)}"
-        probe.write_bytes(b"PartyOps")
+        probe.write_bytes(b"PartyPlatform")
         probe.unlink()
     except ValueError:
         raise
@@ -866,7 +866,7 @@ def _protect_windows_control_config(config_path: Path) -> None:
             creationflags=subprocess.CREATE_NO_WINDOW,
         )
         if result.returncode != 0:
-            raise ValueError("无法保护 PartyOps 系统配置权限，主机配置未完成")
+            raise ValueError("无法保护 PartyPlatform 系统配置权限，主机配置未完成")
 
 
 def _windows_service_running(service: str) -> bool:
@@ -944,7 +944,7 @@ def _stop_windows_service_for_data_migration(timeout: float = 45.0) -> dict[str,
 
     if os.name != "nt" or os.getenv("PARTYOPS_ENVIRONMENT") == "test":
         return {}
-    services = ("PartyOpsUpdateService", "PartyOpsHost")
+    services = ("PartyPlatformUpdateService", "PartyPlatformHost")
     states = {service: _windows_service_running(service) for service in services}
     for service in services:
         subprocess.run(
@@ -991,7 +991,7 @@ def _restore_windows_services_after_data_migration(states: dict[str, bool]) -> N
 
     if os.name != "nt" or os.getenv("PARTYOPS_ENVIRONMENT") == "test":
         return
-    for service in ("PartyOpsUpdateService", "PartyOpsHost"):
+    for service in ("PartyPlatformUpdateService", "PartyPlatformHost"):
         if not states.get(service):
             continue
         subprocess.run(
@@ -1012,7 +1012,7 @@ def _restore_windows_services_after_mode_switch(
     if os.name != "nt" or os.getenv("PARTYOPS_ENVIRONMENT") == "test":
         return
     failures: list[str] = []
-    for service in ("PartyOpsUpdateService", "PartyOpsHost"):
+    for service in ("PartyPlatformUpdateService", "PartyPlatformHost"):
         if not states.get(service):
             continue
         try:
@@ -1053,7 +1053,7 @@ def _windows_privileged_update_lock_path() -> Path:
 
     return (
         Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-        / "PartyOps-System"
+        / "PartyPlatform-System"
         / "update.lock"
     )
 
@@ -1065,7 +1065,7 @@ def _acquire_windows_data_migration_lock() -> Path:
 
     lock_path = _windows_privileged_update_lock_path()
     if not _acquire_update_lock(lock_path):
-        raise ValueError("检测到正在进行或待恢复的 PartyOps 更新事务，数据目录尚未迁移")
+        raise ValueError("检测到正在进行或待恢复的 PartyPlatform 更新事务，数据目录尚未迁移")
     return lock_path
 
 
@@ -1085,7 +1085,7 @@ def _windows_system_host_role_active() -> bool:
 
     if os.name != "nt" or os.getenv("PARTYOPS_ENVIRONMENT") == "test":
         return False
-    root = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps"
+    root = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform"
     mode_path = root / "mode.json"
     if mode_path.is_file():
         try:
@@ -1102,7 +1102,7 @@ def _windows_host_switch_snapshot_path() -> Path:
 
     return (
         Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-        / "PartyOps-System"
+        / "PartyPlatform-System"
         / "host-switch-rollback.json"
     )
 
@@ -1112,7 +1112,7 @@ def _windows_host_switch_pending_path() -> Path:
 
     return (
         Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-        / "PartyOps"
+        / "PartyPlatform"
         / "host-switch-pending.json"
     )
 
@@ -1176,7 +1176,7 @@ def _validated_windows_host_switch_snapshot(
         payload.get("services"), dict
     ):
         raise ValueError("[MODE_SWITCH_SNAPSHOT_INVALID] 主机模式回滚记录格式无效")
-    allowed_services = {"PartyOpsHost", "PartyOpsUpdateService"}
+    allowed_services = {"PartyPlatformHost", "PartyPlatformUpdateService"}
     services = payload["services"]
     if set(services) != allowed_services:
         raise ValueError("[MODE_SWITCH_SNAPSHOT_INVALID] 主机模式回滚服务清单无效")
@@ -1207,7 +1207,7 @@ def _validated_windows_host_switch_snapshot(
         allowed_modes = {"host", "personal", "client"} if kind == "configure_host" else {"host"}
         if not isinstance(parsed_mode, dict) or parsed_mode.get("mode") not in allowed_modes:
             raise ValueError("[MODE_SWITCH_SNAPSHOT_INVALID] 回滚记录不是主机模式")
-    for service in ("PartyOpsHost", "PartyOpsUpdateService"):
+    for service in ("PartyPlatformHost", "PartyPlatformUpdateService"):
         state = services[service]
         if not isinstance(state, dict):
             raise ValueError("[MODE_SWITCH_SNAPSHOT_INVALID] 服务回滚状态无效")
@@ -1226,7 +1226,7 @@ def _validated_windows_host_switch_snapshot(
 
 
 def _host_configuration_paths(data_dir: Path) -> dict[str, Path]:
-    control_root = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps"
+    control_root = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform"
     return {
         "host_env": control_root / "partyops.env",
         "system_mode": control_root / "mode.json",
@@ -1263,7 +1263,7 @@ def _reject_nonempty_personal_host_directory(data_dir: Path, *, current_personal
     marker_path = data_dir / ".partyops-data-root.json"
     if marker_path.is_file():
         marker = json.loads(marker_path.read_text(encoding="utf-8"))
-        if isinstance(marker, dict) and marker.get("product") == "PartyOps" and marker.get("app_id") == "1C8EFC63-CAFC-46EF-A5E3-D3D119B5BB3A":
+        if isinstance(marker, dict) and marker.get("product") == "PartyPlatform" and marker.get("app_id") == "1C8EFC63-CAFC-46EF-A5E3-D3D119B5BB3A":
             scopes = marker.get("scopes", [marker.get("scope")])
             if isinstance(scopes, list) and "personal" in scopes and "host" not in scopes:
                 current_personal = True
@@ -1294,7 +1294,7 @@ def _host_configuration_mutex() -> Iterator[None]:
         raise ctypes.WinError(ctypes.get_last_error())
     attributes = SecurityAttributes(ctypes.sizeof(SecurityAttributes), descriptor, False)
     try:
-        handle = kernel.CreateMutexW(ctypes.byref(attributes), False, "Global\\PartyOps.HostConfiguration")
+        handle = kernel.CreateMutexW(ctypes.byref(attributes), False, "Global\\PartyPlatform.HostConfiguration")
     finally:
         kernel.LocalFree(descriptor)
     if not handle:
@@ -1369,7 +1369,7 @@ def _configure_windows_host_privileged_locked(host: str, port: int, data_dir: Pa
     resolved = _validate_windows_data_dir(raw_data_dir)
     paths = _host_configuration_paths(resolved)
     files = {key: path.read_text(encoding="utf-8") if path.is_file() else None for key, path in paths.items()}
-    services = ("PartyOpsHost", "PartyOpsUpdateService")
+    services = ("PartyPlatformHost", "PartyPlatformUpdateService")
     _write_windows_host_switch_snapshot(
         transaction_id=transaction_id,
         previous_mode=files["system_mode"],
@@ -1477,7 +1477,7 @@ def _restore_windows_host_switch_privileged_locked(expected_transaction_id: str 
         if payload.get("kind") == "configure_host" else None
     )
     mode_path = (
-        Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps" / "mode.json"
+        Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform" / "mode.json"
     )
     try:
         if configuration_files is not None:
@@ -1491,7 +1491,7 @@ def _restore_windows_host_switch_privileged_locked(expected_transaction_id: str 
             mode_path.unlink(missing_ok=True)
         else:
             _write_private(mode_path, previous_mode)
-        for service in ("PartyOpsHost", "PartyOpsUpdateService"):
+        for service in ("PartyPlatformHost", "PartyPlatformUpdateService"):
             state = services[service]
             raw_start = state.get("start_type")
             normalized_start = (
@@ -1506,7 +1506,7 @@ def _restore_windows_host_switch_privileged_locked(expected_transaction_id: str 
         _restore_windows_services_after_mode_switch(
             {
                 service: bool(services[service].get("running"))
-                for service in ("PartyOpsHost", "PartyOpsUpdateService")
+                for service in ("PartyPlatformHost", "PartyPlatformUpdateService")
             }
         )
     except Exception as exc:
@@ -1566,7 +1566,7 @@ def _run_windows_host_switch_helper(argument: str, transaction_id: str = "") -> 
         else:
             raise ValueError("模式切换管理员动作无效")
         return
-    wizard = _executable("PartyOpsWizard")
+    wizard = _executable("PartyPlatformWizard")
     arguments = [argument]
     if transaction_id:
         arguments += ["--mode-switch-transaction", transaction_id]
@@ -1585,17 +1585,17 @@ def _deactivate_windows_host_services_privileged_locked(transaction_id: str = ""
         raise ValueError("模式切换事务编号无效")
     start_configs = {
         service: _windows_service_start_config(service)
-        for service in ("PartyOpsHost", "PartyOpsUpdateService")
+        for service in ("PartyPlatformHost", "PartyPlatformUpdateService")
     }
     mode_path = (
-        Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps" / "mode.json"
+        Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform" / "mode.json"
     )
     previous_mode = (
         mode_path.read_text(encoding="utf-8") if mode_path.is_file() else None
     )
     states = {
         service: _windows_service_running(service)
-        for service in ("PartyOpsHost", "PartyOpsUpdateService")
+        for service in ("PartyPlatformHost", "PartyPlatformUpdateService")
     }
     _write_windows_host_switch_snapshot(
         transaction_id=transaction_id,
@@ -1605,7 +1605,7 @@ def _deactivate_windows_host_services_privileged_locked(transaction_id: str = ""
     )
     try:
         _stop_windows_service_for_data_migration()
-        for service in ("PartyOpsHost", "PartyOpsUpdateService"):
+        for service in ("PartyPlatformHost", "PartyPlatformUpdateService"):
             result = subprocess.run(
                 ["sc.exe", "config", service, "start=", "demand"],
                 check=False,
@@ -2012,7 +2012,7 @@ def _loopback_listener_ports_for_pid(pid: int) -> set[int]:
 
 
 def _personal_health_version(port: int) -> str:
-    """只接受完整 PartyOps 个人模式健康契约，并返回实际版本。"""
+    """只接受完整 PartyPlatform 个人模式健康契约，并返回实际版本。"""
 
     try:
         request = urllib.request.Request(
@@ -2079,7 +2079,7 @@ def _write_personal_process_marker(
 
 
 def _listener_pid_for_loopback_port(port: int) -> int | None:
-    """尽力定位回环监听 PID；只用于恢复旧版 PartyOps 标记，不作为通用杀进程依据。"""
+    """尽力定位回环监听 PID；只用于恢复旧版 PartyPlatform 标记，不作为通用杀进程依据。"""
 
     try:
         if os.name == "nt":
@@ -2139,7 +2139,7 @@ def _process_executable_matches(pid: int, expected: Path) -> bool:
 
 
 def _personal_process_is_owned(data_dir: Path) -> bool:
-    """确认监听进程仍是当前安装记录的个人 PartyOps，不能只信公开健康页。"""
+    """确认监听进程仍是当前安装记录的个人 PartyPlatform，不能只信公开健康页。"""
 
     marker = _personal_process_marker(data_dir)
     if not marker.is_file() or marker.is_symlink():
@@ -2180,7 +2180,7 @@ def _stop_personal_process_for_data_migration(data_dir: Path, port: int) -> bool
         try:
             with socket.create_connection(("127.0.0.1", port), timeout=0.3):
                 raise ValueError(
-                    "旧个人模式仍在运行但缺少受控进程标记。请先在托盘退出 PartyOps，"
+                    "旧个人模式仍在运行但缺少受控进程标记。请先在托盘退出 PartyPlatform，"
                     "再重新选择数据目录。"
                 )
         except (ConnectionRefusedError, TimeoutError, OSError):
@@ -2191,7 +2191,7 @@ def _stop_personal_process_for_data_migration(data_dir: Path, port: int) -> bool
         recorded = Path(str(payload.get("executable", ""))).resolve()
         expected = _executable("partyops").resolve()
     except (OSError, ValueError, TypeError, json.JSONDecodeError):
-        raise ValueError("个人模式进程标记损坏，请先退出 PartyOps 后重试") from None
+        raise ValueError("个人模式进程标记损坏，请先退出 PartyPlatform 后重试") from None
     cross_version = recorded != expected
     if not _process_executable_matches(pid, recorded):
         marker.unlink(missing_ok=True)
@@ -2326,13 +2326,13 @@ def write_host_config(
         os.name == "nt" and os.getenv("PARTYOPS_ENVIRONMENT") != "test"
     )
     if windows_system_mode:
-        # Windows 正式安装：允许用户自定义数据目录（默认 ProgramData\PartyOps-Data），
+        # Windows 正式安装：允许用户自定义数据目录（默认 ProgramData\PartyPlatform-Data），
         # 不再强制固定到系统盘。
         resolved_data_dir = _validate_windows_data_dir(data_dir)
     else:
         resolved_data_dir = data_dir.expanduser().resolve()
     path = (
-        Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps" / "partyops.env"
+        Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform" / "partyops.env"
         if windows_system_mode
         else config_root() / "partyops.env"
     )
@@ -2634,19 +2634,19 @@ def clear_windows_client_autostart() -> None:
             0,
             winreg.KEY_SET_VALUE,
         ) as key:
-            winreg.DeleteValue(key, "PartyOpsAgent")
+            winreg.DeleteValue(key, "PartyPlatformAgent")
     except FileNotFoundError:
         return
 
 
 def _windows_personal_startup_file() -> Path:
-    """返回当前用户 Startup 中只归 PartyOps 管理的降级启动脚本。"""
+    """返回当前用户 Startup 中只归 PartyPlatform 管理的降级启动脚本。"""
 
     appdata = Path(
         os.getenv("APPDATA")
         or (Path.home() / "AppData" / "Roaming")
     )
-    return appdata / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup" / "PartyOpsPersonal.cmd"
+    return appdata / "Microsoft" / "Windows" / "Start Menu" / "Programs" / "Startup" / "PartyPlatformPersonal.cmd"
 
 
 def _record_windows_autostart_warning(message: str) -> None:
@@ -2666,7 +2666,7 @@ def install_windows_personal_autostart() -> str | None:
         return None
     import winreg
 
-    command = f'"{_executable("PartyOpsLauncher")}" --background'
+    command = f'"{_executable("PartyPlatformLauncher")}" --background'
     fallback = _windows_personal_startup_file()
     try:
         with winreg.CreateKeyEx(
@@ -2675,7 +2675,7 @@ def install_windows_personal_autostart() -> str | None:
             0,
             winreg.KEY_SET_VALUE,
         ) as key:
-            winreg.SetValueEx(key, "PartyOpsPersonal", 0, winreg.REG_SZ, command)
+            winreg.SetValueEx(key, "PartyPlatformPersonal", 0, winreg.REG_SZ, command)
         fallback.unlink(missing_ok=True)
         return None
     except OSError as registry_error:
@@ -2715,7 +2715,7 @@ def clear_windows_personal_autostart() -> None:
             0,
             winreg.KEY_SET_VALUE,
         ) as key:
-            winreg.DeleteValue(key, "PartyOpsPersonal")
+            winreg.DeleteValue(key, "PartyPlatformPersonal")
     except FileNotFoundError:
         pass
     except OSError as exc:
@@ -2738,8 +2738,8 @@ def _enable_windows_host_service_autostart() -> None:
     if os.name != "nt" or os.getenv("PARTYOPS_ENVIRONMENT") == "test":
         return
     for service, label in (
-        ("PartyOpsHost", "主机服务"),
-        ("PartyOpsUpdateService", "更新服务"),
+        ("PartyPlatformHost", "主机服务"),
+        ("PartyPlatformUpdateService", "更新服务"),
     ):
         result = subprocess.run(
             ["sc.exe", "config", service, "start=", "auto"],
@@ -2753,7 +2753,7 @@ def _enable_windows_host_service_autostart() -> None:
             detail = (result.stdout + result.stderr).strip()[-2000:]
             raise HostStartupError(
                 SERVICE_MISSING,
-                f"无法把 PartyOps {label}设为随 Windows 启动，请重新运行安装器完成修复安装。",
+                f"无法把 PartyPlatform {label}设为随 Windows 启动，请重新运行安装器完成修复安装。",
                 detail=detail,
             )
 
@@ -2800,7 +2800,7 @@ def host_configuration_transaction(host: str, port: int, data_dir: Path) -> Iter
             ]
             if current_personal_dir is not None:
                 arguments += ["--personal-data-dir", str(current_personal_dir)]
-            result = run_elevated(str(_executable("PartyOpsWizard")), arguments)
+            result = run_elevated(str(_executable("PartyPlatformWizard")), arguments)
             # 只豁免明确未启动，或固定的个人原地转换前置拒绝；普通错误/超时均不能猜测。
             detail = result.stdout + "\n" + result.stderr
             helper_confirmed_no_prepare = (
@@ -2812,7 +2812,7 @@ def host_configuration_transaction(host: str, port: int, data_dir: Path) -> Iter
                 and "PARTYOPS_ELEVATION_CHILD_EXIT" in result.stdout
             )
             _check_windows_elevation_result(result, "主机配置")
-            path = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyOps" / "partyops.env"
+            path = Path(os.getenv("PROGRAMDATA", "C:/ProgramData")) / "PartyPlatform" / "partyops.env"
             if not path.is_file():
                 raise ValueError("Windows 已返回授权结果，但主机配置文件未生成，请重试")
         host_prepared = True
@@ -3181,7 +3181,7 @@ def prepare_linux_launch_environment(
 ) -> Path:
     """生成只含受支持键的一次性 Shell 环境文件。
 
-    该文件由 PartyOps 自己重新引用，原始个人/主机配置从此不会被 Bash
+    该文件由 PartyPlatform 自己重新引用，原始个人/主机配置从此不会被 Bash
     ``source``。所有错误只报告键名和行号，不把令牌或路径内容写入日志。
     """
 
@@ -3272,7 +3272,7 @@ def _executable(name: str) -> Path:
     roots = _candidate_windows_runtime_roots()
     current_root = roots[0]
     for root in roots:
-        candidates = [root / name, root / "PartyOps" / name]
+        candidates = [root / name, root / "PartyPlatform" / name]
         if sys.platform == "win32":
             candidates = [path.with_suffix(".exe") for path in candidates] + candidates
         for path in candidates:
@@ -3291,7 +3291,7 @@ def _marked_runtime_file_is_trusted(root: Path, candidate: Path) -> bool:
 
     try:
         manifest = _read_small_json(root / "release-manifest.json")
-        if manifest.get("product") != "PartyOps":
+        if manifest.get("product") != "PartyPlatform":
             return False
         relative = candidate.resolve().relative_to(root.resolve()).as_posix()
         files = manifest.get("files")
@@ -3394,7 +3394,7 @@ def _preflight_personal_runtime_access(
     executable = _executable("partyops")
     stages = (
         ("个人模式配置", config_path),
-        ("PartyOps 主程序", executable),
+        ("PartyPlatform 主程序", executable),
     )
     for stage, path in stages:
         try:
@@ -3403,7 +3403,7 @@ def _preflight_personal_runtime_access(
             with path.open("rb") as stream:
                 if not stream.read(1):
                     raise PermissionError(f"{stage}为空或不可读")
-            if stage == "PartyOps 主程序" and not os.access(path, os.X_OK):
+            if stage == "PartyPlatform 主程序" and not os.access(path, os.X_OK):
                 raise PermissionError(f"{stage}不可执行")
         except OSError as exc:
             raise _personal_preflight_io_error(stage, path, exc) from exc
@@ -3415,7 +3415,7 @@ def _preflight_personal_runtime_access(
         data_dir.mkdir(parents=True, exist_ok=True)
         _assert_path_components_have_no_reparse_points(data_dir)
         # 覆盖创建、写入、原子替换、删除和日志追加五种启动期权限。
-        _write_private(temporary, "PartyOps personal runtime permission probe\n")
+        _write_private(temporary, "PartyPlatform personal runtime permission probe\n")
         temporary.replace(committed)
         committed.unlink()
         with log_path.open("ab"):
@@ -3581,7 +3581,7 @@ def _preflight_windows_runtime_dependencies(
     rc.4 仅对 Win7 做文件级核验，Win10/11 会在架构检查后直接返回。因此
     通用包中的 Python、SQLite、UCRT 或 VC DLL 被隔离/混装时，只能等到子进程
     退出后笼统报告依赖缺失。这里统一以冻结发布清单为准逐项核验，不从网络
-    下载依赖，也不以系统全局运行库掩盖不完整的 PartyOps 安装目录。
+    下载依赖，也不以系统全局运行库掩盖不完整的 PartyPlatform 安装目录。
     """
 
     if not force and (sys.platform != "win32" or not getattr(sys, "frozen", False)):
@@ -3692,9 +3692,9 @@ def _preflight_windows_runtime_dependencies(
         )
 
     required_paths = {
-        "PartyOps.exe",
-        "PartyOpsLauncher.exe",
-        "PartyOpsWizard.exe",
+        "PartyPlatform.exe",
+        "PartyPlatformLauncher.exe",
+        "PartyPlatformWizard.exe",
         "sqlite3.dll",
         "_internal/sqlite3.dll",
         "_internal/_sqlite3.pyd",
@@ -3764,7 +3764,7 @@ def _preflight_windows_runtime_dependencies(
             (
                 "Win7 运行时不完整或已被安全软件隔离，请使用同一专用安装包执行修复安装。"
                 if is_win7
-                else "PartyOps 运行时不完整、被安全软件隔离或混入旧文件，请使用同一版本安装包执行修复安装。"
+                else "PartyPlatform 运行时不完整、被安全软件隔离或混入旧文件，请使用同一版本安装包执行修复安装。"
             ),
             detail="；".join(parts),
         )
@@ -3797,7 +3797,7 @@ def install_internal_ca(ca_path: Path) -> None:
         try:
             resolved_ca.relative_to(trusted_root)
         except ValueError as exc:
-            raise ValueError("macOS 只允许信任 PartyOps 受控配置目录中的内部 CA") from exc
+            raise ValueError("macOS 只允许信任 PartyPlatform 受控配置目录中的内部 CA") from exc
         keychain = Path.home() / "Library" / "Keychains" / "login.keychain-db"
         result = subprocess.run(
             [
@@ -3818,7 +3818,7 @@ def install_internal_ca(ca_path: Path) -> None:
         if result.returncode != 0:
             detail = (result.stdout + result.stderr).strip()[-1000:]
             raise ValueError(
-                "PartyOps 内部证书未能写入当前用户钥匙串。请解锁登录钥匙串后重试；"
+                "PartyPlatform 内部证书未能写入当前用户钥匙串。请解锁登录钥匙串后重试；"
                 f"系统诊断：{detail or result.returncode}"
             )
         return
@@ -3951,7 +3951,7 @@ def wait_for_host_health(
             code = classify_runtime_failure(detail, exit_code=process.returncode)
             raise HostStartupError(
                 code,
-                "PartyOps 个人进程启动后提前退出。" if code == CHILD_EXITED else "PartyOps 个人进程启动探针发现明确故障。",
+                "PartyPlatform 个人进程启动后提前退出。" if code == CHILD_EXITED else "PartyPlatform 个人进程启动探针发现明确故障。",
                 detail=f"个人进程退出码 {process.returncode}；本次启动日志：\n{detail or '无本轮日志输出'}",
             )
         if progress:
@@ -3966,7 +3966,7 @@ def wait_for_host_health(
                 code = str(status["code"])
                 detail = str(status.get("detail", "")) or tail_service_log(data_dir)
                 raise HostStartupError(
-                    code, "PartyOps 主机进程启动失败。", detail=detail
+                    code, "PartyPlatform 主机进程启动失败。", detail=detail
                 )
         try:
             if tls:
@@ -3975,7 +3975,7 @@ def wait_for_host_health(
                 elif os.getenv("PARTYOPS_ENVIRONMENT") == "test":
                     context = ssl._create_unverified_context()  # nosec B323 - 仅测试夹具没有真实 CA。
                 else:
-                    raise ssl.SSLError("PartyOps 内部 CA 尚未生成")
+                    raise ssl.SSLError("PartyPlatform 内部 CA 尚未生成")
             request = urllib.request.Request(f"{probe_url}/api/v1/health")
             with urllib.request.urlopen(  # nosec B310 - probe_url 固定为回环地址并只允许生成的 HTTP(S) 方案。
                 request,
@@ -4005,7 +4005,7 @@ def wait_for_host_health(
                 if actual_version != __version__:
                     raise HostStartupError(
                         RUNTIME_VERSION_MISMATCH,
-                        "检测到升级前仍在运行的 PartyOps 进程。",
+                        "检测到升级前仍在运行的 PartyPlatform 进程。",
                         detail=(
                             f"当前程序版本 {__version__}，监听端口上的进程版本 "
                             f"{actual_version}。系统没有打开混合版本页面。"
@@ -4070,7 +4070,7 @@ def _query_windows_host_service() -> tuple[str, str]:
     """返回 SCM 状态与脱敏后的原始诊断。"""
 
     result = subprocess.run(
-        ["sc.exe", "queryex", "PartyOpsHost"],
+        ["sc.exe", "queryex", "PartyPlatformHost"],
         check=False,
         capture_output=True,
         text=True,
@@ -4114,7 +4114,7 @@ def _start_windows_host_service(timeout: float = 60.0) -> None:
     if state == "missing":
         raise HostStartupError(
             SERVICE_MISSING,
-            "未检测到“党建智能体 PartyOps 主机服务”，请重新运行安装器完成修复安装。",
+            "未检测到“党建智能体 PartyPlatform 主机服务”，请重新运行安装器完成修复安装。",
             detail=detail,
         )
     # 已安装但未运行：重试启动，容忍冷启动慢/SCM 未就绪。
@@ -4129,7 +4129,7 @@ def _start_windows_host_service(timeout: float = 60.0) -> None:
             return
         if current not in {"pending", "stopping"}:
             result = subprocess.run(
-                ["sc.exe", "start", "PartyOpsHost"],
+                ["sc.exe", "start", "PartyPlatformHost"],
                 check=False,
                 capture_output=True,
                 text=True,
@@ -4145,13 +4145,13 @@ def _start_windows_host_service(timeout: float = 60.0) -> None:
         if current == "missing":
             raise HostStartupError(
                 SERVICE_MISSING,
-                "未检测到“党建智能体 PartyOps 主机服务”，请重新运行安装器完成修复安装。",
+                "未检测到“党建智能体 PartyPlatform 主机服务”，请重新运行安装器完成修复安装。",
                 detail=current_detail,
             )
         time.sleep(1.0 if current == "pending" else 3.0)
     raise HostStartupError(
         SERVICE_STOPPED,
-        "PartyOps 主机服务未进入运行状态。请使用配置向导重试或复制诊断信息。",
+        "PartyPlatform 主机服务未进入运行状态。请使用配置向导重试或复制诊断信息。",
         detail=last_error or detail or "SCM 未返回可识别状态",
     )
 
@@ -4224,10 +4224,10 @@ def launch_personal(config_path: Path) -> str:
     elif lock_owners:
         raise HostStartupError(
             INSTANCE_ALREADY_RUNNING,
-            "同一数据目录已有 PartyOps 进程运行，但其健康接口尚未就绪。请稍候后重试；系统没有启动第二个进程。",
+            "同一数据目录已有 PartyPlatform 进程运行，但其健康接口尚未就绪。请稍候后重试；系统没有启动第二个进程。",
             detail="实例锁仍由现有进程持有；未覆盖进程标记、未改写端口、未改动数据库。",
         )
-    # 端口已由当前 PartyOps 占用时直接复用；若是其他程序占用则立即给出
+    # 端口已由当前 PartyPlatform 占用时直接复用；若是其他程序占用则立即给出
     # 中文诊断，不能等待 180 秒后再让新手猜测原因。
     port_open = False
     try:
@@ -4398,7 +4398,7 @@ def _activate_macos_launch_agent(path: Path, label: str) -> None:
     if result.returncode != 0:
         detail = (result.stdout + result.stderr).strip()[-2000:]
         raise ValueError(
-            "macOS 登录启动项未能加载。请在系统设置的登录项中允许 PartyOps 后重试；"
+            "macOS 登录启动项未能加载。请在系统设置的登录项中允许 PartyPlatform 后重试；"
             f"launchctl 诊断：{detail or result.returncode}"
         )
     result = subprocess.run(
@@ -4479,7 +4479,7 @@ def install_host_autostart(config_path: Path) -> Path | None:
             "Terminal=false",
             "NoDisplay=true",
             "X-GNOME-Autostart-enabled=true",
-            f"X-PartyOps-Config={config_path.resolve()}",
+            f"X-PartyPlatform-Config={config_path.resolve()}",
             "",
         ]
     )
@@ -4495,7 +4495,7 @@ def install_client_autostart(config_path: Path) -> Path | None:
         import winreg
 
         try:
-            executable = _executable("PartyOpsLauncher")
+            executable = _executable("PartyPlatformLauncher")
         except FileNotFoundError:
             # 源码运行和旧便携包仍使用 partyops-client；正式安装包统一经
             # 无控制台 Launcher 拉起 Agent，避免每次登录弹出黑色窗口。
@@ -4513,7 +4513,7 @@ def install_client_autostart(config_path: Path) -> Path | None:
             0,
             winreg.KEY_SET_VALUE,
         ) as key:
-            winreg.SetValueEx(key, "PartyOpsAgent", 0, winreg.REG_SZ, command)
+            winreg.SetValueEx(key, "PartyPlatformAgent", 0, winreg.REG_SZ, command)
         return config_path
     if sys.platform == "darwin":
         launcher = _executable("partyops-launch-agent")
@@ -4764,7 +4764,7 @@ def bootstrap_first_admin(
         method="POST",
         headers={
             "Content-Type": "application/json",
-            "X-PartyOps-Bootstrap-Token": bootstrap_token,
+            "X-PartyPlatform-Bootstrap-Token": bootstrap_token,
         },
     )
     context: ssl.SSLContext | None = None
@@ -4774,7 +4774,7 @@ def bootstrap_first_admin(
         elif os.getenv("PARTYOPS_ENVIRONMENT") == "test":
             context = ssl._create_unverified_context()  # nosec B323 - 测试夹具没有真实 CA。
         else:
-            raise ValueError("PartyOps 内部 CA 尚未就绪，已拒绝发送管理员密码")
+            raise ValueError("PartyPlatform 内部 CA 尚未就绪，已拒绝发送管理员密码")
     def connection_refused(exc: urllib.error.URLError) -> bool:
         reason = getattr(exc, "reason", None)
         return bool(
@@ -4842,7 +4842,7 @@ def configured_runtime_status(
         elif os.getenv("PARTYOPS_ENVIRONMENT") == "test":
             context = ssl._create_unverified_context()  # nosec B323 - 测试夹具没有真实 CA。
         else:
-            raise ValueError("PartyOps 内部 CA 尚未就绪，无法确认原账号状态")
+            raise ValueError("PartyPlatform 内部 CA 尚未就绪，无法确认原账号状态")
     request = urllib.request.Request(local_url, headers={"Cache-Control": "no-store"})
     try:
         with urllib.request.urlopen(  # nosec B310 - URL 已固定为 127.0.0.1 与只读状态接口。
@@ -4988,7 +4988,7 @@ input,select{{width:100%;height:44px;padding:0 12px;border:1px solid #cfc3b6;bac
 .startup-status{{display:none;margin:14px 0 0;padding:12px;background:#f4ede3;border-left:3px solid #b42318}}.startup-status.active{{display:block}}.startup-status ol{{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:8px 0 0;padding:0;list-style:none}}.startup-status li{{padding:8px;background:#fffdf8;color:#776f66;font-size:12px}}.startup-status li.active{{color:#8f1f17;font-weight:700}}
 footer{{padding:18px 38px;color:#776f66;background:#f1e9de;border-top:1px solid #ddd2c5}}
 @media(max-width:760px){{.role-grid,.form-grid,.test-row,.checklist{{grid-template-columns:1fr}}.progress{{grid-template-columns:1fr}}.setup-panel{{margin:0 18px 22px}}section,header{{padding-left:22px;padding-right:22px}}}}
-</style></head><body><main><header><h1><b>党建</b>智办</h1><p>{'重新配置运行角色 · 切换失败会保留原角色和业务数据' if reconfiguration else '基层党建工作闭环协同系统 · PartyOps'}</p></header>
+</style></head><body><main><header><h1><b>党建</b>智办</h1><p>{'重新配置运行角色 · 切换失败会保留原角色和业务数据' if reconfiguration else '基层党建工作闭环协同系统 · PartyPlatform'}</p></header>
 <div class="progress"><span class="active">1　选择这台电脑的角色</span><span>2　核对网络与配置</span><span>3　启动并确认连接</span></div>
 {notice}{failure}
 <section id="role-choice"><h2 class="role-title">第一步 · 这台电脑怎么使用</h2><p class="role-subtitle">只给自己用请选择“个人使用”，无需管理员授权；需要多台电脑协同办公时再选择主机或协同机。</p>
@@ -4999,14 +4999,14 @@ footer{{padding:18px 38px;color:#776f66;background:#f1e9de;border-top:1px solid 
 <ul class="checklist"><li>仅自己在本机使用</li><li>无需局域网协同</li><li>数据目录可自由选择</li></ul>
 <form id="personal-form" method="post"><input type="hidden" name="csrf" value="{csrf}"><input type="hidden" name="mode" value="personal"><div class="form-grid">
 <label><span>本机端口</span><input name="port" value="18775" inputmode="numeric"><small>通常无需修改；系统检测到占用时会立即说明。</small></label>
-<label class="full"><span>个人数据与备份目录</span><div class="dir-row"><input id="personal-data-dir" name="data_dir" value="{personal_data_dir}" placeholder="例如 D:\\我的党建资料\\PartyOps 数据"><button id="browse-personal-data-dir" class="browse" type="button">浏览…</button></div><small>支持中文、空格和非 C 盘固定磁盘。只删除程序时会保留；选择彻底卸载时才会删除。</small></label></div>
+<label class="full"><span>个人数据与备份目录</span><div class="dir-row"><input id="personal-data-dir" name="data_dir" value="{personal_data_dir}" placeholder="例如 D:\\我的党建资料\\PartyPlatform 数据"><button id="browse-personal-data-dir" class="browse" type="button">浏览…</button></div><small>支持中文、空格和非 C 盘固定磁盘。只删除程序时会保留；选择彻底卸载时才会删除。</small></label></div>
 <button class="primary">无需管理员授权，启动个人模式</button></form></section>
 <section id="host-panel" class="setup-panel" data-mode-panel="host" hidden><div class="panel-head"><div><h2>配置主机</h2><p>完成后浏览器会打开主机，继续创建首位管理员账号。</p></div><button type="button" class="back">返回重选角色</button></div>
 <ul class="checklist"><li>这台电脑会长期在线</li><li>已连接办公局域网</li><li>知道备份由谁负责</li></ul>{no_lan_notice}
 <form id="host-form" method="post"><input type="hidden" name="csrf" value="{csrf}"><input type="hidden" name="mode" value="host"><div class="form-grid">
 <label><span>主机局域网地址</span><select id="host-bind" name="host">{options}</select><small>协同电脑必须能访问该地址；真实办公网地址已优先显示。</small></label>
 <label><span>服务端口</span><input name="port" value="18765" inputmode="numeric"><small>通常保持 18765；相邻端口 18766 用于安全设备通道。</small></label>
-<label class="full"><span>数据与备份目录</span><div class="dir-row"><input id="data-dir" name="data_dir" value="{host_data_dir}" placeholder="例如 D:\\PartyOps-数据"><button id="browse-data-dir" class="browse" type="button">浏览…</button></div><small>业务数据库、附件、备份、证书、模型、缓存和运行日志都会保存在这里。建议选择本机数据盘目录（如 D:\\PartyOps-数据）；留空使用默认位置。</small></label></div>
+<label class="full"><span>数据与备份目录</span><div class="dir-row"><input id="data-dir" name="data_dir" value="{host_data_dir}" placeholder="例如 D:\\PartyPlatform-数据"><button id="browse-data-dir" class="browse" type="button">浏览…</button></div><small>业务数据库、附件、备份、证书、模型、缓存和运行日志都会保存在这里。建议选择本机数据盘目录（如 D:\\PartyPlatform-数据）；留空使用默认位置。</small></label></div>
 <div id="loopback-warning" class="inline-warning" hidden>当前选择只能在这台电脑本机使用，其他电脑无法加入协同。若要协同，请连接办公网络并选择真实局域网地址。</div>
 <div id="startup-status" class="startup-status" role="status" aria-live="polite"><strong id="startup-message">正在准备主机……</strong><ol><li data-stage="service">服务注册</li><li data-stage="child">子进程启动</li><li data-stage="port">端口监听</li><li data-stage="health">本机健康检查</li><li data-stage="ready">局域网地址就绪</li></ol></div>
 <button id="host-submit" class="primary">确认配置并启动主机</button></form></section>
@@ -5018,7 +5018,7 @@ footer{{padding:18px 38px;color:#776f66;background:#f1e9de;border-top:1px solid 
 <label><span>本机设备名称</span><input name="device_name" required placeholder="例如：组织部-小王电脑"></label>
 <label><span>一次性入网码</span><input name="token" required type="password" autocomplete="off"><small>入网码只使用一次，10 分钟后自动失效。</small></label>
 <label><span>首次共享的本机文件夹（可选）</span><input name="shared_dir" placeholder="{home}/Documents/党建资料"><small>之后可在文件中心随时添加、移除或调整共享范围。</small></label>
-<label><span>接收与灾备目录</span><input name="backup_dir" value="{home}/PartyOps-灾备副本"></label></div>
+<label><span>接收与灾备目录</span><input name="backup_dir" value="{home}/PartyPlatform-灾备副本"></label></div>
 <button id="client-submit" class="primary" disabled>请先通过主机连接测试</button></form></section>
 <footer>个人模式只在本机运行；主机保存团队唯一业务数据库；协同机只保存自己的配置、接收文件和获授权索引。任何模式都不会启用匿名共享。</footer>
 </main><script>
@@ -5033,7 +5033,7 @@ const bind=document.getElementById('host-bind');const loopback=document.getEleme
 function updateBindWarning(){{loopback.hidden=bind.value!=='127.0.0.1';hostSubmit.disabled=!bind.value}}bind.addEventListener('change',updateBindWarning);updateBindWarning();
 const clientHost=document.getElementById('client-host-url');const testButton=document.getElementById('test-client-host');const testResult=document.getElementById('client-test-result');const clientSubmit=document.getElementById('client-submit');
 let verifiedHost='';clientHost.addEventListener('input',()=>{{if(clientHost.value.trim()!==verifiedHost){{clientSubmit.disabled=true;clientSubmit.textContent='请先通过主机连接测试';testResult.className='test-result';testResult.textContent='地址已变化，请重新测试主机连接。'}}}});
-testButton.addEventListener('click',async()=>{{const host=clientHost.value.trim();if(!host){{testResult.className='test-result error';testResult.textContent='请先填写主机地址。';return}}testButton.disabled=true;testResult.className='test-result';testResult.textContent='正在检查主机、端口和协议……';try{{const body=new URLSearchParams({{csrf:{json.dumps(csrf)},mode:'check_client',host_url:host}});const response=await fetch(location.href,{{method:'POST',headers:{{'Content-Type':'application/x-www-form-urlencoded'}},body}});const result=await response.json();if(!response.ok)throw new Error(result.error||'连接失败');verifiedHost=result.host_url;clientHost.value=result.host_url;clientSubmit.disabled=false;clientSubmit.textContent='连接已验证，安全入网并启动协同机';testResult.className='test-result ok';testResult.textContent=`连接成功：PartyOps ${{result.app_version||''}} 主机正常，可以继续入网。`}}catch(error){{verifiedHost='';clientSubmit.disabled=true;clientSubmit.textContent='请先通过主机连接测试';testResult.className='test-result error';testResult.textContent=error instanceof Error?error.message:'无法连接主机'}}finally{{testButton.disabled=false}}}});
+testButton.addEventListener('click',async()=>{{const host=clientHost.value.trim();if(!host){{testResult.className='test-result error';testResult.textContent='请先填写主机地址。';return}}testButton.disabled=true;testResult.className='test-result';testResult.textContent='正在检查主机、端口和协议……';try{{const body=new URLSearchParams({{csrf:{json.dumps(csrf)},mode:'check_client',host_url:host}});const response=await fetch(location.href,{{method:'POST',headers:{{'Content-Type':'application/x-www-form-urlencoded'}},body}});const result=await response.json();if(!response.ok)throw new Error(result.error||'连接失败');verifiedHost=result.host_url;clientHost.value=result.host_url;clientSubmit.disabled=false;clientSubmit.textContent='连接已验证，安全入网并启动协同机';testResult.className='test-result ok';testResult.textContent=`连接成功：PartyPlatform ${{result.app_version||''}} 主机正常，可以继续入网。`}}catch(error){{verifiedHost='';clientSubmit.disabled=true;clientSubmit.textContent='请先通过主机连接测试';testResult.className='test-result error';testResult.textContent=error instanceof Error?error.message:'无法连接主机'}}finally{{testButton.disabled=false}}}});
 const hostForm=document.getElementById('host-form');const startupStatus=document.getElementById('startup-status');const startupMessage=document.getElementById('startup-message');let startupPoll=null;
 function showStartup(stage,message){{startupStatus.classList.add('active');startupMessage.textContent=message||'正在启动主机……';const order=['service','child','port','health','ready'];const index=Math.max(0,order.indexOf(stage));startupStatus.querySelectorAll('li').forEach((item,key)=>item.classList.toggle('active',key<=index));}}
 async function pollStartup(){{try{{const body=new URLSearchParams({{csrf:{json.dumps(csrf)},mode:'host_status'}});const response=await fetch(location.href,{{method:'POST',headers:{{'Content-Type':'application/x-www-form-urlencoded'}},body}});const result=await response.json();if(response.ok)showStartup(result.ui_stage||'service',result.message||'正在启动主机……')}}catch(error){{}}}}
@@ -5061,7 +5061,7 @@ def _choose_system_folder() -> Path | None:
             root = tkinter.Tk()
             root.withdraw()
             root.attributes("-topmost", True)
-            selected = filedialog.askdirectory(title="选择允许 PartyOps 共享的文件夹")
+            selected = filedialog.askdirectory(title="选择允许 PartyPlatform 共享的文件夹")
             root.destroy()
             return Path(selected) if selected else None
         except Exception:  # noqa: BLE001 - 系统选择器缺失时安全回退到手工路径。
@@ -5069,7 +5069,7 @@ def _choose_system_folder() -> Path | None:
     for executable, arguments in (
         (
             "zenity",
-            ["--file-selection", "--directory", "--title=选择 PartyOps 共享文件夹"],
+            ["--file-selection", "--directory", "--title=选择 PartyPlatform 共享文件夹"],
         ),
         ("kdialog", ["--getexistingdirectory", str(Path.home())]),
     ):
@@ -5478,7 +5478,7 @@ def run_wizard(
                 if mode in {"host_status", "open_host_logs"}:
                     config_path = (
                         Path(os.getenv("PROGRAMDATA", "C:/ProgramData"))
-                        / "PartyOps"
+                        / "PartyPlatform"
                         / "partyops.env"
                     )
                     environment = (

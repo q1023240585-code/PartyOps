@@ -46,7 +46,7 @@ onMounted(async () => {
     configured.value = status.configured;
     if (await session.ensure()) await router.replace("/");
   } catch (error) {
-    Message.error(error instanceof Error ? error.message : "无法连接 PartyOps 主机，请检查主机服务是否已启动");
+    Message.error(error instanceof Error ? error.message : "无法连接 PartyPlatform 主机，请检查主机服务是否已启动");
   }
 });
 
@@ -96,7 +96,7 @@ async function submit() {
       || (error instanceof Error && /failed to fetch|networkerror|10061|积极拒绝/i.test(error.message));
     Message.error(
       isConnectionFailure
-        ? "无法连接到 PartyOps 主机服务。请确认主机服务已完全启动后再试，必要时稍等片刻重试。"
+        ? "无法连接到 PartyPlatform 主机服务。请确认主机服务已完全启动后再试，必要时稍等片刻重试。"
         : (error instanceof Error ? error.message : "无法进入系统"),
     );
   } finally {

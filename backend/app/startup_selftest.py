@@ -31,7 +31,7 @@ def _critical_crypto_roundtrip() -> None:
 
     private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     public_key = private_key.public_key()
-    payload = b"PartyOps target runtime startup self-test"
+    payload = b"PartyPlatform target runtime startup self-test"
     oaep = padding.OAEP(
         mgf=padding.MGF1(algorithm=hashes.SHA256()),
         algorithm=hashes.SHA256(),
@@ -237,9 +237,9 @@ def run_user_permission_selftest(runtime: Path) -> dict[str, object]:
         root = Path(temporary).resolve()
         pending = root / "permission.tmp"
         completed = root / "permission.ok"
-        pending.write_bytes(b"PartyOps user permission self-test")
+        pending.write_bytes(b"PartyPlatform user permission self-test")
         pending.replace(completed)
-        if completed.read_bytes() != b"PartyOps user permission self-test":
+        if completed.read_bytes() != b"PartyPlatform user permission self-test":
             raise PermissionError("桌面账号临时目录原子写入回读失败")
         completed.unlink()
     return {

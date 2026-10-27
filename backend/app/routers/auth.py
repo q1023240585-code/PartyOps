@@ -73,7 +73,7 @@ def bootstrap_request_is_trusted(request: Request) -> bool:
     if settings.environment == "test":
         return True
     expected = settings.bootstrap_token.strip()
-    supplied = request.headers.get("X-PartyOps-Bootstrap-Token", "").strip()
+    supplied = request.headers.get("X-PartyPlatform-Bootstrap-Token", "").strip()
     if len(expected) >= 32 and secrets.compare_digest(supplied, expected):
         return True
     source = request.headers.get("Origin", "").strip()
@@ -143,7 +143,7 @@ def bootstrap_host(
         raise ProblemException(
             403,
             "BOOTSTRAP_TRUST_REQUIRED",
-            "首次配置请求未经 PartyOps 向导确认",
+            "首次配置请求未经 PartyPlatform 向导确认",
             "请从主机桌面打开党建智能体配置向导，或使用主机自身页面完成管理员创建。",
         )
     password_hash = hash_password(payload.password)

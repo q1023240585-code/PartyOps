@@ -109,8 +109,8 @@ def _source_formatter_runtime(runtime: Path) -> tuple[Path, Path | None, Path]:
     root = _source_formatter_root(runtime)
     if os.name == "nt":
         return (
-            root / "PartyOps.DocumentFormatter.Host.exe",
-            root / "PartyOps.DocumentFormatter.AddIn.dll",
+            root / "PartyPlatform.DocumentFormatter.Host.exe",
+            root / "PartyPlatform.DocumentFormatter.AddIn.dll",
             root / "source-host.json",
         )
     return root / "partyops-document-formatter-host", None, root / "source-host.json"
@@ -162,7 +162,7 @@ def _validate_mac_object_record(host: Path, record: dict[str, object]) -> dict[s
     if architecture not in minimum_by_architecture:
         raise RuntimeError("Mac 对象后端目标架构无效")
     expected = {"schema": 3, "platform": "macos", "architecture": architecture,
-                "adapter": MAC_OBJECT_ADAPTER, "source_project": "PartyOps.DocumentFormatter.AddIn",
+                "adapter": MAC_OBJECT_ADAPTER, "source_project": "PartyPlatform.DocumentFormatter.AddIn",
                 "source_snapshot_sha256": MAC_OBJECT_SOURCE_SHA256, "source_snapshot_files": 898,
                 "rules_sha256": MAC_OBJECT_RULES_SHA256, "features": MAC_FEATURES,
                 "host_sha256": _sha256(host), "timezone": "Asia/Shanghai", "self_contained": True,
@@ -267,7 +267,7 @@ def _validate_source_formatter_record(
     if (
         record.get("schema") != 2
         or record.get("timezone") != "Asia/Shanghai"
-        or record.get("source_project") != "PartyOps.DocumentFormatter.AddIn"
+        or record.get("source_project") != "PartyPlatform.DocumentFormatter.AddIn"
         or record.get("source_snapshot_sha256") != FORMATTER_SOURCE_SNAPSHOT_SHA256
         or record.get("source_snapshot_files") != FORMATTER_SOURCE_SNAPSHOT_FILES
         or record.get("platform") != _source_formatter_platform()
@@ -405,7 +405,7 @@ def _run_source_formatter_selftest(runtime: Path, host_binary: Path) -> dict[str
     if (
         payload.get("schema") != 1
         or payload.get("passed") is not True
-        or payload.get("source_project") != "PartyOps.DocumentFormatter.AddIn"
+        or payload.get("source_project") != "PartyPlatform.DocumentFormatter.AddIn"
         or payload.get("features")
         != ["format", "replace", "redheader", "rename", "convert", "pdf-to-word"]
     ):
@@ -531,13 +531,13 @@ def run_selftest(runtime: Path) -> dict[str, object]:
         module = importlib.import_module(package)
         smart_versions[package] = str(getattr(module, "__version__", "unknown"))
     # macOS Intel 的 setup-python 可能携带只服务旧算法的 OpenSSL legacy
-    # provider；发布包会剔除它。这里显式验证 PartyOps 实际使用的现代 TLS 与
+    # provider；发布包会剔除它。这里显式验证 PartyPlatform 实际使用的现代 TLS 与
     # Ed25519 签名链，防止闭包瘦身造成“能安装但加密功能启动时才失败”。
     ssl.create_default_context()
     from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
     crypto_key = Ed25519PrivateKey.generate()
-    crypto_payload = b"PartyOps package self-test"
+    crypto_payload = b"PartyPlatform package self-test"
     crypto_key.public_key().verify(crypto_key.sign(crypto_payload), crypto_payload)
     if runtime_profile == "full":
         llama = _native_executable(runtime, "llama-server")

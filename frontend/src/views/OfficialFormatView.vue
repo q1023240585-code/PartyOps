@@ -219,7 +219,7 @@ async function parseLocalResponse<T>(response: Response): Promise<T> {
   try { payload = await response.json() as Record<string, unknown> } catch { payload = { code: "LOCAL_HELPER_RESPONSE_INVALID", detail: `本机服务返回异常（${response.status}）` } }
   throw new LocalFormatError(String(payload.code || "LOCAL_FORMAT_FAILED"), String(payload.detail || payload.title || "本机处理未完成"));
 }
-function localHeaders(): HeadersInit { return { "X-PartyOps-Local-Token": localSessionToken.value } }
+function localHeaders(): HeadersInit { return { "X-PartyPlatform-Local-Token": localSessionToken.value } }
 async function cleanupLocalSession() {
   window.clearTimeout(pollTimer);
   if (!localBaseUrl.value || !localSessionId.value || !localSessionToken.value) return;
@@ -233,8 +233,8 @@ async function ensureLocalSession() {
   localBaseUrl.value = ticket.local_base_url;
   let health: Response;
   try { health = await window.fetch(`${ticket.local_base_url}/health`, { cache: "no-store", credentials: "omit", mode: "cors" }) }
-  catch { throw new LocalFormatError("LOCAL_HELPER_UNREACHABLE", "当前电脑的内置公文引擎未启动，请重新打开 PartyOps。") }
-  if (!health.ok) throw new LocalFormatError("LOCAL_HELPER_HEALTH_FAILED", "内置公文引擎健康检查未通过，请修复安装 PartyOps。");
+  catch { throw new LocalFormatError("LOCAL_HELPER_UNREACHABLE", "当前电脑的内置公文引擎未启动，请重新打开 PartyPlatform。") }
+  if (!health.ok) throw new LocalFormatError("LOCAL_HELPER_HEALTH_FAILED", "内置公文引擎健康检查未通过，请修复安装 PartyPlatform。");
   const response = await window.fetch(`${ticket.local_base_url}/v1/sessions`, { method: "POST", headers: { Authorization: `Bearer ${ticket.ticket}` }, credentials: "omit", mode: "cors" });
   const session = await parseLocalResponse<SessionResponse>(response);
   localSessionId.value = session.session_id; localSessionToken.value = session.session_token;
@@ -349,16 +349,16 @@ onBeforeUnmount(() => { window.clearTimeout(pollTimer); window.clearInterval(clo
       <div>
         <p class="page-kicker">朱批案台 · 当前电脑批量处理</p>
         <h1 class="page-title">公文规范排版</h1>
-        <p class="page-description">公文排版在 PartyOps 页面中使用，文件由当前电脑处理，并复用本机 WPS/Word 的原排版源码。</p>
+        <p class="page-description">公文排版在 PartyPlatform 页面中使用，文件由当前电脑处理，并复用本机 WPS/Word 的原排版源码。</p>
       </div>
       <div class="format-header-actions">
         <button type="button" class="engine-self-test" @click="runSelfTest"><IconSafe /><span>{{ selfTestText }}</span></button>
         <PageHelp
           title="公文排版帮助"
           :tips="[
-            '六类功能、25 项能力全部在 PartyOps 页面内执行，源文件默认不覆盖。',
+            '六类功能、25 项能力全部在 PartyPlatform 页面内执行，源文件默认不覆盖。',
             '文件只发送给当前电脑 127.0.0.1 的内置引擎，15 分钟无操作后自动清理临时副本。',
-            '自动模式优先使用本机 WPS；Windows 上 WPS 不可用时回退 Word，任务与结果在 PartyOps 页面管理。',
+            '自动模式优先使用本机 WPS；Windows 上 WPS 不可用时回退 Word，任务与结果在 PartyPlatform 页面管理。',
             'Intel Mac 候选环境处理期间保持 WPS 打开且可见，勿隐藏、最小化或退出，并及时响应 macOS 权限提示；完成后人工核对文字、字体（包括引号的 Times New Roman）、格式与分页。',
             '套红、复杂表格、扫描 PDF 和特殊版式仍应按最终打印页逐页核对。',
           ]"

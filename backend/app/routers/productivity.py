@@ -930,7 +930,7 @@ def create_handover(
         ],
     }
     # 同一秒内重复生成交接包也必须得到独立文件名，避免唯一索引冲突。
-    filename = f"PartyOps-交接清单-{beijing_now().strftime('%Y%m%d%H%M%S%f')}.zip"
+    filename = f"PartyPlatform-交接清单-{beijing_now().strftime('%Y%m%d%H%M%S%f')}.zip"
     path = get_settings().exports_dir / filename
     manifest_bytes = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
     checksums = [f"{hashlib.sha256(manifest_bytes).hexdigest()}  manifest.json"]

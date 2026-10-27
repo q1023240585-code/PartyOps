@@ -92,6 +92,6 @@ def start_instance_formatter(data_dir: Path, configured_port: int, secret: str) 
         service.close()
         raise OfficialFormatError(
             "LOCAL_FORMAT_CONFIG_WRITE_FAILED", "公文排版配置未保存",
-            "无法保存当前实例的排版端口，请检查业务数据目录权限后重新打开 PartyOps。",
+            "无法保存当前实例的排版端口，请检查业务数据目录权限后重新打开 PartyPlatform。",
         ) from exc
     return service
